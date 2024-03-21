@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "25104211908",
+    "project_id": "csm-katalog",
+    "storage_bucket": "csm-katalog.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25104211908:android:ace972a8c70fb5ffe4ce91",
+        "android_client_info": {
+          "package_name": "com.csm.katalog.csmkatalog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBNfoOqpPhyB5eo7L7ouF_JqCG-g6FfPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
