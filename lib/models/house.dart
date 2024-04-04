@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class House {
   final int modelID;
   final int price;
@@ -88,9 +86,9 @@ var dummyList = [
     allHouseNumbers: ["201", "202", "203", "204", "205", "206", ],
     occupiedHouseNumbers: ["201", "204", "205", "206", ],
     imageUrls: [
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.rumah123.com%2Fpanduan-properti%2Ftips-properti-66343-panduan-rumah-tipe-36-harga-denah-desain-dan-dekorasi-2020-id.html&psig=AOvVaw2gDZ3AA-2nqacl_SsJkxCt&ust=1711457008464000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNj2kqq4j4UDFQAAAAAdAAAAABAJ",
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.researchgate.net%2Ffigure%2FThe-observed-house-type-36-98-Saputra-2004_fig1_322080059&psig=AOvVaw2gDZ3AA-2nqacl_SsJkxCt&ust=1711457008464000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNj2kqq4j4UDFQAAAAAdAAAAABAR",
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.99.co%2Fid%2Fpanduan%2Fukuran-rumah-tipe-36%2F&psig=AOvVaw2gDZ3AA-2nqacl_SsJkxCt&ust=1711457008464000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNj2kqq4j4UDFQAAAAAdAAAAABAh",
+        "https://img.antaranews.com/cache/1200x800/2019/07/12/WhatsApp_Image_2019-06-21_at_18_51_53_-1.jpeg.webp",
+        "https://img.antaranews.com/cache/1200x800/2019/07/12/WhatsApp_Image_2019-06-21_at_18_51_53_-1.jpeg.webp",
+
       ],
     youtubeUrls: [],
   ),
@@ -107,9 +105,9 @@ var dummyList = [
     allHouseNumbers: ["101", "102", "103", "104", "105", "106", "301", "302", "303", "304", "401", "402", "403"],
     occupiedHouseNumbers: ["101", "104", "304", "401", "402", ],
     imageUrls: [
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.kompas.com%2Fproperti%2Fread%2F2021%2F07%2F01%2F090000921%2Fperlu-diketahui-realisasi-kpr-subsidi-rata-rata-202666-unit-per-tahun&psig=AOvVaw1Ro6NbCwair88sO3y3RFW4&ust=1711461379554000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCKiCvM7Ij4UDFQAAAAAdAAAAABBA",
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.kompas.com%2Ftren%2Fread%2F2021%2F02%2F22%2F150300065%2Fcari-rumah-subsidi-cek-infonya-di-3-aplikasi-dan-situs-web-ini%3Fpage%3Dall&psig=AOvVaw1Ro6NbCwair88sO3y3RFW4&ust=1711461379554000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCKiCvM7Ij4UDFQAAAAAdAAAAABBI",
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pikiran-rakyat.com%2Fproperti%2Fpr-017501114%2Fcicilan-rp1-jutaan-dan-dp-1-persen-berikut-tabel-simulasi-angsuran-rumah-subsidi-di-bandung-2023%3Fpage%3Dall&psig=AOvVaw3g093y178SDddBQPPCPTBL&ust=1711461486696000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCKiNxoHJj4UDFQAAAAAdAAAAABAY",
+        "https://img.antaranews.com/cache/1200x800/2022/09/18/IMG-20220918-WA0025_2.jpg.webp",
+        "https://img.antaranews.com/cache/1200x800/2023/02/07/rumah-subsidi-4.jpeg.webp",
+        "https://assets.pikiran-rakyat.com/crop/283x0:1598x927/703x0/webp/photo/2022/09/18/49290791.jpeg",
       ],
     youtubeUrls: [],
   ),

@@ -1,8 +1,19 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'screens/catalog_screen.dart';
 import 'screens/admin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
+
+class MouseTooScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+  };
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: MouseTooScrollBehavior(),
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -26,7 +38,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const CatalogScreen(),
+        '/': (context) => CatalogScreen(),
         '/admin': (context) => const AdminScreen(),
       }
     );

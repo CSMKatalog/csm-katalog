@@ -1,24 +1,26 @@
+
 import 'package:flutter/material.dart';
 
 import '../models/house.dart';
 
 class CatalogScreen extends StatelessWidget {
-  const CatalogScreen({super.key});
+  CatalogScreen({super.key});
 
+  // Untuk sementara digunakan data dummy
   static final List<House> houseList = dummyList;
+  var catalogRows = houseList.map((e) => CatalogRow(house: e,)).toList();
+  var currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          ListView.builder(
-              itemBuilder: (context, index) {
-                return CatalogRow(house: houseList[index]);
-              },
-            itemCount: houseList.length,
-          ),
-        ],
+      body: ListView.builder(
+        physics: ImmediatePageScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        itemBuilder: (context, index) {
+          return CatalogRow(house: houseList[index]);
+        },
+        itemCount: houseList.length,
       ),
     );
   }
@@ -32,39 +34,59 @@ class CatalogRow extends StatelessWidget {
   Widget build(BuildContext context) {
     List<StatelessWidget> rowItems = getRow(house);
 
-    return ListView.builder(
-        itemBuilder: (context, index) {
-          return rowItems[index];
-        },
-        itemCount: rowItems.length,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: Row(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return rowItems[index];
+                },
+                itemCount: rowItems.length,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class CatalogImageItem extends StatelessWidget {
-  const CatalogImageItem({super.key, required String url});
+  const CatalogImageItem({super.key, required this.url});
+  final String url;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+      return Image.network(url);
   }
 }
 
 class CatalogDetailItem extends StatelessWidget {
-  const CatalogDetailItem({super.key, required House house});
+  const CatalogDetailItem({super.key, required this.house});
+  final House house;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      children: [
+        Text(house.name),
+        if(house.hasTerrace) Text("Lapangan luas"),
+        if(house.hasAttic) Text("Gudang di atap"),
+        if(house.hasInsideKitchen) Text("Dapur dalam rumah"),
+      ],
+    );
   }
 }
 
 class CatalogVideoItem extends StatelessWidget {
-  const CatalogVideoItem({super.key, required String url});
+  const CatalogVideoItem({super.key, required this.url});
+  final String url;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Text(url);
   }
 }
 
@@ -85,4 +107,8 @@ List<StatelessWidget> getRow(House house) {
   return rowItems;
 }
 
+class ImmediatePageScrollPhysics extends PageScrollPhysics {
+  @override
+  double? get dragStartDistanceMotionThreshold => null;
+}
 
