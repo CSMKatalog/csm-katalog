@@ -1,5 +1,7 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/house.dart';
 
@@ -11,16 +13,36 @@ class CatalogScreen extends StatelessWidget {
   var catalogRows = houseList.map((e) => CatalogRow(house: e,)).toList();
   var currentIndex = 0;
 
+  final ScrollController _columnController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
+    void handleKeyEvent(RawKeyEvent event) {
+      var columnOffset = _columnController.offset;
+      var scrollOffset = MediaQuery.of(context).size.height;
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+        _columnController.animateTo(columnOffset - scrollOffset, duration: Duration(milliseconds: 300), curve: Curves.ease);
+      }
+      else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+        _columnController.animateTo(columnOffset + scrollOffset, duration: Duration(milliseconds: 300), curve: Curves.ease);
+      }
+    }
+
     return Scaffold(
-      body: ListView.builder(
-        physics: ImmediatePageScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          return CatalogRow(house: houseList[index]);
-        },
-        itemCount: houseList.length,
+      body: RawKeyboardListener(
+        autofocus: true,
+        focusNode: _focusNode,
+        onKey: handleKeyEvent,
+        child: ListView.builder(
+          controller: _columnController,
+          physics: ImmediatePageScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            return CatalogRow(house: houseList[index]);
+          },
+          itemCount: houseList.length,
+        ),
       ),
     );
   }
@@ -33,13 +55,13 @@ class CatalogRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<StatelessWidget> rowItems = getRow(house);
-
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Row(
         children: [
           Expanded(
             child: ListView.builder(
+              physics: ImmediatePageScrollPhysics(),
               scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return rowItems[index];
@@ -59,7 +81,25 @@ class CatalogImageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      return Image.network(url);
+      return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              color: Colors.black
+            ),
+            child: Center(
+              child: DecoratedBox(
+                decoration: const BoxDecoration(
+                    color: Colors.white
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.network(url, height: double.infinity),
+                ),
+              ),
+            ),
+          )
+      );
   }
 }
 
@@ -69,13 +109,16 @@ class CatalogDetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(house.name),
-        if(house.hasTerrace) Text("Lapangan luas"),
-        if(house.hasAttic) Text("Gudang di atap"),
-        if(house.hasInsideKitchen) Text("Dapur dalam rumah"),
-      ],
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        children: [
+          Text(house.name),
+          if(house.hasTerrace) Text("Lapangan luas"),
+          if(house.hasAttic) Text("Gudang di atap"),
+          if(house.hasInsideKitchen) Text("Dapur dalam rumah"),
+        ],
+      ),
     );
   }
 }
