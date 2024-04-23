@@ -5,7 +5,7 @@ import 'screens/catalog_screen.dart';
 import 'screens/admin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 class MouseTooScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -16,6 +16,7 @@ class MouseTooScrollBehavior extends MaterialScrollBehavior {
 }
 
 Future<void> main() async {
+  usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -64,8 +65,8 @@ class CatalogRouteInformationParser  extends RouteInformationParser<CatalogRoute
   }
 
   @override
-  RouteInformation restoreRouteInformation(CatalogRoutePath path) {
-    if (path.isAdminPage) {
+  RouteInformation restoreRouteInformation(CatalogRoutePath configuration) {
+    if (configuration.isAdminPage) {
       return RouteInformation(uri: Uri.parse('/admin'));
     }
     return RouteInformation(uri: Uri.parse('/'));
@@ -78,36 +79,45 @@ class CatalogRouterDelegate  extends RouterDelegate<CatalogRoutePath>
   final GlobalKey<NavigatorState> navigatorKey;
 
   bool isCatalog = true;
-
   CatalogRouterDelegate() : navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   CatalogRoutePath get currentConfiguration {
-    return isCatalog
+    return isCatalog == true
         ? CatalogRoutePath.catalog()
         : CatalogRoutePath.admin();
   }
 
+  List<Page> get _catalogStack {
+
+    return [MaterialPage(
+      key: const ValueKey('CatalogPage'),
+      child: CatalogScreen(),
+    ),];
+  }
+
+  List<Page> get _adminStack {
+
+    return [const MaterialPage(
+      key: ValueKey('AdminPage'),
+      child: AdminScreen(),
+    ),];
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Page> stack;
+    if (isCatalog == true) {
+      stack = _catalogStack;
+    } else {
+      stack = _adminStack;
+    }
     return Navigator(
       key: navigatorKey,
-      pages: [
-        if(isCatalog) MaterialPage(
-          key: const ValueKey('CatalogPage'),
-          child: CatalogScreen(),
-        ),
-        if(!isCatalog) const MaterialPage(
-          key: ValueKey('AdminPage'),
-          child: AdminScreen(),
-        ),
-      ],
+      pages: stack,
       onPopPage: (route, result) {
-        if (!route.didPop(result)) {
-          return false;
-        }
+        if (!route.didPop(result)) return false;
         isCatalog = true;
-        notifyListeners();
         return true;
       },
     );
