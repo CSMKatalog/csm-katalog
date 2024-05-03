@@ -13,7 +13,22 @@ class House {
   final List<String> imageUrls;
   final List<String> youtubeUrls;
 
-  House({
+  House.empty() :
+    modelID = -1,
+    price = -1,
+    name = "",
+    houseDimensions = Vector2(length: -1, width: -1),
+    landDimensions = Vector2(length: -1, width: -1),
+    hasAttic = false,
+    hasInsideKitchen = false,
+    hasTerrace = false,
+    bedrooms = -1,
+    allHouseNumbers = [],
+    occupiedHouseNumbers = [],
+    imageUrls = [],
+    youtubeUrls = [];
+
+  House ({
     required this.modelID,
     required this.price,
     required this.name,

@@ -1,3 +1,5 @@
+import '../models/house.dart';
+import 'house_detail.dart';
 import 'house_list.dart';
 import 'package:flutter/material.dart';
 import 'house_add.dart';
@@ -10,32 +12,49 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  var dashboardScreens = [
-    DashboardScreen(label: "Daftar Item", icon: Icon(Icons.abc_outlined), widget: HouseList()),
-    DashboardScreen(label: "Tambah Item", icon: Icon(Icons.abc_outlined), widget: HouseAdd()),
-    DashboardScreen(label: "Download Katalog", icon: Icon(Icons.abc_outlined), widget: HouseList()),
-  ];
-  late Widget selectedScreen = dashboardScreens[0].widget;
+  _AdminScreenState () {
+    dashboardScreens = [
+      DashboardScreen(label: "Daftar Item", icon: Icon(Icons.abc_outlined), widget: HouseList(changeScreenListener:
+          (House house) {
+        setState(() {
+          selectedScreen = HouseDetail(house: house);
+        });
+      }
+      )),
+      DashboardScreen(label: "Tambah Item", icon: Icon(Icons.abc_outlined), widget: HouseAdd()),
+      DashboardScreen(label: "Download Katalog", icon: Icon(Icons.abc_outlined), widget: Placeholder()),
+    ];
+    selectedScreen = dashboardScreens[0].widget;
+  }
+  late var dashboardScreens;
+  late Widget selectedScreen;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
-        children: [
-          Sidebar(
-            dashboardScreens: dashboardScreens,
-            changeScreenListener: (widget) {
-              setState(() {
-                selectedScreen = widget;
-              });
-            },
-          ),
-          // Main dashboard
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: selectedScreen,
-          ),
-        ],
+      body: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Sidebar(
+              dashboardScreens: dashboardScreens,
+              changeScreenListener: (widget) {
+                setState(() {
+                  selectedScreen = widget;
+                });
+              },
+            ),
+            // Main dashboard
+            SizedBox(
+              width: (MediaQuery.of(context).size.width > 720) ? (MediaQuery.of(context).size.width*2.95/4) : (MediaQuery.of(context).size.width-190),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 8.0, right: 8.0),
+                child: selectedScreen,
+              ),
+            ),
+          ],
+        ),
       )
     );
   }
@@ -80,7 +99,7 @@ class Sidebar extends StatelessWidget {
               )
           ),
           child: SizedBox(
-            width: MediaQuery.of(context).size.width/4,
+            width: (MediaQuery.of(context).size.width > 720) ? (MediaQuery.of(context).size.width/4) : (180),
             height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
@@ -90,13 +109,18 @@ class Sidebar extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Image.asset("images/logo_csm.png"),
+                        child: MediaQuery.of(context).size.width > 1000 ? Image.asset("images/logo_csm.png") : SizedBox(),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("PT. CSM"),
-                          Text("Catalog Creator"),
+                          Text("PT. CSM",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 23,
+                              ),
+                            ),
+                          Text("Penyusun Katalog"),
                         ]
                       )
                     ],
@@ -108,7 +132,7 @@ class Sidebar extends StatelessWidget {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(4.0),
+                          padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0, right: 4.0),
                           child: Text(screen.label),
                         ),
                       ],
@@ -130,5 +154,21 @@ class DashboardScreen {
 
   DashboardScreen({required this.label, required this.icon, required this.widget});
 }
+
+class HeaderAdminScreen extends StatelessWidget {
+  HeaderAdminScreen({super.key, required this.text});
+  String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+        text,
+        style: TextStyle(
+          fontSize: 23,
+        ),
+    );
+  }
+}
+
 
 
