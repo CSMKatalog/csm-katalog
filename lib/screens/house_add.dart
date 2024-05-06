@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:csmkatalog/screens/admin_screen.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
@@ -5,61 +7,27 @@ import 'package:flutter/material.dart';
 import '../models/house.dart';
 
 class HouseAdd extends StatefulWidget {
-  HouseAdd({super.key, House? house}) {
-    this.house = house ?? House.empty();
-  }
-
-  late House house;
-  final nameController = TextEditingController();
-  final landLengthController = TextEditingController();
-  final landWidthController = TextEditingController();
-  final houseLengthController = TextEditingController();
-  final houseWidthController = TextEditingController();
-  final bedroomsController = TextEditingController();
+  HouseAdd({super.key, required this.house});
+  House house;
 
   @override
   State<HouseAdd> createState() => _HouseAddState();
 }
 
 class _HouseAddState extends State<HouseAdd> {
-  // Here
-  _HouseAddState () {
-    // Fieldsny yang error
-    if (widget.house.modelID != -1) {
-      fields.add(editButtons);
-      headerText = "Detail Model Rumah ${widget.house.name}";
-      // TODO: set all fields to house details
-    } else {
-      fields.add(addButtons);
-    }
-  }
-  late List<Widget> fields = [
-    HouseAddItemTextDetail(label: "Nama", hintText: "Nama model rumah", textEditingController: widget.nameController),
-    HouseAddItemTextDetail(label: "Jumlah Kamar Tidur", hintText: "Nama model rumah", textEditingController: widget.bedroomsController),
-    HouseAddItemDimensionDetail(label: "tanah", lengthController: widget.landLengthController, widthController: widget.landWidthController, hintText: "tanah (meter)"),
-    HouseAddItemDimensionDetail(label: "rumah", lengthController: widget.houseLengthController, widthController: widget.houseWidthController, hintText: "rumah (meter)"),
-    HouseAddItemCheckboxDetail(label: "Ada dapur dalam", value: kitchenValue, onChanged: (b) => {
-      setState(() {
-        kitchenValue = b!;
-      })
-    },),
-    HouseAddItemCheckboxDetail(label: "Ada teras", value: terraceValue, onChanged: (b) => {
-      setState(() {
-        terraceValue = b!;
-      })
-    },),
-    HouseAddItemCheckboxDetail(label: "Ada loteng", value: atticValue, onChanged: (b) => {
-      setState(() {
-        atticValue = b!;
-      })
-    },),
-  ];
+  _HouseAddState ();
+
+  final nameController = TextEditingController();
+  final landLengthController = TextEditingController();
+  final landWidthController = TextEditingController();
+  final houseLengthController = TextEditingController();
+  final houseWidthController = TextEditingController();
+  final bedroomsController = TextEditingController();
+  List<Widget> fields = [];
   bool kitchenValue = false;
   bool terraceValue = false;
   bool atticValue = false;
   String headerText = "Tambah Model Rumah Baru";
-
-  // Here
 
   Widget addButtons = Row(
     mainAxisAlignment: MainAxisAlignment.end,
@@ -81,6 +49,37 @@ class _HouseAddState extends State<HouseAdd> {
       },),
     ],
   );
+
+  @override
+  void initState() {
+    super.initState();
+    fields.add(HouseAddItemTextDetail(label: "Nama", hintText: "Nama model rumah", textEditingController: nameController),);
+    fields.add(HouseAddItemTextDetail(label: "Jumlah Kamar Tidur", hintText: "Nama model rumah", textEditingController: bedroomsController),);
+    fields.add(HouseAddItemDimensionDetail(label: "tanah", lengthController: landLengthController, widthController: landWidthController, hintText: "tanah (meter)"),);
+    fields.add(HouseAddItemDimensionDetail(label: "rumah", lengthController: houseLengthController, widthController: houseWidthController, hintText: "rumah (meter)"),);
+    fields.add(HouseAddItemCheckboxDetail(label: "Ada dapur dalam", value: kitchenValue, onChanged: () => {
+      setState(() {
+        kitchenValue = !kitchenValue;
+      })
+    },),);
+    fields.add(HouseAddItemCheckboxDetail(label: "Ada teras", value: terraceValue, onChanged: () => {
+      setState(() {
+        terraceValue = !terraceValue;
+      })
+    },),);
+    fields.add(HouseAddItemCheckboxDetail(label: "Ada loteng", value: atticValue, onChanged: () => {
+      setState(() {
+        atticValue = !atticValue;
+      })
+    },),);
+    if (widget.house.modelID != -1) {
+      fields.add(editButtons);
+      headerText = "Detail Model Rumah ${widget.house.name}";
+      // TODO: set all fields to house details
+    } else {
+      fields.add(addButtons);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,18 +131,36 @@ class HouseSubmitButton extends StatelessWidget {
   }
 }
 
-class HouseAddItemCheckboxDetail extends StatelessWidget {
+class HouseAddItemCheckboxDetail extends StatefulWidget {
   HouseAddItemCheckboxDetail({super.key, required this.label, required this.value, required this.onChanged});
   String label;
   bool value;
-  void Function(bool?) onChanged;
+  void Function() onChanged;
+
+  @override
+  State<HouseAddItemCheckboxDetail> createState() => _HouseAddItemCheckboxDetailState();
+}
+
+class _HouseAddItemCheckboxDetailState extends State<HouseAddItemCheckboxDetail> {
+  late bool checkValue;
+
+  @override
+  void initState() {
+    super.initState();
+    checkValue = widget.value;
+  }
 
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
-      title: Text("${label}:"),
-      value: value,
-      onChanged: onChanged,
+      title: Text("${widget.label}:"),
+      value: checkValue,
+      onChanged: (b) => {
+        widget.onChanged(),
+        setState(() {
+          checkValue = !checkValue;
+        }),
+      },
       controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
     );
   }
@@ -174,8 +191,6 @@ class HouseTextField extends StatelessWidget {
     );
   }
 }
-
-
 
 class HouseAddItemDimensionDetail extends StatelessWidget {
   HouseAddItemDimensionDetail({super.key,
@@ -225,3 +240,20 @@ class HouseAddItemTextDetail extends StatelessWidget {
   }
 }
 
+
+// TODO: I'm so fucked
+class HouseAddItemImageDetails extends StatefulWidget {
+  const HouseAddItemImageDetails({super.key});
+
+  @override
+  State<HouseAddItemImageDetails> createState() => _HouseAddItemImageDetailsState();
+}
+
+class _HouseAddItemImageDetailsState extends State<HouseAddItemImageDetails> {
+  List<String> listOfImageNames = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}

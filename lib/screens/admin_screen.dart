@@ -1,5 +1,4 @@
 import '../models/house.dart';
-import 'house_detail.dart';
 import 'house_list.dart';
 import 'package:flutter/material.dart';
 import 'house_add.dart';
@@ -17,11 +16,11 @@ class _AdminScreenState extends State<AdminScreen> {
       DashboardScreen(label: "Daftar Item", icon: Icon(Icons.abc_outlined), widget: HouseList(changeScreenListener:
           (House house) {
         setState(() {
-          selectedScreen = HouseDetail(house: house);
+          selectedScreen = HouseAdd(house: house);
         });
       }
       )),
-      DashboardScreen(label: "Tambah Item", icon: Icon(Icons.abc_outlined), widget: HouseAdd()),
+      DashboardScreen(label: "Tambah Item", icon: Icon(Icons.abc_outlined), widget: HouseAdd(house: House.empty(),)),
       DashboardScreen(label: "Download Katalog", icon: Icon(Icons.abc_outlined), widget: Placeholder()),
     ];
     selectedScreen = dashboardScreens[0].widget;
