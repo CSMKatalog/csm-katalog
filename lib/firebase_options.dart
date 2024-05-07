@@ -71,4 +71,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'csm-katalog.appspot.com',
     iosBundleId: 'com.csm.katalog.csmkatalog',
   );
+
 }

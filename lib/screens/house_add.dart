@@ -240,7 +240,6 @@ class HouseAddItemTextDetail extends StatelessWidget {
   }
 }
 
-
 // TODO: I'm so fucked
 class HouseAddItemImageDetails extends StatefulWidget {
   const HouseAddItemImageDetails({super.key});

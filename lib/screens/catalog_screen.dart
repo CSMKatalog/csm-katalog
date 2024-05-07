@@ -1,66 +1,147 @@
+import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../models/house.dart';
 
-class CatalogScreen extends StatelessWidget {
-  CatalogScreen({super.key});
-
-  // Untuk sementara digunakan data dummy
+class CatalogScreen extends StatefulWidget {
+  const CatalogScreen({super.key});
   static final List<House> houseList = dummyList;
-  var catalogRows = houseList.map((e) => CatalogRow(house: e,)).toList();
-  var currentIndex = 0;
 
+  @override
+  State<CatalogScreen> createState() => _CatalogScreenState();
+}
+
+class _CatalogScreenState extends State<CatalogScreen> {
   final ScrollController _columnController = ScrollController();
-  final FocusNode _focusNode = FocusNode();
+  var rowControllers = CatalogScreen.houseList.map((e) => ScrollController()).toList();
+  bool isVideo = false;
 
   @override
   Widget build(BuildContext context) {
-    void handleKeyEvent(RawKeyEvent event) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width*11/12;
+
+    void scrollUp() {
       var columnOffset = _columnController.offset;
-      var scrollOffset = MediaQuery.of(context).size.height;
-      if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-        _columnController.animateTo(columnOffset - scrollOffset, duration: Duration(milliseconds: 300), curve: Curves.ease);
-      }
-      else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-        _columnController.animateTo(columnOffset + scrollOffset, duration: Duration(milliseconds: 300), curve: Curves.ease);
-      }
+      _columnController.animateTo(columnOffset - height, duration: Duration(milliseconds: 300), curve: Curves.ease);
     }
+    void scrollDown() {
+      var columnOffset = _columnController.offset;
+      _columnController.animateTo(columnOffset + height, duration: Duration(milliseconds: 300), curve: Curves.ease);
+    }
+    void scrollLeft() {
+      var curRow = _columnController.offset ~/ height;
+      var rowController = rowControllers[curRow];
+      var rowOffset = rowController.offset;
+      rowController.animateTo(rowOffset - width, duration: Duration(milliseconds: 300), curve: Curves.ease);
+    }
+    void scrollRight() {
+      var curRow = _columnController.offset ~/ height;
+      var rowController = rowControllers[curRow];
+      var rowOffset = rowController.offset;
+      rowController.animateTo(rowOffset + width, duration: Duration(milliseconds: 300), curve: Curves.ease);
+    }
+    var scrollCallbacks = {
+      "up": scrollUp,
+      "down": scrollDown,
+      "left": scrollLeft,
+      "right": scrollRight,
+    };
 
     return Scaffold(
-      body: RawKeyboardListener(
-        autofocus: true,
-        focusNode: _focusNode,
-        onKey: handleKeyEvent,
-        child: ListView.builder(
-          controller: _columnController,
-          physics: ImmediatePageScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) {
-            return CatalogRow(house: houseList[index]);
-          },
-          itemCount: houseList.length,
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: Row(
+          children: [
+            if (false) SizedBox(
+              width: 100,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Flexible(
+                    child: Container(
+                      color: Colors.grey,
+                      child: GridView(
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 1,
+                        ),
+                        children: [
+                          SizedBox(),
+                          CatalogScrollButton(onPressed: scrollUp, icon: Icons.keyboard_arrow_up),
+                          SizedBox(),
+                          CatalogScrollButton(onPressed: scrollLeft, icon: Icons.keyboard_arrow_left),
+                          SizedBox(),
+                          CatalogScrollButton(onPressed: scrollRight, icon: Icons.keyboard_arrow_right),
+                          SizedBox(),
+                          CatalogScrollButton(onPressed: scrollDown, icon: Icons.keyboard_arrow_down),
+                          SizedBox(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 50,)
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: _columnController,
+                physics: ImmediatePageScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  return CatalogRow(house: CatalogScreen.houseList[index], controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
+                },
+                itemCount: CatalogScreen.houseList.length,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class CatalogRow extends StatelessWidget {
-  CatalogRow({super.key, required this.house});
-  House house;
+class CatalogScrollButton extends StatelessWidget {
+  const CatalogScrollButton({super.key, required this.onPressed, required this.icon});
+  final VoidCallback onPressed;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    List<StatelessWidget> rowItems = getRow(house);
+    return GestureDetector(
+        onTap: onPressed,
+        child: Container(
+          color: Colors.blueGrey,
+          child: Icon(icon, size: MediaQuery.of(context).size.width < 600 ? 10 : 20,),
+        )
+    );
+  }
+}
+
+
+class CatalogRow extends StatelessWidget {
+
+  const CatalogRow({super.key, required this.house, required this.controller, required this.scrollCallbacks});
+  final House house;
+  final ScrollController controller;
+  final Map<String, VoidCallback> scrollCallbacks;
+
+  @override
+  Widget build(BuildContext context) {
+    List<StatelessWidget> rowItems = getRow(house, scrollCallbacks);
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Row(
         children: [
           Expanded(
             child: ListView.builder(
+              controller: controller,
               physics: ImmediatePageScrollPhysics(),
               scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
@@ -85,7 +166,7 @@ class CatalogImageItem extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: DecoratedBox(
             decoration: const BoxDecoration(
-              color: Colors.black
+              color: Colors.black87
             ),
             child: Center(
               child: DecoratedBox(
@@ -124,16 +205,55 @@ class CatalogDetailItem extends StatelessWidget {
 }
 
 class CatalogVideoItem extends StatelessWidget {
-  const CatalogVideoItem({super.key, required this.url});
+  const CatalogVideoItem({super.key, required this.url, required this.scrollCallbacks});
   final String url;
+  final Map<String, VoidCallback> scrollCallbacks;
 
   @override
   Widget build(BuildContext context) {
-    return Text(url);
+    final controller = YoutubePlayerController.fromVideoId(
+      videoId: YoutubePlayerController.convertUrlToId(url)!,
+      autoPlay: false,
+      params: const YoutubePlayerParams(
+        strictRelatedVideos: true,
+        showControls: false,
+      ),
+    );
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: Container(
+        color: Colors.black87,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+                child: YoutubePlayer(
+                  controller: controller,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height/8,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  FloatingActionButton(onPressed: scrollCallbacks["left"], child: Icon(Icons.keyboard_arrow_left)),
+                  FloatingActionButton(onPressed: scrollCallbacks["right"], child: Icon(Icons.keyboard_arrow_right)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
-List<StatelessWidget> getRow(House house) {
+List<StatelessWidget> getRow(House house, Map<String, VoidCallback> scrollCallbacks) {
   List<StatelessWidget> rowItems = [];
   if (house.imageUrls.isNotEmpty) {
     rowItems.add(CatalogImageItem(url: house.imageUrls[0]));
@@ -145,7 +265,7 @@ List<StatelessWidget> getRow(House house) {
     }
   }
   for (var url in house.youtubeUrls) {
-    rowItems.add(CatalogVideoItem(url: url));
+    rowItems.add(CatalogVideoItem(url: url, scrollCallbacks: scrollCallbacks,));
   }
   return rowItems;
 }

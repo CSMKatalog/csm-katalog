@@ -105,7 +105,7 @@ var dummyList = [
         "https://img.antaranews.com/cache/1200x800/2019/07/12/WhatsApp_Image_2019-06-21_at_18_51_53_-1.jpeg.webp",
 
       ],
-    youtubeUrls: [],
+    youtubeUrls: ["https://www.youtube.com/watch?v=nPbcg3a0unk"],
   ),
   House(
     modelID: 2,
@@ -124,6 +124,6 @@ var dummyList = [
         "https://img.antaranews.com/cache/1200x800/2023/02/07/rumah-subsidi-4.jpeg.webp",
         "https://assets.pikiran-rakyat.com/crop/283x0:1598x927/703x0/webp/photo/2022/09/18/49290791.jpeg",
       ],
-    youtubeUrls: [],
+    youtubeUrls: ["https://www.youtube.com/watch?v=UM51OOFKvJw"],
   ),
 ];
