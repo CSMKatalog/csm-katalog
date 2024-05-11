@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 
@@ -31,6 +32,7 @@ class _HouseAddState extends State<HouseAdd> {
   final youtubeController = TextEditingController();
   List<Widget> fields = [];
   List<Uint8List> listOfImages = [];
+  List<String> listOfFeatures = [];
   bool kitchenValue = false;
   bool terraceValue = false;
   bool atticValue = false;
@@ -69,6 +71,14 @@ class _HouseAddState extends State<HouseAdd> {
     }
   }
 
+  void deleteFile(int index) {
+    ;
+  }
+
+  void appendFeature(String feature) {
+    listOfFeatures.add(feature);
+  }
+
   Future<Uint8List> imageUrlToImage(String imageUrl) async {
     http.Response response = await http.get(Uri.parse(imageUrl));
     return response.bodyBytes;
@@ -102,6 +112,13 @@ class _HouseAddState extends State<HouseAdd> {
       House house = widget.house;
       headerText = "Detail Model Rumah ${house.name}";
       // TODO: set all fields to house details
+      nameController.text = house.name;
+      landLengthController.text = house.landDimensions.length.toString();
+      landWidthController.text = house.landDimensions.width.toString();
+      houseLengthController.text = house.houseDimensions.length.toString();
+      houseWidthController.text = house.houseDimensions.length.toString();
+      bedroomsController.text = house.bedrooms.toString();
+      youtubeController.text = house.youtubeUrls[0];
       listOfImages = [];
       for(String imageUrl in house.imageUrls) {
         imageUrlToImage(imageUrl).then((value) => listOfImages.add(value));
@@ -109,7 +126,16 @@ class _HouseAddState extends State<HouseAdd> {
     } else {
       fields.add(addButtons);
     }
-    fields.add(HouseAddItemImageDetails(uploadFile: uploadFile, listOfImages: listOfImages,));
+    fields.add(HouseAddItemImageDetail(
+      uploadFile: uploadFile,
+      deleteFile: (index) {listOfImages.removeAt(index);},
+      listOfImages: listOfImages,
+    ));
+    fields.add(HouseAddItemTextListDetail(
+      appendText: (value) {listOfFeatures.add(value);},
+      deleteText: (index) {listOfFeatures.removeAt(index);},
+      listOfString: listOfFeatures,
+    ));
   }
 
   @override
@@ -271,18 +297,20 @@ class HouseAddItemTextDetail extends StatelessWidget {
   }
 }
 
-class HouseAddItemImageDetails extends StatefulWidget {
-
-  const HouseAddItemImageDetails({super.key, required this.uploadFile, required this.listOfImages});
+// TODO: How delete image
+class HouseAddItemImageDetail extends StatefulWidget {
+  const HouseAddItemImageDetail({super.key, required this.uploadFile, required this.deleteFile, required this.listOfImages});
   final AsyncCallback uploadFile;
+  final Function deleteFile;
   final List<Uint8List> listOfImages;
 
   @override
-  State<HouseAddItemImageDetails> createState() => _HouseAddItemImageDetailsState();
+  State<HouseAddItemImageDetail> createState() => _HouseAddItemImageDetailState();
 }
 
-class _HouseAddItemImageDetailsState extends State<HouseAddItemImageDetails> {
+class _HouseAddItemImageDetailState extends State<HouseAddItemImageDetail> {
   late List<Uint8List> listOfImages;
+  bool isHovered = false;
 
   @override
   initState() {
@@ -292,32 +320,182 @@ class _HouseAddItemImageDetailsState extends State<HouseAddItemImageDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.listOfImages.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                color: Colors.black87,
-                child: Container(
-                  decoration: BoxDecoration(border: Border.all(color: Colors.black87, width: 2)),
-                  child: Image.memory(widget.listOfImages[index]),
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1), borderRadius: BorderRadius.all(Radius.circular(4.0))),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.listOfImages.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return InkWell(
+                    onTap: () {
+                      widget.deleteFile(index);
+                    },
+                    onHover: (b) {
+                      setState(() {
+                        isHovered = b;
+                      });
+                    },
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: isHovered ? Colors.red : Colors.deepPurpleAccent,
+                                    width: 1
+                                ),
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Image.memory(widget.listOfImages[index]),
+                            ),
+                          ),
+                        ),
+                        Placeholder(
+                          color: Colors.red,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Flexible(
+              child: Container(
+                decoration: BoxDecoration(border: Border.all(color: Colors.deepPurple, width: 1), borderRadius: BorderRadius.all(Radius.circular(4.0))),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          await widget.uploadFile();
+                          setState(() {
+                            listOfImages;
+                          });
+                        },
+                        child: Text(
+                          "Upload Gambar",
+                          style: TextStyle(color: Colors.deepPurple,),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+          ],
         ),
-        TextButton(onPressed: () async {
-          await widget.uploadFile();
-          setState(() {
-            listOfImages;
-          });
-        }, child: Text("Upload Gambar"))
-      ],
+      ),
+    );
+  }
+}
+
+class HouseAddItemTextListDetail extends StatefulWidget {
+  const HouseAddItemTextListDetail({super.key, required this.appendText, required this.deleteText, required this.listOfString});
+  final Function appendText;
+  final Function deleteText;
+  final List<String> listOfString;
+
+  @override
+  State<HouseAddItemTextListDetail> createState() => _HouseAddItemTextListDetailState();
+}
+
+class _HouseAddItemTextListDetailState extends State<HouseAddItemTextListDetail> {
+  late List<String> listOfString;
+  bool isHovered = false;
+
+  @override
+  initState() {
+    super.initState();
+    listOfString = widget.listOfString;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1), borderRadius: BorderRadius.all(Radius.circular(4.0))),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.listOfString.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return InkWell(
+                    onTap: () {
+                      widget.deleteText(index);
+                    },
+                    onHover: (b) {
+                      setState(() {
+                        isHovered = b;
+                      });
+                    },
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: isHovered ? Colors.red : Colors.deepPurpleAccent,
+                                    width: 1
+                                ),
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(widget.listOfString[index]),
+                            ),
+                          ),
+                        ),
+                        Placeholder(
+                          color: Colors.red,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Flexible(
+              child: Container(
+                decoration: BoxDecoration(border: Border.all(color: Colors.deepPurple, width: 1), borderRadius: BorderRadius.all(Radius.circular(4.0))),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          widget.appendText();
+                          setState(() {
+                            listOfString;
+                          });
+                        },
+                        child: Text(
+                          "Upload Gambar",
+                          style: TextStyle(color: Colors.deepPurple,),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

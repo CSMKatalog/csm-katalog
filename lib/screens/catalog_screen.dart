@@ -131,7 +131,7 @@ class CatalogDetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double widthCoefficient = (MediaQuery.of(context).size.width/1000);
+    double widthCoefficient = MediaQuery.of(context).size.width > 750 ? 0.75 : (MediaQuery.of(context).size.width/1000);
     TextStyle normal = TextStyle(
       fontSize: 36 * widthCoefficient,
       fontWeight: FontWeight.normal,
@@ -191,7 +191,7 @@ class CatalogDetailItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   SizedBox(height: MediaQuery.of(context).size.height/4 * widthCoefficient,),
-                  Expanded(child: SizedBox()),
+                  Expanded(child: Text(house.description, style: normal,)),
                   SizedBox(height: 1, child: Container(color: Colors.black87),),
                   Text("DP mulai dari", style: small,),
                   Text("Rp.${house.price.toString()},-", style: normal,),

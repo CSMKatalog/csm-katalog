@@ -2,6 +2,7 @@ class House {
   final int modelID;
   final int price;
   final String name;
+  final String description;
   final Vector2 houseDimensions;
   final Vector2 landDimensions;
   final bool hasAttic;
@@ -17,6 +18,7 @@ class House {
     modelID = -1,
     price = -1,
     name = "",
+    description = "",
     houseDimensions = Vector2(length: -1, width: -1),
     landDimensions = Vector2(length: -1, width: -1),
     hasAttic = false,
@@ -32,6 +34,7 @@ class House {
     required this.modelID,
     required this.price,
     required this.name,
+    required this.description,
     required this.houseDimensions,
     required this.landDimensions,
     required this.hasAttic,
@@ -54,6 +57,7 @@ class House {
       modelID: json["id"],
       price: json["price"],
       name: json["name"],
+      description: json["description"],
       houseDimensions: houseDim,
       landDimensions: landDim,
       hasAttic: json["attic"],
@@ -92,6 +96,7 @@ var dummyList = [
     modelID: 1,
     price: 185000000,
     name: "Ocean Calm",
+    description: "Lorem ipsum si dolor apsum si dolor amet.",
     houseDimensions: Vector2(length: 8, width: 7),
     landDimensions: Vector2(length: 10, width: 8),
     hasAttic: false,
@@ -111,6 +116,7 @@ var dummyList = [
     modelID: 2,
     price: 150000000,
     name: "River Jet",
+    description: "Lorem ipsum si dolor amet ipsum si dolo.",
     houseDimensions: Vector2(length: 7, width: 6),
     landDimensions: Vector2(length: 10, width: 6),
     hasAttic: true,
