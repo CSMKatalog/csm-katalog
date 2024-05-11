@@ -1,7 +1,12 @@
 import 'dart:developer';
+import 'package:http/http.dart' as http;
+import 'dart:typed_data';
 
 import 'package:csmkatalog/screens/admin_screen.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/house.dart';
@@ -23,7 +28,9 @@ class _HouseAddState extends State<HouseAdd> {
   final houseLengthController = TextEditingController();
   final houseWidthController = TextEditingController();
   final bedroomsController = TextEditingController();
+  final youtubeController = TextEditingController();
   List<Widget> fields = [];
+  List<Uint8List> listOfImages = [];
   bool kitchenValue = false;
   bool terraceValue = false;
   bool atticValue = false;
@@ -50,6 +57,23 @@ class _HouseAddState extends State<HouseAdd> {
     ],
   );
 
+  Future<void> uploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'png', 'jpeg', 'gif', 'svg']
+    );
+
+    if (result != null) {
+      Uint8List image = result.files.single.bytes!;
+      listOfImages.add(image);
+    }
+  }
+
+  Future<Uint8List> imageUrlToImage(String imageUrl) async {
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    return response.bodyBytes;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -72,13 +96,20 @@ class _HouseAddState extends State<HouseAdd> {
         atticValue = !atticValue;
       })
     },),);
+    fields.add(HouseAddItemTextDetail(label: "Link URL Youtube", hintText: "Link video tour rumah", textEditingController: youtubeController));
     if (widget.house.modelID != -1) {
       fields.add(editButtons);
-      headerText = "Detail Model Rumah ${widget.house.name}";
+      House house = widget.house;
+      headerText = "Detail Model Rumah ${house.name}";
       // TODO: set all fields to house details
+      listOfImages = [];
+      for(String imageUrl in house.imageUrls) {
+        imageUrlToImage(imageUrl).then((value) => listOfImages.add(value));
+      }
     } else {
       fields.add(addButtons);
     }
+    fields.add(HouseAddItemImageDetails(uploadFile: uploadFile, listOfImages: listOfImages,));
   }
 
   @override
@@ -240,19 +271,53 @@ class HouseAddItemTextDetail extends StatelessWidget {
   }
 }
 
-// TODO: I'm so fucked
 class HouseAddItemImageDetails extends StatefulWidget {
-  const HouseAddItemImageDetails({super.key});
+
+  const HouseAddItemImageDetails({super.key, required this.uploadFile, required this.listOfImages});
+  final AsyncCallback uploadFile;
+  final List<Uint8List> listOfImages;
 
   @override
   State<HouseAddItemImageDetails> createState() => _HouseAddItemImageDetailsState();
 }
 
 class _HouseAddItemImageDetailsState extends State<HouseAddItemImageDetails> {
-  List<String> listOfImageNames = [];
+  late List<Uint8List> listOfImages;
+
+  @override
+  initState() {
+    super.initState();
+    listOfImages = widget.listOfImages;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: widget.listOfImages.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                color: Colors.black87,
+                child: Container(
+                  decoration: BoxDecoration(border: Border.all(color: Colors.black87, width: 2)),
+                  child: Image.memory(widget.listOfImages[index]),
+                ),
+              );
+            },
+          ),
+        ),
+        TextButton(onPressed: () async {
+          await widget.uploadFile();
+          setState(() {
+            listOfImages;
+          });
+        }, child: Text("Upload Gambar"))
+      ],
+    );
   }
 }

@@ -25,7 +25,7 @@ class _AdminScreenState extends State<AdminScreen> {
     ];
     selectedScreen = dashboardScreens[0].widget;
   }
-  late var dashboardScreens;
+  late List<DashboardScreen> dashboardScreens;
   late Widget selectedScreen;
 
   @override

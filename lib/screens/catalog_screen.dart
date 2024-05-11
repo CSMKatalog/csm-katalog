@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../models/house.dart';
@@ -53,80 +54,20 @@ class _CatalogScreenState extends State<CatalogScreen> {
     };
 
     return Scaffold(
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: Row(
-          children: [
-            if (false) SizedBox(
-              width: 100,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Flexible(
-                    child: Container(
-                      color: Colors.grey,
-                      child: GridView(
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 1,
-                        ),
-                        children: [
-                          SizedBox(),
-                          CatalogScrollButton(onPressed: scrollUp, icon: Icons.keyboard_arrow_up),
-                          SizedBox(),
-                          CatalogScrollButton(onPressed: scrollLeft, icon: Icons.keyboard_arrow_left),
-                          SizedBox(),
-                          CatalogScrollButton(onPressed: scrollRight, icon: Icons.keyboard_arrow_right),
-                          SizedBox(),
-                          CatalogScrollButton(onPressed: scrollDown, icon: Icons.keyboard_arrow_down),
-                          SizedBox(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 50,)
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                controller: _columnController,
-                physics: ImmediatePageScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  return CatalogRow(house: CatalogScreen.houseList[index], controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
-                },
-                itemCount: CatalogScreen.houseList.length,
-              ),
-            ),
-          ],
-        ),
+      body: ListView.builder(
+        controller: _columnController,
+        physics: ImmediatePageScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        itemBuilder: (context, index) {
+          return CatalogRow(house: CatalogScreen.houseList[index], controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
+        },
+        itemCount: CatalogScreen.houseList.length,
       ),
     );
   }
 }
 
-class CatalogScrollButton extends StatelessWidget {
-  const CatalogScrollButton({super.key, required this.onPressed, required this.icon});
-  final VoidCallback onPressed;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          color: Colors.blueGrey,
-          child: Icon(icon, size: MediaQuery.of(context).size.width < 600 ? 10 : 20,),
-        )
-    );
-  }
-}
-
-
 class CatalogRow extends StatelessWidget {
-
   const CatalogRow({super.key, required this.house, required this.controller, required this.scrollCallbacks});
   final House house;
   final ScrollController controller;
@@ -190,15 +131,75 @@ class CatalogDetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double widthCoefficient = (MediaQuery.of(context).size.width/1000);
+    TextStyle normal = TextStyle(
+      fontSize: 36 * widthCoefficient,
+      fontWeight: FontWeight.normal,
+    );
+    TextStyle bold = TextStyle(
+      fontSize: 38 * widthCoefficient,
+      fontWeight: FontWeight.bold,
+    );
+    TextStyle title = TextStyle(
+      fontSize: 48 * widthCoefficient,
+      fontWeight: FontWeight.w300,
+    );
+    TextStyle small = TextStyle(
+      fontSize: 28 * widthCoefficient,
+      fontWeight: FontWeight.normal,
+    );
+    TextStyle padding = TextStyle(
+      fontSize: 64 * widthCoefficient,
+      color: Colors.transparent,
+    );
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: [
-          Text(house.name),
-          if(house.hasTerrace) Text("Lapangan luas"),
-          if(house.hasAttic) Text("Gudang di atap"),
-          if(house.hasInsideKitchen) Text("Dapur dalam rumah"),
-        ],
+      height: MediaQuery.of(context).size.height,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 50/widthCoefficient, horizontal: 32.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(house.name, style: title,),
+                  SizedBox(height: 3, child: Container(color: Colors.black87),),
+                  SizedBox(height: MediaQuery.of(context).size.height/8 * widthCoefficient,),
+                  if(house.hasTerrace) Text("Lapangan luas", style: bold),
+                  if(house.hasAttic) Text("Gudang di atap", style: bold),
+                  if(house.hasInsideKitchen) Text("Dapur dalam rumah", style: bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(house.bedrooms.toString(), style: bold),
+                      Text(" kamar tidur", style: normal,)
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text("Tanah ${house.landDimensions.toString()}", style: normal,),
+                  Text("Rumah ${house.houseDimensions.toString()}", style: normal,),
+                  Expanded(child: SizedBox()),
+                  SizedBox(height: 1, child: Container(color: Colors.black87),),
+                  Text(".", style: padding,),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height/4 * widthCoefficient,),
+                  Expanded(child: SizedBox()),
+                  SizedBox(height: 1, child: Container(color: Colors.black87),),
+                  Text("DP mulai dari", style: small,),
+                  Text("Rp.${house.price.toString()},-", style: normal,),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
