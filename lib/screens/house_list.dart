@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/house.dart';
 
 class HouseList extends StatelessWidget {
-  HouseList({super.key, required this.changeScreenListener});
-  Function(House house) changeScreenListener;
+  const HouseList({super.key, required this.changeScreenListener});
+  final Function(House house) changeScreenListener;
 
   // Untuk sementara digunakan data dummy
   static final List<House> houseList = dummyList;
@@ -25,9 +25,9 @@ class HouseList extends StatelessWidget {
 }
 
 class HouseListItem extends StatelessWidget {
-  HouseListItem({super.key, required this.house, required this.changeScreenListener});
+  const HouseListItem({super.key, required this.house, required this.changeScreenListener});
   final House house;
-  Function(House house) changeScreenListener;
+  final Function(House house) changeScreenListener;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class HouseListItem extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 8.0,),
+            const SizedBox(width: 8.0,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -13,15 +13,15 @@ class AdminScreen extends StatefulWidget {
 class _AdminScreenState extends State<AdminScreen> {
   _AdminScreenState () {
     dashboardScreens = [
-      DashboardScreen(label: "Daftar Item", icon: Icon(Icons.abc_outlined), widget: HouseList(changeScreenListener:
+      DashboardScreen(label: "Daftar Item", icon: const Icon(Icons.abc_outlined), widget: HouseList(changeScreenListener:
           (House house) {
         setState(() {
           selectedScreen = HouseAdd(house: house);
         });
       }
       )),
-      DashboardScreen(label: "Tambah Item", icon: Icon(Icons.abc_outlined), widget: HouseAdd(house: House.empty(),)),
-      DashboardScreen(label: "Download Katalog", icon: Icon(Icons.abc_outlined), widget: Placeholder()),
+      DashboardScreen(label: "Tambah Item", icon: const Icon(Icons.abc_outlined), widget: HouseAdd(house: House.empty(),)),
+      DashboardScreen(label: "Download Katalog", icon: const Icon(Icons.abc_outlined), widget: const Placeholder()),
     ];
     selectedScreen = dashboardScreens[0].widget;
   }
@@ -70,15 +70,15 @@ class Bottombar extends StatelessWidget {
 
 
 class Sidebar extends StatelessWidget {
-   Sidebar({super.key, required this.dashboardScreens, required this.changeScreenListener});
+   const Sidebar({super.key, required this.dashboardScreens, required this.changeScreenListener});
    final Function(Widget) changeScreenListener;
-   final dashboardScreens;
-   var selectedScreen = 0;
+   final List<DashboardScreen> dashboardScreens;
+   final int selectedScreen = 0;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: BorderDirectional(
           end: BorderSide(
             color: Colors.blueAccent,
@@ -89,7 +89,7 @@ class Sidebar extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(right: 6.0),
         child: DecoratedBox(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               border: BorderDirectional(
                   end: BorderSide(
                       color: Colors.blueAccent,
@@ -108,9 +108,9 @@ class Sidebar extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: MediaQuery.of(context).size.width > 1000 ? Image.asset("images/logo_csm.png") : SizedBox(),
+                        child: MediaQuery.of(context).size.width > 1000 ? Image.asset("images/logo_csm.png") : const SizedBox(),
                       ),
-                      Column(
+                      const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text("PT. CSM",
@@ -131,7 +131,7 @@ class Sidebar extends StatelessWidget {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0, right: 4.0),
+                          padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0, right: 4.0),
                           child: Text(screen.label),
                         ),
                       ],
@@ -155,14 +155,14 @@ class DashboardScreen {
 }
 
 class HeaderAdminScreen extends StatelessWidget {
-  HeaderAdminScreen({super.key, required this.text});
-  String text;
+  const HeaderAdminScreen({super.key, required this.text});
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 23,
         ),
     );

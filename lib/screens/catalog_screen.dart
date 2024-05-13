@@ -1,9 +1,4 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../models/house.dart';
@@ -28,23 +23,23 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
     void scrollUp() {
       var columnOffset = _columnController.offset;
-      _columnController.animateTo(columnOffset - height, duration: Duration(milliseconds: 300), curve: Curves.ease);
+      _columnController.animateTo(columnOffset - height, duration: const Duration(milliseconds: 300), curve: Curves.ease);
     }
     void scrollDown() {
       var columnOffset = _columnController.offset;
-      _columnController.animateTo(columnOffset + height, duration: Duration(milliseconds: 300), curve: Curves.ease);
+      _columnController.animateTo(columnOffset + height, duration: const Duration(milliseconds: 300), curve: Curves.ease);
     }
     void scrollLeft() {
       var curRow = _columnController.offset ~/ height;
       var rowController = rowControllers[curRow];
       var rowOffset = rowController.offset;
-      rowController.animateTo(rowOffset - width, duration: Duration(milliseconds: 300), curve: Curves.ease);
+      rowController.animateTo(rowOffset - width, duration: const Duration(milliseconds: 300), curve: Curves.ease);
     }
     void scrollRight() {
       var curRow = _columnController.offset ~/ height;
       var rowController = rowControllers[curRow];
       var rowOffset = rowController.offset;
-      rowController.animateTo(rowOffset + width, duration: Duration(milliseconds: 300), curve: Curves.ease);
+      rowController.animateTo(rowOffset + width, duration: const Duration(milliseconds: 300), curve: Curves.ease);
     }
     var scrollCallbacks = {
       "up": scrollUp,
@@ -167,9 +162,7 @@ class CatalogDetailItem extends StatelessWidget {
                   Text(house.name, style: title,),
                   SizedBox(height: 3, child: Container(color: Colors.black87),),
                   SizedBox(height: MediaQuery.of(context).size.height/8 * widthCoefficient,),
-                  if(house.hasTerrace) Text("Lapangan luas", style: bold),
-                  if(house.hasAttic) Text("Gudang di atap", style: bold),
-                  if(house.hasInsideKitchen) Text("Dapur dalam rumah", style: bold),
+                  for (String feature in house.features) Text(feature, style: bold),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -177,10 +170,10 @@ class CatalogDetailItem extends StatelessWidget {
                       Text(" kamar tidur", style: normal,)
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text("Tanah ${house.landDimensions.toString()}", style: normal,),
                   Text("Rumah ${house.houseDimensions.toString()}", style: normal,),
-                  Expanded(child: SizedBox()),
+                  const Expanded(child: SizedBox()),
                   SizedBox(height: 1, child: Container(color: Colors.black87),),
                   Text(".", style: padding,),
                 ],
@@ -242,8 +235,8 @@ class CatalogVideoItem extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  FloatingActionButton(onPressed: scrollCallbacks["left"], child: Icon(Icons.keyboard_arrow_left)),
-                  FloatingActionButton(onPressed: scrollCallbacks["right"], child: Icon(Icons.keyboard_arrow_right)),
+                  FloatingActionButton(onPressed: scrollCallbacks["left"], child: const Icon(Icons.keyboard_arrow_left)),
+                  FloatingActionButton(onPressed: scrollCallbacks["right"], child: const Icon(Icons.keyboard_arrow_right)),
                 ],
               ),
             ),
