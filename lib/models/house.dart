@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class House {
   final String modelID;
   final int price;
@@ -53,8 +55,7 @@ class House {
   factory House.fromJson(
       Map<String, dynamic> json,
       String id) {
-    json = json["data"];
-    
+    log(json.toString());
     Vector2 houseDim = Vector2(width: json["house_width"], length: json["house_length"]);
     Vector2 landDim = Vector2(width: json["land_width"], length: json["land_length"]);
     var house = House(
@@ -68,17 +69,17 @@ class House {
       hasInsideKitchen: json["in_kitchen"],
       hasTerrace: json["terrace"],
       bedrooms: json["bedrooms"],
-      allHouseNumbers: json["all_hs"],
-      unoccupiedHouseNumbers: json["open_hs"],
-      imageUrls: json["images"],
-      youtubeUrls: json["videos"],
-      features: json["features"],
+      allHouseNumbers: List<String>.from(json["all_hs"]),
+      unoccupiedHouseNumbers: List<String>.from(json["open_hs"]),
+      imageUrls: List<String>.from(json["images"]),
+      youtubeUrls: List<String>.from(json["videos"]),
+      features: List<String>.from(json["features"]),
     );
     return house;
   }
 
   Map<String, dynamic> toJson([String? id]) {
-    Map<String, dynamic> json = {};
+    final Map<String, dynamic> json = {};
     if (id != null) {
       json["id"] = id;
     }

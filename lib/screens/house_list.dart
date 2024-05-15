@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
-
+import 'package:csmkatalog/firebase/firestore_connector.dart';
 import '../models/house.dart';
 
-class HouseList extends StatelessWidget {
+class HouseList extends StatefulWidget {
   const HouseList({super.key, required this.changeScreenListener});
   final Function(House house) changeScreenListener;
 
-  // Untuk sementara digunakan data dummy
-  static final List<House> houseList = dummyList;
+  @override
+  State<HouseList> createState() => _HouseListState();
+}
+
+class _HouseListState extends State<HouseList> {
+  List<House> houseList = [];
+
+  void fetchHouseList() async {
+    houseList = await FirestoreConnector.readHouses();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHouseList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +31,7 @@ class HouseList extends StatelessWidget {
           shrinkWrap: true,
           itemCount: houseList.length,
           itemBuilder: (context, index) {
-            return HouseListItem(house: houseList[index], changeScreenListener: changeScreenListener);
+            return HouseListItem(house: houseList[index], changeScreenListener: widget.changeScreenListener);
           }
       ),
     );

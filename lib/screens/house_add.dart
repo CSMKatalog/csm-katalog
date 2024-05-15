@@ -4,12 +4,15 @@ import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:csmkatalog/firebase/firestorage_connector.dart';
+import 'package:csmkatalog/firebase/firestore_connector.dart';
 
 import '../models/house.dart';
 
 class HouseAdd extends StatefulWidget {
-  const HouseAdd({super.key, required this.house});
+  const HouseAdd({super.key, required this.house, required this.changeScreenListener});
   final House house;
+  final VoidCallback changeScreenListener;
 
   @override
   State<HouseAdd> createState() => _HouseAddState();
@@ -29,34 +32,62 @@ class _HouseAddState extends State<HouseAdd> {
   late List<Widget> fields;
   late ImageList listOfImages;
   late List<TextEditingController> listOfFeatures;
-  late  List<TextEditingController> listOfYoutubeUrls;
+  late List<TextEditingController> listOfYoutubeUrls;
   bool kitchenValue = false;
   bool terraceValue = false;
   bool atticValue = false;
   String headerText = "Tambah Model Rumah Baru";
 
-  Widget addButtons = Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      HouseSubmitButton(text: "Tambah", onPressed: () {
-        // TODO: add function to add a new house to database
-      },),
-    ],
-  );
+  Future<List<String>> uploadImageList() async {
+    final List<String> imageUrls = [];
+    for (Uint8List image in listOfImages.imageList) {
+      String fileName = "image-${DateTime.now()}";
+      String imageUrl = await FirestorageConnector.uploadFile(image, fileName);
+      imageUrls.add(imageUrl);
+    }
+    return imageUrls;
+  }
 
-  Widget editButtons = Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      HouseSubmitButton(text: "Ubah", onPressed: () {
-        // TODO: add function to edit an existing house in database
-      },),
-      HouseSubmitButton(text: "Hapus", onPressed: () {
-        // TODO: add function to delete an existing house in database
-      },),
-    ],
-  );
+  Future<void> uploadHouseDetail() async {
+    double houseLength = double.parse(houseLengthController.value.text.replaceAll(",", "."));
+    double houseWidth = double.parse(houseWidthController.value.text.replaceAll(",", "."));
+    double landLength = double.parse(landLengthController.value.text.replaceAll(",", "."));
+    double landWidth = double.parse(landWidthController.value.text.replaceAll(",", "."));
 
-  Future<void> uploadFile() async {
+    House house =  House(
+      modelID: widget.house.modelID,
+      price: int.parse(priceController.value.text),
+      name: nameController.value.text,
+      description: descriptionController.value.text,
+      houseDimensions: Vector2(length: houseLength, width:  houseWidth),
+      landDimensions: Vector2(length: landLength, width:  landWidth),
+      hasAttic: atticValue,
+      hasInsideKitchen: kitchenValue,
+      hasTerrace: terraceValue,
+      bedrooms: int.parse(bedroomsController.value.text),
+      allHouseNumbers: [],
+      unoccupiedHouseNumbers: [],
+      imageUrls: await uploadImageList(),
+      youtubeUrls: listOfYoutubeUrls.map((e) => e.value.text).toList(),
+      features:  listOfFeatures.map((e) => e.value.text).toList(),
+    );
+
+    if (widget.house.modelID.isNotEmpty) {
+      await FirestoreConnector.updateHouse(widget.house.modelID, house)
+          .then((value) => widget.changeScreenListener());
+    } else {
+      await FirestoreConnector.createHouse(house)
+          .then((value) => widget.changeScreenListener());
+    }
+  }
+
+  Future<void> deleteHouseDetail() async {
+    await FirestoreConnector.deleteHouse(widget.house.modelID)
+        .then((value) => widget.changeScreenListener());
+  }
+
+
+  Future<void> openFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'png', 'jpeg', 'gif', 'svg']
@@ -131,7 +162,7 @@ class _HouseAddState extends State<HouseAdd> {
       listOfString: listOfYoutubeUrls,
     ));
     fields.add(HouseAddItemImageDetail(
-      uploadFile: uploadFile,
+      uploadFile: openFile,
       deleteFile: (index) {listOfImages.deleteImage(index);},
       listOfImages: listOfImages,
     ));
@@ -139,9 +170,20 @@ class _HouseAddState extends State<HouseAdd> {
 
     // Tambah tombol add atau edit
     if (widget.house.modelID.isNotEmpty) {
-      fields.add(editButtons);
+      fields.add(Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          HouseSubmitButton(text: "Ubah", onPressed: uploadHouseDetail),
+          HouseSubmitButton(text: "Hapus", onPressed: deleteHouseDetail),
+        ],
+      ));
     } else {
-      fields.add(addButtons);
+      fields.add(Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          HouseSubmitButton(text: "Tambah", onPressed: uploadHouseDetail),
+        ],
+      ));
     }
   }
 
@@ -169,7 +211,7 @@ class _HouseAddState extends State<HouseAdd> {
 class HouseSubmitButton extends StatelessWidget {
   const HouseSubmitButton({super.key, required this.text, required this.onPressed});
   final String text;
-  final VoidCallback onPressed;
+  final AsyncCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

@@ -11,16 +11,30 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
+
+  getHouseAdd({House? house}) {
+    return HouseAdd(
+        house: house ?? House.empty(),
+        changeScreenListener: () {
+          setState(() {
+            selectedScreen = getHouseList();
+          });
+        }
+    );
+  }
+
+  getHouseList() {
+    return HouseList(changeScreenListener: (House house) {
+      setState(() {
+        selectedScreen = getHouseAdd(house: house);
+      });
+    });
+  }
+
   _AdminScreenState () {
     dashboardScreens = [
-      DashboardScreen(label: "Daftar Item", icon: const Icon(Icons.abc_outlined), widget: HouseList(changeScreenListener:
-          (House house) {
-        setState(() {
-          selectedScreen = HouseAdd(house: house);
-        });
-      }
-      )),
-      DashboardScreen(label: "Tambah Item", icon: const Icon(Icons.abc_outlined), widget: HouseAdd(house: House.empty(),)),
+      DashboardScreen(label: "Daftar Item", icon: const Icon(Icons.abc_outlined), widget: getHouseList()),
+      DashboardScreen(label: "Tambah Item", icon: const Icon(Icons.abc_outlined), widget: getHouseAdd()),
       DashboardScreen(label: "Download Katalog", icon: const Icon(Icons.abc_outlined), widget: const Placeholder()),
     ];
     selectedScreen = dashboardScreens[0].widget;
