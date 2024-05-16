@@ -1,0 +1,7 @@
+{
+  "version": 0,
+  "name": "csmkatalog",
+  "rewrites": [
+    {"source": "/:a*", "destination": "/"}
+  ]
+}
