@@ -6,7 +6,6 @@ class FirestorageConnector {
   static final FirebaseStorage storage = FirebaseStorage.instance;
 
   static Future<String> uploadFile(Uint8List rawImage, String fileName) async {
-
     // Create the file metadata
     final mime = lookupMimeType("", headerBytes: rawImage)!;
     final metadata = SettableMetadata(contentType: extensionFromMime(mime));
@@ -22,5 +21,13 @@ class FirestorageConnector {
         .getDownloadURL();
 
     return uploadedImageUrl;
+  }
+
+  static Future<void> deleteFile(String imageUrl) async {
+    // Create a reference to the file to delete
+    final desertRef = storage.ref().child(imageUrl);
+
+    // Delete the file
+    await desertRef.delete();
   }
 }

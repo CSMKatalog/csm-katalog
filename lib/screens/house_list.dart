@@ -14,7 +14,10 @@ class _HouseListState extends State<HouseList> {
   List<House> houseList = [];
 
   void fetchHouseList() async {
-    houseList = await FirestoreConnector.readHouses();
+    var temp = await FirestoreConnector.readHouses();
+    setState(() {
+      houseList = temp;
+    });
   }
 
   @override
@@ -45,7 +48,7 @@ class HouseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         changeScreenListener(house);
       },
@@ -64,7 +67,7 @@ class HouseListItem extends StatelessWidget {
                   ),
                 ),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width/8,
+                  width: MediaQuery.of(context).size.width/4,
                   child: Image.network(
                     house.imageUrls[0],
                     fit: BoxFit.contain,

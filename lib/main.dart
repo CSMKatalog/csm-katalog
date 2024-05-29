@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
       scrollBehavior: MouseTooScrollBehavior(),
       title: 'Katalog CSM',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
       routerDelegate: _routerDelegate,
@@ -90,8 +90,8 @@ class CatalogRouterDelegate  extends RouterDelegate<CatalogRoutePath>
 
   List<Page> get _catalogStack {
 
-    return [MaterialPage(
-      key: const ValueKey('CatalogPage'),
+    return [const MaterialPage(
+      key: ValueKey('CatalogPage'),
       child: CatalogScreen(),
     ),];
   }

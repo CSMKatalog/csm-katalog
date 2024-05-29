@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-
+import 'package:csmkatalog/firebase/firestore_connector.dart';
 import '../models/house.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
-  static final List<House> houseList = dummyList;
 
   @override
   State<CatalogScreen> createState() => _CatalogScreenState();
@@ -13,8 +12,25 @@ class CatalogScreen extends StatefulWidget {
 
 class _CatalogScreenState extends State<CatalogScreen> {
   final ScrollController _columnController = ScrollController();
-  var rowControllers = CatalogScreen.houseList.map((e) => ScrollController()).toList();
   bool isVideo = false;
+  List<ScrollController> rowControllers = [];
+  List<House> houseList = [];
+
+  void fetchHouseList() async {
+    List<House> temp = await FirestoreConnector.readHouses();
+    Map<String, dynamic> imageList = await FirestoreConnector.readCover();
+    temp.insert(0, House.cover(imageUrls: imageList["imageUrls"]));
+    setState(() {
+      houseList = temp;
+      rowControllers = temp.map((e) => ScrollController()).toList();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHouseList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +70,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
         physics: ImmediatePageScrollPhysics(),
         scrollDirection: Axis.vertical,
         itemBuilder: (context, index) {
-          return CatalogRow(house: CatalogScreen.houseList[index], controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
+          return CatalogRow(house: houseList[index], controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
         },
-        itemCount: CatalogScreen.houseList.length,
+        itemCount: houseList.length,
       ),
     );
   }
@@ -166,7 +182,7 @@ class CatalogDetailItem extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(house.bedrooms.toString(), style: bold),
+
                       Text(" kamar tidur", style: normal,)
                     ],
                   ),
@@ -249,6 +265,12 @@ class CatalogVideoItem extends StatelessWidget {
 
 List<StatelessWidget> getRow(House house, Map<String, VoidCallback> scrollCallbacks) {
   List<StatelessWidget> rowItems = [];
+  if (house.modelID == "coverCSM") {
+    for (var url in house.imageUrls) {
+      rowItems.add(CatalogImageItem(url: url));
+    }
+    return rowItems;
+  }
   if (house.imageUrls.isNotEmpty) {
     rowItems.add(CatalogImageItem(url: house.imageUrls[0]));
   }

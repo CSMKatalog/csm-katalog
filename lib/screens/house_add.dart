@@ -21,21 +21,19 @@ class HouseAdd extends StatefulWidget {
 class _HouseAddState extends State<HouseAdd> {
   _HouseAddState ();
 
+  // TODO: Ini untuk data-data yang diperlukan untuk menampung data input
   final nameController = TextEditingController();
-  final landLengthController = TextEditingController();
-  final landWidthController = TextEditingController();
-  final houseLengthController = TextEditingController();
-  final houseWidthController = TextEditingController();
-  final bedroomsController = TextEditingController();
+  final landAreaController = TextEditingController();
+  final houseAreaController = TextEditingController();
   final priceController = TextEditingController();
+  final dpController = TextEditingController();
+  final typeController = TextEditingController();
   final descriptionController = TextEditingController();
   late List<Widget> fields;
   late ImageList listOfImages;
   late List<TextEditingController> listOfFeatures;
+  late List<TextEditingController> listOfCriteria;
   late List<TextEditingController> listOfYoutubeUrls;
-  bool kitchenValue = false;
-  bool terraceValue = false;
-  bool atticValue = false;
   String headerText = "Tambah Model Rumah Baru";
 
   Future<List<String>> uploadImageList() async {
@@ -48,28 +46,26 @@ class _HouseAddState extends State<HouseAdd> {
     return imageUrls;
   }
 
+  // TODO: Ini untuk ubah data yang disimpan dan upload
   Future<void> uploadHouseDetail() async {
-    double houseLength = double.parse(houseLengthController.value.text.replaceAll(",", "."));
-    double houseWidth = double.parse(houseWidthController.value.text.replaceAll(",", "."));
-    double landLength = double.parse(landLengthController.value.text.replaceAll(",", "."));
-    double landWidth = double.parse(landWidthController.value.text.replaceAll(",", "."));
+    double houseArea = double.parse(houseAreaController.value.text.replaceAll(",", "."));
+    double landArea = double.parse(landAreaController.value.text.replaceAll(",", "."));
+    int price = int.parse(priceController.value.text.replaceAll(",", "").replaceAll(".", ""));
+    int dp = int.parse(dpController.value.text.replaceAll(",", "").replaceAll(".", ""));
 
     House house =  House(
       modelID: widget.house.modelID,
-      price: int.parse(priceController.value.text),
+      buildingType: typeController.value.text,
+      price: price,
+      downPayment: dp,
       name: nameController.value.text,
       description: descriptionController.value.text,
-      houseDimensions: Vector2(length: houseLength, width:  houseWidth),
-      landDimensions: Vector2(length: landLength, width:  landWidth),
-      hasAttic: atticValue,
-      hasInsideKitchen: kitchenValue,
-      hasTerrace: terraceValue,
-      bedrooms: int.parse(bedroomsController.value.text),
-      allHouseNumbers: [],
-      unoccupiedHouseNumbers: [],
+      houseDimensions: houseArea,
+      landDimensions: landArea,
       imageUrls: await uploadImageList(),
       youtubeUrls: listOfYoutubeUrls.map((e) => e.value.text).toList(),
-      features:  listOfFeatures.map((e) => e.value.text).toList(),
+      features: listOfFeatures.map((e) => e.value.text).toList(),
+      criteria: listOfCriteria.map((e) => e.value.text).toList(),
     );
 
     if (widget.house.modelID.isNotEmpty) {
@@ -81,11 +77,20 @@ class _HouseAddState extends State<HouseAdd> {
     }
   }
 
+  Future<void> reuploadHouseDetail() async {
+    for (var imageUrl in widget.house.imageUrls) {
+      FirestorageConnector.deleteFile(Uri.parse(imageUrl).pathSegments.last);
+    }
+    await uploadHouseDetail();
+  }
+
   Future<void> deleteHouseDetail() async {
+    for (var imageUrl in widget.house.imageUrls) {
+      FirestorageConnector.deleteFile(Uri.parse(imageUrl).pathSegments.last);
+    }
     await FirestoreConnector.deleteHouse(widget.house.modelID)
         .then((value) => widget.changeScreenListener());
   }
-
 
   Future<void> openFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -117,19 +122,20 @@ class _HouseAddState extends State<HouseAdd> {
     listOfImages = ImageList();
     listOfFeatures = [];
     listOfYoutubeUrls = [];
+    listOfCriteria = [];
     fields = [];
 
     // Isi form field jika ada data
+    // TODO: Ini untuk ubah pindahkan data dari detail ke tampilan
     if (widget.house.modelID.isNotEmpty) {
       House house = widget.house;
       headerText = "Detail Model Rumah ${house.name}";
       nameController.text = house.name;
-      bedroomsController.text = house.bedrooms.toString();
+      typeController.text = house.buildingType.toString();
       priceController.text = house.price.toString();
-      landLengthController.text = house.landDimensions.length.toString();
-      landWidthController.text = house.landDimensions.width.toString();
-      houseLengthController.text = house.houseDimensions.length.toString();
-      houseWidthController.text = house.houseDimensions.length.toString();
+      dpController.text = house.downPayment.toString();
+      houseAreaController.text = house.houseDimensions.toString();
+      landAreaController.text = house.landDimensions.toString();
       descriptionController.text = house.description;
       loadImages(house.imageUrls);
       for(String feature in house.features) {
@@ -138,15 +144,21 @@ class _HouseAddState extends State<HouseAdd> {
       for(String videoUrl in house.youtubeUrls) {
         listOfYoutubeUrls.add(TextEditingController(text: videoUrl));
       }
+      for(String videoUrl in house.youtubeUrls) {
+        listOfCriteria.add(TextEditingController(text: videoUrl));
+      }
     }
 
     // Tambah elemen form
+    // TODO: Ini untuk ubah kolom pada detail rumah
     fields.add(HouseAddItemTextDetail(label: "Nama", hintText: "Nama model rumah", textEditingController: nameController),);
     fields.add(const SizedBox());
-    fields.add(HouseAddItemTextDetail(label: "Jumlah Kamar Tidur", hintText: "Jumlah kamar tidur", textEditingController: bedroomsController),);
-    fields.add(HouseAddItemTextDetail(label: "Deposito Awal", hintText: "Deposito (rupiah)", textEditingController: priceController),);
-    fields.add(HouseAddItemDimensionDetail(label: "tanah", lengthController: landLengthController, widthController: landWidthController, hintText: "tanah (meter)"),);
-    fields.add(HouseAddItemDimensionDetail(label: "rumah", lengthController: houseLengthController, widthController: houseWidthController, hintText: "rumah (meter)"),);
+    fields.add(HouseAddItemTextDetail(label: "Tipe Bangunan", hintText: "Kode tipe banguan", textEditingController: typeController),);
+    fields.add(HouseAddItemLongTextDetail(label: "Deskripsi Model Rumah", hintText: "Maksimal 200 huruf", textEditingController: descriptionController),);
+    fields.add(HouseAddItemTextDetail(label: "Harga Jual Rumah", hintText: "Harga (rupiah)", textEditingController: priceController),);
+    fields.add(HouseAddItemTextDetail(label: "Down Payment", hintText: "DP (rupiah)", textEditingController: dpController),);
+    fields.add(HouseAddItemTextDetail(label: "Luas Rumah", hintText: "Luas (meter persegi)", textEditingController: houseAreaController),);
+    fields.add(HouseAddItemTextDetail(label: "Luas Tanah", hintText: "Luas (meter persegi)", textEditingController: landAreaController),);
     fields.add(HouseAddItemTextListDetail(
       label: "Daftar fitur istimewa",
       hintText: "Fitur",
@@ -161,19 +173,27 @@ class _HouseAddState extends State<HouseAdd> {
       deleteText: (index) {listOfYoutubeUrls.removeAt(index);},
       listOfString: listOfYoutubeUrls,
     ));
+
+    fields.add(HouseAddItemTextListDetail(
+      label: "List keterangan pembelian rumah",
+      hintText: "Keterangan",
+      appendText: () {listOfCriteria.add(TextEditingController());},
+      deleteText: (index) {listOfCriteria.removeAt(index);},
+      listOfString: listOfCriteria,
+    ));
     fields.add(HouseAddItemImageDetail(
       uploadFile: openFile,
       deleteFile: (index) {listOfImages.deleteImage(index);},
       listOfImages: listOfImages,
     ));
-    fields.add(HouseAddItemLongTextDetail(label: "Deskripsi Model Rumah", hintText: "Maksimal 200 huruf", textEditingController: descriptionController),);
 
+    fields.add(const SizedBox());
     // Tambah tombol add atau edit
     if (widget.house.modelID.isNotEmpty) {
       fields.add(Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          HouseSubmitButton(text: "Ubah", onPressed: uploadHouseDetail),
+          HouseSubmitButton(text: "Ubah", onPressed: reuploadHouseDetail),
           HouseSubmitButton(text: "Hapus", onPressed: deleteHouseDetail),
         ],
       ));
@@ -396,58 +416,66 @@ class _HouseAddItemImageDetailState extends State<HouseAddItemImageDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: ListenableBuilder(
-                listenable: listOfImages,
-                builder: (BuildContext context, Widget? child) {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: listOfImages.imageList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return HouseAddItemImageListItemDetail(
-                        index: index,
-                        image: listOfImages.imageList[index],
-                        deleteFile: () {
-                          widget.deleteFile(index);
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+    const Text("List gambar rumah, denah, atau tabel angsuran:"),
+    const SizedBox(height: 8.0,),
+        Container(
+          decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: ListenableBuilder(
+                    listenable: listOfImages,
+                    builder: (BuildContext context, Widget? child) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: listOfImages.imageList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return HouseAddItemImageListItemDetail(
+                            index: index,
+                            image: listOfImages.imageList[index],
+                            deleteFile: () {
+                              widget.deleteFile(index);
+                            },
+                          );
                         },
                       );
                     },
-                  );
-                },
-              ),
-            ),
-            Flexible(
-              child: Container(
-                decoration: BoxDecoration(border: Border.all(color: Colors.deepPurple, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () async {
-                          await widget.uploadFile();
-                        },
-                        child: const Text(
-                          "Upload Gambar",
-                          style: TextStyle(color: Colors.deepPurple,),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                Flexible(
+                  child: Container(
+                    decoration: BoxDecoration(border: Border.all(color: Colors.blueGrey, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              await widget.uploadFile();
+                            },
+                            child: const Text(
+                              "Upload Gambar",
+                              style: TextStyle(color: Colors.blueGrey,),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -495,7 +523,7 @@ class _HouseAddItemImageListItemDetailState extends State<HouseAddItemImageListI
             child: Container(
               decoration: BoxDecoration(
                   border: Border.all(
-                      color: isHovered ? Colors.red : Colors.deepPurpleAccent,
+                      color: isHovered ? Colors.red : Colors.blueGrey,
                       width: 1
                   ),
                   borderRadius: const BorderRadius.all(Radius.circular(4.0))),
@@ -575,7 +603,7 @@ class _HouseAddItemTextListDetailState extends State<HouseAddItemTextListDetail>
                 ),
                 Flexible(
                   child: Container(
-                    decoration: BoxDecoration(border: Border.all(color: Colors.deepPurple, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.blueGrey, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
                     child: Row(
                       children: [
                         Expanded(
@@ -588,7 +616,7 @@ class _HouseAddItemTextListDetailState extends State<HouseAddItemTextListDetail>
                             },
                             child: Text(
                               "Tambah ${widget.hintText}",
-                              style: const TextStyle(color: Colors.deepPurple,),
+                              style: const TextStyle(color: Colors.blueGrey,),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -645,7 +673,7 @@ class _HouseAddItemTextListItemDetailState extends State<HouseAddItemTextListIte
             child: Container(
               decoration: BoxDecoration(
                   border: Border.all(
-                      color: isHovered ? Colors.red : Colors.deepPurpleAccent,
+                      color: isHovered ? Colors.red : Colors.blueGrey,
                       width: 1
                   ),
                   borderRadius: const BorderRadius.all(Radius.circular(4.0))),
