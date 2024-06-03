@@ -144,7 +144,7 @@ class _HouseAddState extends State<HouseAdd> {
       for(String videoUrl in house.youtubeUrls) {
         listOfYoutubeUrls.add(TextEditingController(text: videoUrl));
       }
-      for(String videoUrl in house.youtubeUrls) {
+      for(String videoUrl in house.criteria) {
         listOfCriteria.add(TextEditingController(text: videoUrl));
       }
     }
@@ -307,7 +307,7 @@ class HouseTextField extends StatelessWidget {
         height: 1.2,
       ),
       decoration: InputDecoration(
-          contentPadding: const EdgeInsets.only(top: 1.0, bottom: 1.0, left: 8.0, right: 8.0),
+          contentPadding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 8.0, right: 8.0),
           border: const OutlineInputBorder(
               borderSide: BorderSide()
           ),

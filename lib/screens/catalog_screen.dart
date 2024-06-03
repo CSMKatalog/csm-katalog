@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import '../models/house.dart';
+import 'package:intl/intl.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -70,7 +72,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         physics: ImmediatePageScrollPhysics(),
         scrollDirection: Axis.vertical,
         itemBuilder: (context, index) {
-          return CatalogRow(house: houseList[index], controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
+          return CatalogRow(houseList: houseList, houseIndex: index, controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
         },
         itemCount: houseList.length,
       ),
@@ -78,15 +80,78 @@ class _CatalogScreenState extends State<CatalogScreen> {
   }
 }
 
+class CatalogScrollHelper extends StatefulWidget {
+  const CatalogScrollHelper({super.key, required this.rowIndex, required this.colIndex, required this.lastRowIndex, required this.lastColIndex});
+  final int rowIndex;
+  final int colIndex;
+  final int lastRowIndex;
+  final int lastColIndex;
+
+  @override
+  State<CatalogScrollHelper> createState() => _CatalogScrollHelperState();
+}
+
+class _CatalogScrollHelperState extends State<CatalogScrollHelper> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Column(
+        children: [
+          if(widget.rowIndex != 0) const CatalogArrow(icon: Icons.keyboard_arrow_up),
+          Expanded(
+              child: Row(
+                children: [
+                  if(widget.colIndex != 0) const CatalogArrow(icon: Icons.keyboard_arrow_left),
+                  const Expanded(child: SizedBox()),
+                  if(widget.colIndex != widget.lastColIndex) const CatalogArrow(icon: Icons.keyboard_arrow_right),
+                ],
+              )
+          ),
+          if(widget.rowIndex != widget.lastRowIndex) const CatalogArrow(icon: Icons.keyboard_arrow_down),
+        ],
+      ),
+    );
+  }
+}
+
+
+class CatalogArrow extends StatelessWidget {
+  const CatalogArrow({super.key, required this.icon});
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color.fromRGBO(150, 150, 150, 0.1),
+        ),
+        child: Icon(
+          icon,
+          color: Colors.blue,
+          weight: 20,
+          size: 25,
+        ),
+      ),
+    );
+  }
+}
+
+
 class CatalogRow extends StatelessWidget {
-  const CatalogRow({super.key, required this.house, required this.controller, required this.scrollCallbacks});
-  final House house;
+  const CatalogRow({super.key, required this.houseList, required this.houseIndex, required this.controller, required this.scrollCallbacks});
+  final List<House> houseList;
+  final int houseIndex;
   final ScrollController controller;
   final Map<String, VoidCallback> scrollCallbacks;
 
   @override
   Widget build(BuildContext context) {
-    List<StatelessWidget> rowItems = getRow(house, scrollCallbacks);
+    List<StatelessWidget> rowItems = getRow(houseList[houseIndex], scrollCallbacks);
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Row(
@@ -97,7 +162,16 @@ class CatalogRow extends StatelessWidget {
               physics: ImmediatePageScrollPhysics(),
               scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  return rowItems[index];
+                  return Stack(
+                    children: [
+                      rowItems[index],
+                      CatalogScrollHelper(
+                          rowIndex: houseIndex,
+                          colIndex: index,
+                          lastRowIndex: houseList.length-1,
+                          lastColIndex: rowItems.length-1)
+                    ],
+                  );
                 },
                 itemCount: rowItems.length,
             ),
@@ -121,13 +195,15 @@ class CatalogImageItem extends StatelessWidget {
               color: Colors.black87
             ),
             child: Center(
-              child: DecoratedBox(
-                decoration: const BoxDecoration(
-                    color: Colors.white
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(url, height: double.infinity),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  color: Colors.white,
+                  child: Image.network(
+                    url,
+                    height: double.infinity,
+                    fit: BoxFit.contain,
+                  )
                 ),
               ),
             ),
@@ -139,6 +215,11 @@ class CatalogImageItem extends StatelessWidget {
 class CatalogDetailItem extends StatelessWidget {
   const CatalogDetailItem({super.key, required this.house});
   final House house;
+
+  String getRupiah(nominal) {
+    var formatter = NumberFormat('###,###,###,###');
+    return "Rp. ${formatter.format(nominal).replaceAll(",", ".")},-";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,20 +256,20 @@ class CatalogDetailItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(house.name, style: title,),
-                  SizedBox(height: 3, child: Container(color: Colors.black87),),
-                  SizedBox(height: MediaQuery.of(context).size.height/8 * widthCoefficient,),
-                  for (String feature in house.features) Text(feature, style: bold),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-
-                      Text(" kamar tidur", style: normal,)
+                      Text(house.name, style: title,),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  Text("Tanah ${house.landDimensions.toString()}", style: normal,),
-                  Text("Rumah ${house.houseDimensions.toString()}", style: normal,),
+                  SizedBox(height: 3, child: Container(color: Colors.black87),),
+                  SizedBox(height: MediaQuery.of(context).size.height/12 * widthCoefficient,),
+                  Text("Total harga jual", style: normal,),
+                  Text(getRupiah(house.price), style: bold,),
+                  const SizedBox(height: 10),
+                  for (String feature in house.features) Text(feature, style: bold),
+                  Text("Luas tanah ${house.landDimensions} m²", style: normal,),
+                  Text("Luas rumah ${house.houseDimensions} m²", style: normal,),
                   const Expanded(child: SizedBox()),
                   SizedBox(height: 1, child: Container(color: Colors.black87),),
                   Text(".", style: padding,),
@@ -199,11 +280,18 @@ class CatalogDetailItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height/4 * widthCoefficient,),
-                  Expanded(child: Text(house.description, style: normal,)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(house.buildingType, style: title,),
+                    ],
+                  ),
+                  SizedBox(height: 3, child: Container(color: Colors.black87),),
+                  SizedBox(height: MediaQuery.of(context).size.height/12 * widthCoefficient,),
+                  Expanded(child: Text(house.description, style: small,),),
                   SizedBox(height: 1, child: Container(color: Colors.black87),),
                   Text("DP mulai dari", style: small,),
-                  Text("Rp.${house.price.toString()},-", style: normal,),
+                  Text(getRupiah(house.downPayment), style: normal,),
                 ],
               ),
             ),
@@ -263,6 +351,60 @@ class CatalogVideoItem extends StatelessWidget {
   }
 }
 
+class CatalogPolicyItem extends StatelessWidget {
+  const CatalogPolicyItem({super.key, required this.house});
+  final House house;
+
+  @override
+  Widget build(BuildContext context) {
+    double widthCoefficient = MediaQuery.of(context).size.width > 750 ? 0.75 : (MediaQuery.of(context).size.width/1000);
+    TextStyle tiny = TextStyle(
+      fontSize: 22 * widthCoefficient,
+      fontWeight: FontWeight.normal,
+    );
+    TextStyle title = TextStyle(
+      fontSize: 48 * widthCoefficient,
+      fontWeight: FontWeight.w300,
+    );
+    TextStyle small = TextStyle(
+      fontSize: 28 * widthCoefficient,
+      fontWeight: FontWeight.normal,
+    );
+    TextStyle padding = TextStyle(
+      fontSize: 64 * widthCoefficient,
+      color: Colors.transparent,
+    );
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 50/widthCoefficient, horizontal: 32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(house.name, style: title,),
+            SizedBox(height: 3, child: Container(color: Colors.black87),),
+            SizedBox(height: MediaQuery.of(context).size.height/12 * widthCoefficient,),
+            for (final (index, criterion) in house.criteria.indexed) Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("${index+1}.", style: tiny),
+                SizedBox(width: 3,),
+                Expanded(child: Container(child: Text(criterion, style: tiny, softWrap: true,))),
+              ],
+            ),
+            const Expanded(child: SizedBox()),
+            SizedBox(height: 1, child: Container(color: Colors.black87),),
+            Text(".", style: padding,),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 List<StatelessWidget> getRow(House house, Map<String, VoidCallback> scrollCallbacks) {
   List<StatelessWidget> rowItems = [];
   if (house.modelID == "coverCSM") {
@@ -275,6 +417,7 @@ List<StatelessWidget> getRow(House house, Map<String, VoidCallback> scrollCallba
     rowItems.add(CatalogImageItem(url: house.imageUrls[0]));
   }
   rowItems.add(CatalogDetailItem(house: house));
+  rowItems.add(CatalogPolicyItem(house: house));
   if (house.imageUrls.isNotEmpty) {
     for (var url in house.imageUrls.sublist(1)) {
       rowItems.add(CatalogImageItem(url: url));
