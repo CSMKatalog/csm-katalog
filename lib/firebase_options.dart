@@ -25,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -70,6 +64,24 @@ class DefaultFirebaseOptions {
     projectId: 'csm-katalog',
     storageBucket: 'csm-katalog.appspot.com',
     iosBundleId: 'com.csm.katalog.csmkatalog',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCsDOWMkTO_SJH2jeDBodCq_VtqUyR8cIQ',
+    appId: '1:25104211908:ios:b5aa8e532f6d0888e4ce91',
+    messagingSenderId: '25104211908',
+    projectId: 'csm-katalog',
+    storageBucket: 'csm-katalog.appspot.com',
+    iosBundleId: 'com.csm.katalog.csmkatalog',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAERGUnICjcVl_veNDpSWL1TOfa7GpQ6dM',
+    appId: '1:25104211908:web:4c8cbddc6ba01f8be4ce91',
+    messagingSenderId: '25104211908',
+    projectId: 'csm-katalog',
+    authDomain: 'csm-katalog.firebaseapp.com',
+    storageBucket: 'csm-katalog.appspot.com',
   );
 
 }

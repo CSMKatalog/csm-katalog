@@ -51,7 +51,8 @@ class _HouseCoverState extends State<HouseCover> {
   Future<void> openFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'png', 'jpeg', 'gif', 'svg']
+        allowedExtensions: ['jpg', 'png', 'jpeg', 'gif', 'svg'],
+        withData: true,
     );
 
     if (result != null) {

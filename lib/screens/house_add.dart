@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:csmkatalog/screens/admin_screen.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
@@ -95,7 +96,8 @@ class _HouseAddState extends State<HouseAdd> {
   Future<void> openFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'png', 'jpeg', 'gif', 'svg']
+        allowedExtensions: ['jpg', 'png', 'jpeg', 'gif', 'svg'],
+        withData: true,
     );
 
     if (result != null) {
@@ -155,10 +157,10 @@ class _HouseAddState extends State<HouseAdd> {
     fields.add(const SizedBox());
     fields.add(HouseAddItemTextDetail(label: "Tipe Bangunan", hintText: "Kode tipe banguan", textEditingController: typeController),);
     fields.add(HouseAddItemLongTextDetail(label: "Deskripsi Model Rumah", hintText: "Maksimal 200 huruf", textEditingController: descriptionController),);
-    fields.add(HouseAddItemTextDetail(label: "Harga Jual Rumah", hintText: "Harga (rupiah)", textEditingController: priceController),);
-    fields.add(HouseAddItemTextDetail(label: "Down Payment", hintText: "DP (rupiah)", textEditingController: dpController),);
-    fields.add(HouseAddItemTextDetail(label: "Luas Rumah", hintText: "Luas (meter persegi)", textEditingController: houseAreaController),);
-    fields.add(HouseAddItemTextDetail(label: "Luas Tanah", hintText: "Luas (meter persegi)", textEditingController: landAreaController),);
+    fields.add(HouseAddItemNumberDetail(label: "Harga Jual Rumah", hintText: "Harga (rupiah)", textEditingController: priceController),);
+    fields.add(HouseAddItemNumberDetail(label: "Down Payment", hintText: "DP (rupiah)", textEditingController: dpController),);
+    fields.add(HouseAddItemNumberDetail(label: "Luas Rumah", hintText: "Luas (meter persegi)", textEditingController: houseAreaController),);
+    fields.add(HouseAddItemNumberDetail(label: "Luas Tanah", hintText: "Luas (meter persegi)", textEditingController: landAreaController),);
     fields.add(HouseAddItemTextListDetail(
       label: "Daftar fitur istimewa",
       hintText: "Fitur",
@@ -228,10 +230,17 @@ class _HouseAddState extends State<HouseAdd> {
   }
 }
 
-class HouseSubmitButton extends StatelessWidget {
+class HouseSubmitButton extends StatefulWidget {
   const HouseSubmitButton({super.key, required this.text, required this.onPressed});
   final String text;
   final AsyncCallback onPressed;
+
+  @override
+  State<HouseSubmitButton> createState() => _HouseSubmitButtonState();
+}
+
+class _HouseSubmitButtonState extends State<HouseSubmitButton> {
+  bool hasClicked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -240,6 +249,7 @@ class HouseSubmitButton extends StatelessWidget {
       width: 120,
       child: FittedBox(
         child: FloatingActionButton.extended(
+          backgroundColor: hasClicked ? Colors.blueGrey.shade50 : null,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           extendedPadding: const EdgeInsets.symmetric(horizontal: 32.0),
           elevation: 0,
@@ -249,8 +259,16 @@ class HouseSubmitButton extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.bold
           ),
-          label: Text(text,),
-          onPressed: onPressed,
+          label: hasClicked ? Text("${widget.text}?",) : Text(widget.text,),
+          onPressed: () {
+            if(hasClicked) {
+              widget.onPressed();
+            } else {
+              setState(() {
+                hasClicked = true;
+              });
+            }
+          },
         ),
       ),
     );
@@ -293,16 +311,19 @@ class _HouseAddItemCheckboxDetailState extends State<HouseAddItemCheckboxDetail>
 }
 
 class HouseTextField extends StatelessWidget {
-  const HouseTextField({super.key, required this.hintText, required this.textEditingController, this.multiline = false});
+  const HouseTextField({super.key, required this.hintText, required this.textEditingController, this.type = TextInputType.text});
   final String hintText;
   final TextEditingController textEditingController;
-  final bool multiline;
+  final TextInputType type;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      keyboardType: multiline ? TextInputType.multiline : null,
-      maxLines: multiline ? null : 1,
+      keyboardType: type,
+      inputFormatters: [
+        if(type == TextInputType.number) FilteringTextInputFormatter.allow(RegExp(r"[\.\,0-9]*")),
+      ],
+      maxLines: type == TextInputType.multiline ? null : 1,
       style: const TextStyle(
         height: 1.2,
       ),
@@ -345,6 +366,30 @@ class HouseAddItemDimensionDetail extends StatelessWidget {
   }
 }
 
+class HouseAddItemNumberDetail extends StatelessWidget {
+  const HouseAddItemNumberDetail({super.key, required this.label, required this.hintText, required this.textEditingController});
+  final String label;
+  final String hintText;
+  final TextEditingController textEditingController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("$label:"),
+        const SizedBox(height: 8.0,),
+        HouseTextField(
+          hintText: hintText,
+          textEditingController: textEditingController,
+          type: TextInputType.number
+        ),
+      ],
+    );
+  }
+}
+
 
 class HouseAddItemTextDetail extends StatelessWidget {
   const HouseAddItemTextDetail({super.key, required this.label, required this.hintText, required this.textEditingController});
@@ -363,6 +408,7 @@ class HouseAddItemTextDetail extends StatelessWidget {
         HouseTextField(
           hintText: hintText,
           textEditingController: textEditingController,
+          type: TextInputType.text
         ),
       ],
     );
@@ -386,7 +432,7 @@ class HouseAddItemLongTextDetail extends StatelessWidget {
         HouseTextField(
           hintText: hintText,
           textEditingController: textEditingController,
-          multiline: true,
+          type: TextInputType.multiline
         ),
       ],
     );

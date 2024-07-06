@@ -116,7 +116,6 @@ class _CatalogScrollHelperState extends State<CatalogScrollHelper> {
   }
 }
 
-
 class CatalogArrow extends StatelessWidget {
   const CatalogArrow({super.key, required this.icon});
   final IconData icon;
@@ -140,7 +139,6 @@ class CatalogArrow extends StatelessWidget {
     );
   }
 }
-
 
 class CatalogRow extends StatelessWidget {
   const CatalogRow({super.key, required this.houseList, required this.houseIndex, required this.controller, required this.scrollCallbacks});
@@ -314,7 +312,6 @@ class CatalogVideoItem extends StatelessWidget {
       autoPlay: false,
       params: const YoutubePlayerParams(
         strictRelatedVideos: true,
-        showControls: false,
       ),
     );
     return SizedBox(
@@ -403,7 +400,6 @@ class CatalogPolicyItem extends StatelessWidget {
     );
   }
 }
-
 
 List<StatelessWidget> getRow(House house, Map<String, VoidCallback> scrollCallbacks) {
   List<StatelessWidget> rowItems = [];
