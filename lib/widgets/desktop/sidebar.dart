@@ -1,16 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-class Bottombar extends StatelessWidget {
-  const Bottombar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
+import '../../utils/dashboard_screen.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key, required this.applicationName, required this.dashboardScreens, required this.changeScreenListener});
@@ -42,7 +31,7 @@ class Sidebar extends StatelessWidget {
               )
           ),
           child: SizedBox(
-            width: (MediaQuery.of(context).size.width > 720) ? (MediaQuery.of(context).size.width/4) : (180),
+            width: (MediaQuery.of(context).size.width > 900) ? (MediaQuery.of(context).size.width/4) : (180),
             height: MediaQuery.of(context).size.height,
             child: Container(
               color: Colors.blueGrey[300],
@@ -98,6 +87,7 @@ class Sidebar extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(screen.label,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: 18,
                                       color: Colors.blueGrey[900],
@@ -116,61 +106,6 @@ class Sidebar extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class DashboardScreen {
-  String label;
-  Icon icon;
-  Widget widget;
-
-  DashboardScreen({required this.label, required this.icon, required this.widget});
-}
-
-class Header extends StatefulWidget {
-  const Header({super.key, required this.text, required this.onTap});
-  final String text;
-  final VoidCallback onTap;
-
-  @override
-  State<Header> createState() => _HeaderState();
-}
-
-class _HeaderState extends State<Header> {
-  bool isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        InkWell(
-          child: Container(
-            color: isHovered ? Colors.red : Colors.blueGrey,
-            child: Icon(
-                Icons.arrow_back,
-                color: Colors.white),
-          ),
-          onTap: widget.onTap,
-          onHover: (b){
-            setState(() {
-              isHovered = b;
-            });
-          },
-        ),
-        Expanded(
-          child: Column(
-            children: [
-              Text(
-                widget.text,
-                style: const TextStyle(
-                  fontSize: 23,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

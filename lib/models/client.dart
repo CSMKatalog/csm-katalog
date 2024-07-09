@@ -2,20 +2,20 @@ enum ClientType {interested, inProgress, bought, cancelled, notInterested }
 
 String clientTypeToString(ClientType ct) {
   switch (ct) {
-    case ClientType.bought: return 'bought';
-    case ClientType.cancelled: return 'cancelled';
-    case ClientType.inProgress: return 'inProgress';
-    case ClientType.interested: return 'interested';
-    case ClientType.notInterested: return 'notInterested';
+    case ClientType.bought: return 'Telah Membeli';
+    case ClientType.cancelled: return 'Batal';
+    case ClientType.inProgress: return 'Sedang Proses';
+    case ClientType.interested: return 'Tertarik';
+    case ClientType.notInterested: return 'Belum Tentu';
   }
 }
 
 ClientType stringToClientType(String s) {
   switch (s) {
-    case 'bought': return ClientType.bought;
-    case 'cancelled': return ClientType.cancelled;
-    case 'inProgress': return ClientType.inProgress;
-    case 'interested': return ClientType.interested;
+    case 'Telah Membeli': return ClientType.bought;
+    case 'Batal': return ClientType.cancelled;
+    case 'Sedang Proses': return ClientType.inProgress;
+    case 'Tertarik': return ClientType.interested;
     default: return ClientType.notInterested;
   }
 }
@@ -23,7 +23,7 @@ ClientType stringToClientType(String s) {
 class Client {
   final String clientID;
   final ClientType clientType;
-  final String modelID;
+  final String house;
   final String name;
   final String phoneNumber;
   final String note;
@@ -31,7 +31,7 @@ class Client {
   Client.empty() :
         clientID = "",
         clientType = ClientType.notInterested,
-        modelID = "",
+        house = "",
         name = "",
         phoneNumber = "",
         note = "";
@@ -39,7 +39,7 @@ class Client {
   Client ({
     required this.clientID,
     required this.clientType,
-    required this.modelID,
+    required this.house,
     required this.name,
     required this.phoneNumber,
     required this.note,
@@ -49,7 +49,7 @@ class Client {
     var house = Client(
       clientID: id,
       clientType: stringToClientType(json["type"]),
-      modelID: json["house"],
+      house: json["house"],
       name: json["name"],
       phoneNumber: json["phone"],
       note: json["rejection"],
@@ -62,8 +62,8 @@ class Client {
     if (id != null) {
       json["id"] = id;
     }
-    json["type"] = clientType;
-    json["house"] = modelID;
+    json["type"] = clientTypeToString(clientType);
+    json["house"] = house;
     json["name"] = name;
     json["phone"] = phoneNumber;
     json["rejection"] = note;

@@ -2,9 +2,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:csmkatalog/screens/admin/house_add.dart';
+
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/firebase/firestorage_connector.dart';
+import 'package:csmkatalog/utils/image_list.dart';
+import 'package:csmkatalog/widgets/desktop/image_list_detail.dart';
+import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 
 class HouseCover extends StatefulWidget {
   const HouseCover({super.key});
@@ -74,13 +77,13 @@ class _HouseCoverState extends State<HouseCover> {
           width: MediaQuery.of(context).size.width/2,
           child: Column(
             children: [
-              HouseAddItemImageDetail(
+              ImageListDetail(
                 uploadFile: openFile,
                 deleteFile: (index) {listOfImages.deleteImage(index);},
                 listOfImages: listOfImages,
               ),
               SizedBox(height: 8,),
-              HouseSubmitButton(text: "Simpan", onPressed: uploadImageList)
+              SubmitButton(text: "Simpan", onPressed: uploadImageList)
             ],
           ),
         ),

@@ -1,12 +1,15 @@
-import 'package:csmkatalog/firebase/firestore_connector.dart';
-import 'package:csmkatalog/screens/sales/sales_list.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/models/house.dart';
 import 'package:csmkatalog/models/client.dart';
-import 'package:csmkatalog/widgets/desktop_widgets.dart';
+import 'package:csmkatalog/widgets/desktop/header.dart';
+import 'package:csmkatalog/widgets/desktop/sidebar.dart';
 import 'package:csmkatalog/screens/sales/sales_list.dart';
 import 'package:csmkatalog/screens/sales/sales_add.dart';
+
+import '../../utils/dashboard_screen.dart';
 
 class SalesScreen extends StatefulWidget {
   const SalesScreen({super.key});

@@ -29,7 +29,7 @@ class FirestoreConnector {
   }
 
   static Future<void> createClient(Client client) async {
-    await db.collection("client").add(client.toJson());
+    await db.collection("clients").add(client.toJson());
   }
 
   static Future<List<Client>> readClients([ClientType? clientType]) async {

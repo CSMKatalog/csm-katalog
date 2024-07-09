@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:csmkatalog/models/client.dart';
 
 class SalesList extends StatefulWidget {
@@ -49,6 +50,23 @@ class SalesListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double widthCoefficient = MediaQuery.of(context).size.width > 750 ? 0.75 : (MediaQuery.of(context).size.width/1000);
+    TextStyle phone = TextStyle(
+      fontSize: 22 * widthCoefficient,
+      fontWeight: FontWeight.normal,
+    );
+    TextStyle name = TextStyle(
+      fontSize: 26 * widthCoefficient,
+      fontWeight: FontWeight.bold,
+    );
+    TextStyle type = TextStyle(
+      fontSize: 36 * widthCoefficient,
+      fontWeight: FontWeight.w300,
+    );
+    TextStyle small = TextStyle(
+      fontSize: 20 * widthCoefficient,
+      fontWeight: FontWeight.normal,
+    );
     return InkWell(
       onTap: () {
         changeScreenListener(client);
@@ -60,16 +78,26 @@ class SalesListItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(client.name),
-                Text(client.phoneNumber),
+                Text(client.name, style: name),
+                Text(client.phoneNumber, style: phone,),
               ],
             ),
+            SizedBox(width: 20,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(client.note),
+                Text(clientTypeToString(client.clientType), style: type,),
               ],
-            )
+            ),
+            SizedBox(width: 20,),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(client.note, style: small, softWrap: true,),
+                ],
+              ),
+            ),
           ],
         ),
       ),
