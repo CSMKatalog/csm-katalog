@@ -1,87 +1,6 @@
-import '../models/house.dart';
-import 'house_cover.dart';
-import 'house_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'house_add.dart';
-
-class AdminScreen extends StatefulWidget {
-  const AdminScreen({super.key});
-
-  @override
-  State<AdminScreen> createState() => _AdminScreenState();
-}
-
-class _AdminScreenState extends State<AdminScreen> {
-
-  getHouseAdd({House? house}) {
-    return HouseAdd(
-        house: house ?? House.empty(),
-        changeScreenListener: () {
-          setState(() {
-            selectedScreen = getHouseList();
-          });
-        }
-    );
-  }
-
-  getHouseList() {
-    return HouseList(changeScreenListener: (House house) {
-      setState(() {
-        selectedScreen = getHouseAdd(house: house);
-      });
-    });
-  }
-
-  getCover() {
-    return HouseCover();
-  }
-
-  _AdminScreenState () {
-    dashboardScreens = [
-      DashboardScreen(label: "Daftar Item", icon: const Icon(Icons.abc_outlined), widget: getHouseList()),
-      DashboardScreen(label: "Tambah Item", icon: const Icon(Icons.abc_outlined), widget: getHouseAdd()),
-      DashboardScreen(label: "Halaman Depan", icon: const Icon(Icons.abc_outlined), widget: getCover()),
-    ];
-    selectedScreen = dashboardScreens[0].widget;
-  }
-  late List<DashboardScreen> dashboardScreens;
-  late Widget selectedScreen;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blueAccent)
-        ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Sidebar(
-                dashboardScreens: dashboardScreens,
-                changeScreenListener: (widget) {
-                  setState(() {
-                    selectedScreen = widget;
-                  });
-                },
-              ),
-              // Main dashboard
-              SizedBox(
-                width: (MediaQuery.of(context).size.width > 720) ? (MediaQuery.of(context).size.width*2.95/4) : (MediaQuery.of(context).size.width-190),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 8.0, right: 8.0),
-                  child: selectedScreen,
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
-    );
-  }
-}
+import 'package:flutter/widgets.dart';
 
 class Bottombar extends StatelessWidget {
   const Bottombar({super.key});
@@ -94,21 +13,22 @@ class Bottombar extends StatelessWidget {
 
 
 class Sidebar extends StatelessWidget {
-   const Sidebar({super.key, required this.dashboardScreens, required this.changeScreenListener});
-   final Function(Widget) changeScreenListener;
-   final List<DashboardScreen> dashboardScreens;
-   final int selectedScreen = 0;
+  const Sidebar({super.key, required this.applicationName, required this.dashboardScreens, required this.changeScreenListener});
+  final String applicationName;
+  final Function(Widget) changeScreenListener;
+  final List<DashboardScreen> dashboardScreens;
+  final int selectedScreen = 0;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: const BoxDecoration(
-        border: BorderDirectional(
-          end: BorderSide(
-            color: Colors.blueGrey,
-            width: 3
+          border: BorderDirectional(
+              end: BorderSide(
+                  color: Colors.blueGrey,
+                  width: 3
+              )
           )
-        )
       ),
       child: Padding(
         padding: const EdgeInsets.only(right: 6.0),
@@ -139,18 +59,18 @@ class Sidebar extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: MediaQuery.of(context).size.width > 1000 ? Image.asset("images/logo_csm.png") : const SizedBox(),
                           ),
-                          const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("PT. CSM",
-                                style: TextStyle(
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("PT. CSM",
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 23,
                                     color: Colors.black,
                                   ),
                                 ),
-                              Text("Penyusun Katalog"),
-                            ]
+                                Text(applicationName),
+                              ]
                           )
                         ],
                       ),
@@ -158,7 +78,7 @@ class Sidebar extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   SizedBox(height: 1, child: Container(
-                      color: Colors.blueGrey,
+                    color: Colors.blueGrey,
                   ),),
                   const SizedBox(height: 16),
                   for (var screen in dashboardScreens)
@@ -208,20 +128,49 @@ class DashboardScreen {
   DashboardScreen({required this.label, required this.icon, required this.widget});
 }
 
-class HeaderAdminScreen extends StatelessWidget {
-  const HeaderAdminScreen({super.key, required this.text});
+class Header extends StatefulWidget {
+  const Header({super.key, required this.text, required this.onTap});
   final String text;
+  final VoidCallback onTap;
+
+  @override
+  State<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends State<Header> {
+  bool isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-        text,
-        style: const TextStyle(
-          fontSize: 23,
+    return Row(
+      children: [
+        InkWell(
+          child: Container(
+            color: isHovered ? Colors.red : Colors.blueGrey,
+            child: Icon(
+                Icons.arrow_back,
+                color: Colors.white),
+          ),
+          onTap: widget.onTap,
+          onHover: (b){
+            setState(() {
+              isHovered = b;
+            });
+          },
         ),
+        Expanded(
+          child: Column(
+            children: [
+              Text(
+                widget.text,
+                style: const TextStyle(
+                  fontSize: 23,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
-
-
-

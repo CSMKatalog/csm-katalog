@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:csmkatalog/firebase/firestore_connector.dart';
-import '../models/house.dart';
+import 'package:csmkatalog/models/house.dart';
 
 class HouseList extends StatefulWidget {
   const HouseList({super.key, required this.changeScreenListener});

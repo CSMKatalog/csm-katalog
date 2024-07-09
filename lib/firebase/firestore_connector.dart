@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/house.dart';
+import 'package:csmkatalog/models/client.dart';
+import 'package:csmkatalog/models/house.dart';
 
 class FirestoreConnector {
   static FirebaseFirestore db = FirebaseFirestore.instance;
@@ -25,6 +26,40 @@ class FirestoreConnector {
 
   static Future<void> deleteHouse(String id) async {
     await db.collection("houses").doc(id).delete();
+  }
+
+  static Future<void> createClient(Client client) async {
+    await db.collection("client").add(client.toJson());
+  }
+
+  static Future<List<Client>> readClients([ClientType? clientType]) async {
+    List<Client> clients = [];
+    if (clientType == null) {
+      await db.collection("clients").orderBy("timestamp").get().then((event) {
+        for (var doc in event.docs) {
+          Client client = Client.fromJson(doc.data(), doc.id);
+          clients.add(client);
+        }
+      });
+    } else {
+      await db.collection("clients").where(
+          "type", isEqualTo: clientTypeToString(clientType)).orderBy(
+          "timestamp", descending: true).get().then((event) {
+        for (var doc in event.docs) {
+          Client client = Client.fromJson(doc.data(), doc.id);
+          clients.add(client);
+        }
+      });
+    }
+    return clients;
+  }
+
+  static Future<void> updateClient(String id, Client client) async {
+    await db.collection("clients").doc(id).set(client.toJson());
+  }
+
+  static Future<void> deleteClient(String id) async {
+    await db.collection("clients").doc(id).delete();
   }
 
   static Future<void> updateCover(String id, Map<String, dynamic> imageList) async {

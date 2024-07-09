@@ -1,11 +1,10 @@
 import 'dart:typed_data';
-import 'package:csmkatalog/firebase/firestore_connector.dart';
-import 'package:csmkatalog/screens/house_add.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
-
-import '../firebase/firestorage_connector.dart';
+import 'package:csmkatalog/screens/admin/house_add.dart';
+import 'package:csmkatalog/firebase/firestore_connector.dart';
+import 'package:csmkatalog/firebase/firestorage_connector.dart';
 
 class HouseCover extends StatefulWidget {
   const HouseCover({super.key});
@@ -25,7 +24,7 @@ class _HouseCoverState extends State<HouseCover> {
     final List<String> newImageUrls = [];
     for (Uint8List image in listOfImages.imageList) {
       String fileName = "cover-${DateTime.now()}";
-      String imageUrl = await FirestorageConnector.uploadFile(image, fileName);
+      String imageUrl = await FirestorageConnector.uploadFile(image, fileName, true);
       newImageUrls.add(imageUrl);
     }
     await FirestoreConnector.updateCover("coverCSM", {"imageUrls": newImageUrls});

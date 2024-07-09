@@ -1,11 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'screens/catalog_screen.dart';
-import 'screens/admin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:csmkatalog/firebase_options.dart';
+import 'package:csmkatalog/screens/catalog_screen.dart';
+import 'package:csmkatalog/screens/admin/admin_screen.dart';
 
 class MouseTooScrollBehavior extends MaterialScrollBehavior {
   @override

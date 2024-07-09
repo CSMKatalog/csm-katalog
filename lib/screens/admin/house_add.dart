@@ -1,14 +1,15 @@
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:csmkatalog/screens/admin_screen.dart';
-import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:csmkatalog/widgets/desktop_widgets.dart';
+import 'package:csmkatalog/models/house.dart';
+import 'package:csmkatalog/screens/admin/admin_screen.dart';
 import 'package:csmkatalog/firebase/firestorage_connector.dart';
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 
-import '../models/house.dart';
 
 class HouseAdd extends StatefulWidget {
   const HouseAdd({super.key, required this.house, required this.changeScreenListener});
@@ -41,7 +42,7 @@ class _HouseAddState extends State<HouseAdd> {
     final List<String> imageUrls = [];
     for (Uint8List image in listOfImages.imageList) {
       String fileName = "image-${DateTime.now()}";
-      String imageUrl = await FirestorageConnector.uploadFile(image, fileName);
+      String imageUrl = await FirestorageConnector.uploadFile(image, fileName, true);
       imageUrls.add(imageUrl);
     }
     return imageUrls;
@@ -213,7 +214,7 @@ class _HouseAddState extends State<HouseAdd> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        HeaderAdminScreen(text: headerText),
+        Header(text: headerText, onTap: widget.changeScreenListener,),
         Expanded(
           child: DynamicHeightGridView(
             crossAxisCount: 2,
@@ -440,25 +441,11 @@ class HouseAddItemLongTextDetail extends StatelessWidget {
 }
 
 
-class HouseAddItemImageDetail extends StatefulWidget {
-  const HouseAddItemImageDetail({super.key, required this.uploadFile, required this.deleteFile, required this.listOfImages});
+class HouseAddItemImageDetail extends StatelessWidget {
+  HouseAddItemImageDetail({super.key, required this.uploadFile, required this.deleteFile, required this.listOfImages});
   final AsyncCallback uploadFile;
   final Function(int) deleteFile;
   final ImageList listOfImages;
-
-  @override
-  State<HouseAddItemImageDetail> createState() => _HouseAddItemImageDetailState();
-}
-
-class _HouseAddItemImageDetailState extends State<HouseAddItemImageDetail> {
-  late ImageList listOfImages;
-  bool isHovered = false;
-
-  @override
-  initState() {
-    super.initState();
-    listOfImages = widget.listOfImages;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -488,7 +475,7 @@ class _HouseAddItemImageDetailState extends State<HouseAddItemImageDetail> {
                             index: index,
                             image: listOfImages.imageList[index],
                             deleteFile: () {
-                              widget.deleteFile(index);
+                              deleteFile(index);
                             },
                           );
                         },
@@ -504,7 +491,7 @@ class _HouseAddItemImageDetailState extends State<HouseAddItemImageDetail> {
                         Expanded(
                           child: InkWell(
                             onTap: () async {
-                              await widget.uploadFile();
+                              await uploadFile();
                             },
                             child: const Text(
                               "Upload Gambar",
@@ -604,7 +591,6 @@ class HouseAddItemTextListDetail extends StatefulWidget {
 
 class _HouseAddItemTextListDetailState extends State<HouseAddItemTextListDetail> {
   late List<TextEditingController> listOfString;
-  bool isHovered = false;
 
   @override
   initState() {
