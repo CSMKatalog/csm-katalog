@@ -70,10 +70,13 @@ class _TextListDetailState extends State<TextListDetail> {
                                 listOfString;
                               });
                             },
-                            child: Text(
-                              "Tambah ${widget.hintText}",
-                              style: const TextStyle(color: Colors.blueGrey,),
-                              textAlign: TextAlign.center,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Tambah ${widget.hintText}",
+                                style: const TextStyle(color: Colors.blueGrey,),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                         ),

@@ -11,6 +11,8 @@ import 'package:csmkatalog/screens/admin/house_add.dart';
 import 'package:csmkatalog/screens/sales/sales_list.dart';
 import 'package:csmkatalog/screens/sales/sales_add.dart';
 
+import '../sales/sales_progress.dart';
+
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
 
@@ -19,10 +21,18 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-
-  getHouseAdd({House? house}) {
+  Widget getHouseAdd() {
     return HouseAdd(
-        house: house ?? House.empty(),
+        house: House.empty(),
+        changeScreenListener: () {
+          setState(() { selectedScreen = getHouseList(); });
+        }
+    );
+  }
+
+  Widget getHouseEdit(House house) {
+    return HouseAdd(
+        house: house,
         changeScreenListener: () {
           setState(() {
             selectedScreen = getHouseList();
@@ -31,72 +41,93 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
-  getHouseList() {
+  Widget getHouseList() {
     return HouseList(changeScreenListener: (House house) {
       setState(() {
-        selectedScreen = getHouseAdd(house: house);
+        selectedScreen = getHouseEdit(house);
       });
     });
   }
 
-  getCover() {
+  Widget getCover() {
     return HouseCover();
   }
 
-  getClientAdd({Client? client}) {
+  Widget getClientAdd() {
     return SalesAdd(
-        client: client ?? Client.empty(),
+        client: Client.empty(),
         changeScreenListener: () {
-          setState(() {
-            selectedScreen = getActiveClientList();
-          });
-        }
+          setState(() { selectedScreen = getActiveClientList(); });
+        },
+        progressScreenListener: () {
+          setState(() { selectedScreen = getClientProgress(Client.empty()); });
+        },
     );
   }
 
-  getPotentialClientList() {
-    return SalesList(
-      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientAdd(client: client);});},
-      loadCallback: () => FirestoreConnector.readClients(),
+  Widget getClientEdit(Client client) {
+    return SalesAdd(
+      client: client,
+      changeScreenListener: () {
+        setState(() { selectedScreen = getActiveClientList(); });
+      },
+      progressScreenListener: () {
+        setState(() { selectedScreen = getClientProgress(client); });
+      },
     );
   }
 
-  getActiveClientList() {
+  Widget getClientProgress(Client client) {
+    return SalesProgress(client: client, changeScreenListener: () {
+      setState(() {
+        selectedScreen = getPotentialClientList();
+      });
+    });
+  }
+
+  Widget getPotentialClientList() {
     return SalesList(
-      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientAdd(client: client);});},
-      loadCallback: () => FirestoreConnector.readClients(),
+      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
+      loadCallback: () => FirestoreConnector.readClients(ClientType.interested),
     );
   }
 
-  getInactiveClientList() {
+  Widget getActiveClientList() {
     return SalesList(
-      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientAdd(client: client);});},
-      loadCallback: () => FirestoreConnector.readClients(),
+      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
+      loadCallback: () => FirestoreConnector.readClients(ClientType.inProgress),
     );
   }
 
-  getPastClientList() {
+  Widget getInactiveClientList() {
     return SalesList(
-      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientAdd(client: client);});},
-      loadCallback: () => FirestoreConnector.readClients(),
+      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
+      loadCallback: () => FirestoreConnector.readClients(ClientType.cancelled),
+    );
+  }
+
+  Widget getPastClientList() {
+    return SalesList(
+      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
+      loadCallback: () => FirestoreConnector.readClients(ClientType.bought),
     );
   }
 
   _AdminScreenState () {
     dashboardScreens = [
-      DashboardScreen(label: "Daftar Item", icon: const Icon(Icons.abc_outlined), widget: getHouseList()),
-      DashboardScreen(label: "Tambah Item", icon: const Icon(Icons.abc_outlined), widget: getHouseAdd()),
-      DashboardScreen(label: "Halaman Depan", icon: const Icon(Icons.abc_outlined), widget: getCover()),
+      Screen(label: "Daftar Item", icon: Icons.abc_outlined, widgetFunction: getHouseList),
+      Screen(label: "Tambah Item", icon: Icons.abc_outlined, widgetFunction: getHouseAdd),
+      Screen(label: "Halaman Depan", icon: Icons.abc_outlined, widgetFunction: getCover),
       // DashboardScreen(label: "", icon: const Icon(Icons.abc_outlined), widget: SizedBox(height: 10,)),
-      DashboardScreen(label: "Daftar Peminat", icon: const Icon(Icons.abc_outlined), widget: getPotentialClientList()),
-      DashboardScreen(label: "Daftar Klien", icon: const Icon(Icons.abc_outlined), widget: getActiveClientList()),
-      DashboardScreen(label: "Tambah Klien", icon: const Icon(Icons.abc_outlined), widget: getClientAdd()),
-      DashboardScreen(label: "Riwayat Pembelian", icon: const Icon(Icons.abc_outlined), widget: getPastClientList()),
-      DashboardScreen(label: "Riwayat Penawaran", icon: const Icon(Icons.abc_outlined), widget: getInactiveClientList()),
+      Screen(label: "Daftar Peminat", icon: Icons.abc_outlined, widgetFunction: getPotentialClientList),
+      Screen(label: "Daftar Klien", icon: Icons.abc_outlined, widgetFunction: getActiveClientList),
+      Screen(label: "Tambah Klien", icon: Icons.abc_outlined, widgetFunction: getClientAdd),
+      Screen(label: "Riwayat Pembelian", icon: Icons.abc_outlined, widgetFunction: getPastClientList),
+      Screen(label: "Riwayat Penawaran", icon: Icons.abc_outlined, widgetFunction: getInactiveClientList),
     ];
-    selectedScreen = dashboardScreens[0].widget;
+    selectedScreen = dashboardScreens[0].widgetFunction();
   }
-  late List<DashboardScreen> dashboardScreens;
+  late List<Screen> dashboardScreens;
   late Widget selectedScreen;
 
   @override

@@ -13,30 +13,34 @@ class HouseList extends StatefulWidget {
 
 class _HouseListState extends State<HouseList> {
   List<House> houseList = [];
+  late Future<dynamic> _future;
 
-  void fetchHouseList() async {
+  Future<dynamic> fetchHouseList() async {
     var temp = await FirestoreConnector.readHouses();
-    setState(() {
-      houseList = temp;
-    });
+    houseList = temp;
   }
 
   @override
   void initState() {
     super.initState();
-    fetchHouseList();
   }
 
   @override
   Widget build(BuildContext context) {
+    _future = fetchHouseList();
+
     return SizedBox(
       width: MediaQuery.of(context).size.width/3,
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: houseList.length,
-          itemBuilder: (context, index) {
-            return HouseListItem(house: houseList[index], changeScreenListener: widget.changeScreenListener);
-          }
+      child: FutureBuilder(
+        builder: (context, snapshot) {
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: houseList.length,
+              itemBuilder: (context, index) {
+                return HouseListItem(house: houseList[index], changeScreenListener: widget.changeScreenListener);
+              }
+          );
+        }, future: _future,
       ),
     );
   }

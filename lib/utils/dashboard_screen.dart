@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
-class DashboardScreen {
+class Screen {
   String label;
-  Icon icon;
-  Widget widget;
+  IconData icon;
+  Widget Function() widgetFunction;
 
-  DashboardScreen({required this.label, required this.icon, required this.widget});
+  Screen({required this.label, required this.icon, required this.widgetFunction});
+}
+
+class LoadingScreen extends StatelessWidget {
+  const LoadingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
 }

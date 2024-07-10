@@ -11,9 +11,10 @@ import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 
 class SalesAdd extends StatefulWidget {
-  const SalesAdd({super.key, required this.client, required this.changeScreenListener});
+  const SalesAdd({super.key, required this.client, required this.changeScreenListener, required this.progressScreenListener});
   final Client client;
   final VoidCallback changeScreenListener;
+  final VoidCallback progressScreenListener;
 
   @override
   State<SalesAdd> createState() => _SalesAddState();
@@ -39,6 +40,7 @@ class _SalesAddState extends State<SalesAdd> {
       name: nameController.value.text,
       phoneNumber: phoneController.value.text,
       note: noteController.value.text,
+      progress: widget.client.clientID.isNotEmpty ? widget.client.progress : getBlankProgress()
     );
 
     if (widget.client.clientID.isNotEmpty) {
@@ -59,9 +61,6 @@ class _SalesAddState extends State<SalesAdd> {
   void initState() {
     super.initState();
     fields = [];
-
-    // Isi form field jika ada data
-    // TODO: Ini untuk ubah pindahkan data dari detail ke tampilan
     if (widget.client.clientID.isNotEmpty) {
       Client client = widget.client;
       headerText = "Detail Klien ${client.name}";
@@ -82,10 +81,11 @@ class _SalesAddState extends State<SalesAdd> {
     fields.add(Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SubmitButton(text: "Progress", onPressed: uploadClientDetail),
+        SubmitButton(
+            text: "Progress",
+            onPressed: () async {widget.progressScreenListener();}),
       ],
     ));
-    // Tambah tombol add atau edit
     if (widget.client.clientID.isNotEmpty) {
       fields.add(Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -108,7 +108,7 @@ class _SalesAddState extends State<SalesAdd> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Header(text: headerText, onTap: widget.changeScreenListener,),
+        PageHeader(text: headerText, onTap: widget.changeScreenListener,),
         Expanded(
           child: DynamicHeightGridView(
               crossAxisCount: 2,

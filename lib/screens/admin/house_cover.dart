@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/firebase/firestorage_connector.dart';
-import 'package:csmkatalog/utils/image_list.dart';
+import 'package:csmkatalog/utils/file_list.dart';
 import 'package:csmkatalog/widgets/desktop/image_list_detail.dart';
 import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 
@@ -17,7 +17,7 @@ class HouseCover extends StatefulWidget {
 }
 
 class _HouseCoverState extends State<HouseCover> {
-  ImageList listOfImages = ImageList();
+  FileList listOfImages = FileList();
   List<String> imageUrls = [];
 
   Future<void> uploadImageList() async {
@@ -25,9 +25,9 @@ class _HouseCoverState extends State<HouseCover> {
       FirestorageConnector.deleteFile(Uri.parse(imageUrl).pathSegments.last);
     }
     final List<String> newImageUrls = [];
-    for (Uint8List image in listOfImages.imageList) {
+    for (Uint8List image in listOfImages.fileList) {
       String fileName = "cover-${DateTime.now()}";
-      String imageUrl = await FirestorageConnector.uploadFile(image, fileName, true);
+      String imageUrl = await FirestorageConnector.uploadFile(image, fileName, "images/");
       newImageUrls.add(imageUrl);
     }
     await FirestoreConnector.updateCover("coverCSM", {"imageUrls": newImageUrls});
@@ -43,7 +43,7 @@ class _HouseCoverState extends State<HouseCover> {
     var newImageUrls = await FirestoreConnector.readCover();
     for(String imageUrl in newImageUrls["imageUrls"]) {
       Uint8List image = await imageUrlToImage(imageUrl);
-      listOfImages.addImage(image);
+      listOfImages.addFile(image);
     }
     setState(() {
       imageUrls = newImageUrls["imageUrls"];
@@ -59,7 +59,7 @@ class _HouseCoverState extends State<HouseCover> {
 
     if (result != null) {
       Uint8List image = result.files.single.bytes!;
-      listOfImages.addImage(image);
+      listOfImages.addFile(image);
     }
   }
 
@@ -78,8 +78,9 @@ class _HouseCoverState extends State<HouseCover> {
           child: Column(
             children: [
               ImageListDetail(
+                label: "List gambar untuk halaman depan katalog:",
                 uploadFile: openFile,
-                deleteFile: (index) {listOfImages.deleteImage(index);},
+                deleteFile: (index) {listOfImages.deleteFile(index);},
                 listOfImages: listOfImages,
               ),
               SizedBox(height: 8,),

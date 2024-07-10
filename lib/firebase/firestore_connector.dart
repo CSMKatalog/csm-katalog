@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csmkatalog/models/client.dart';
 import 'package:csmkatalog/models/house.dart';
+import 'dart:developer';
 
 class FirestoreConnector {
   static FirebaseFirestore db = FirebaseFirestore.instance;
@@ -34,23 +35,13 @@ class FirestoreConnector {
 
   static Future<List<Client>> readClients([ClientType? clientType]) async {
     List<Client> clients = [];
-    if (clientType == null) {
-      await db.collection("clients").orderBy("timestamp").get().then((event) {
-        for (var doc in event.docs) {
-          Client client = Client.fromJson(doc.data(), doc.id);
-          clients.add(client);
-        }
-      });
-    } else {
-      await db.collection("clients").where(
-          "type", isEqualTo: clientTypeToString(clientType)).orderBy(
-          "timestamp", descending: true).get().then((event) {
-        for (var doc in event.docs) {
-          Client client = Client.fromJson(doc.data(), doc.id);
-          clients.add(client);
-        }
-      });
-    }
+    await db.collection("clients").orderBy("timestamp").get().then((event) {
+      for (var doc in event.docs) {
+        Client client = Client.fromJson(doc.data(), doc.id);
+        clients.add(client);
+      }
+    });
+    clients = clients.where((e) => e.clientType == clientType).toList();
     return clients;
   }
 

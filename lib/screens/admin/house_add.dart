@@ -8,7 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:csmkatalog/firebase/firestorage_connector.dart';
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/models/house.dart';
-import 'package:csmkatalog/utils/image_list.dart';
+import 'package:csmkatalog/utils/file_list.dart';
 import 'package:csmkatalog/widgets/desktop/header.dart';
 import 'package:csmkatalog/widgets/desktop/image_list_detail.dart';
 import 'package:csmkatalog/widgets/desktop/submit_button.dart';
@@ -37,7 +37,7 @@ class _HouseAddState extends State<HouseAdd> {
   final typeController = TextEditingController();
   final descriptionController = TextEditingController();
   late List<Widget> fields;
-  late ImageList listOfImages;
+  late FileList listOfImages;
   late List<TextEditingController> listOfFeatures;
   late List<TextEditingController> listOfCriteria;
   late List<TextEditingController> listOfYoutubeUrls;
@@ -45,9 +45,9 @@ class _HouseAddState extends State<HouseAdd> {
 
   Future<List<String>> uploadImageList() async {
     final List<String> imageUrls = [];
-    for (Uint8List image in listOfImages.imageList) {
+    for (Uint8List image in listOfImages.fileList) {
       String fileName = "image-${DateTime.now()}";
-      String imageUrl = await FirestorageConnector.uploadFile(image, fileName, true);
+      String imageUrl = await FirestorageConnector.uploadFile(image, fileName, "images/");
       imageUrls.add(imageUrl);
     }
     return imageUrls;
@@ -108,7 +108,7 @@ class _HouseAddState extends State<HouseAdd> {
 
     if (result != null) {
       Uint8List image = result.files.single.bytes!;
-      listOfImages.addImage(image);
+      listOfImages.addFile(image);
     }
   }
 
@@ -120,14 +120,14 @@ class _HouseAddState extends State<HouseAdd> {
   void loadImages(List<String> imageUrls) async {
     for(String imageUrl in imageUrls) {
       Uint8List image = await imageUrlToImage(imageUrl);
-      listOfImages.addImage(image);
+      listOfImages.addFile(image);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    listOfImages = ImageList();
+    listOfImages = FileList();
     listOfFeatures = [];
     listOfYoutubeUrls = [];
     listOfCriteria = [];
@@ -190,8 +190,9 @@ class _HouseAddState extends State<HouseAdd> {
       listOfString: listOfCriteria,
     ));
     fields.add(ImageListDetail(
+      label: "List gambar rumah, denah, atau tabel angsuran:",
       uploadFile: openFile,
-      deleteFile: (index) {listOfImages.deleteImage(index);},
+      deleteFile: (index) {listOfImages.deleteFile(index);},
       listOfImages: listOfImages,
     ));
 
@@ -219,7 +220,7 @@ class _HouseAddState extends State<HouseAdd> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Header(text: headerText, onTap: widget.changeScreenListener,),
+        PageHeader(text: headerText, onTap: widget.changeScreenListener,),
         Expanded(
           child: DynamicHeightGridView(
             crossAxisCount: 2,

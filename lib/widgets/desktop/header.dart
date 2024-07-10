@@ -1,15 +1,35 @@
 import 'package:flutter/material.dart';
 
-class Header extends StatefulWidget {
-  const Header({super.key, required this.text, required this.onTap});
+class SectionHeader extends StatelessWidget {
+  const SectionHeader({super.key, required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+class PageHeader extends StatefulWidget {
+  const PageHeader({super.key, required this.text, required this.onTap});
   final String text;
   final VoidCallback onTap;
 
   @override
-  State<Header> createState() => _HeaderState();
+  State<PageHeader> createState() => _PageHeaderState();
 }
 
-class _HeaderState extends State<Header> {
+class _PageHeaderState extends State<PageHeader> {
   bool isHovered = false;
 
   @override

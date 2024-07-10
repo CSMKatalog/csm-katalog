@@ -20,6 +20,51 @@ ClientType stringToClientType(String s) {
   }
 }
 
+Map<String, dynamic> getBlankProgress() {
+  return {
+    "ktpkk": {
+      "done": false,
+      "ktp": [],
+      "kk": [],
+    },
+    "dp": {
+      "done": false,
+      "dp": [],
+    },
+    "bi": {
+      "done": false,
+      "bi": [],
+    },
+    "pendamping": {
+      "done": false,
+      "pasangan": [],
+      "gaji3bln": [],
+      "gajiskpg": [],
+      "skk": [],
+      "nip": [],
+      "tbng3bln": [],
+      "rmhlurah": [],
+      "tbngbtn": [],
+      "sku": [],
+      "lku": [],
+      "legalusaha": [],
+      "mat600035": [],
+    },
+    "survei": {
+      "done": false,
+      "survei": [],
+    },
+    "kredit": {
+      "done": false,
+      "kredit": [],
+    },
+    "kunci": {
+      "done": false,
+      "kunci": [],
+    },
+  };
+}
+
 class Client {
   final String clientID;
   final ClientType clientType;
@@ -27,6 +72,7 @@ class Client {
   final String name;
   final String phoneNumber;
   final String note;
+  final Map<String, dynamic> progress;
 
   Client.empty() :
         clientID = "",
@@ -34,7 +80,8 @@ class Client {
         house = "",
         name = "",
         phoneNumber = "",
-        note = "";
+        note = "",
+        progress = getBlankProgress();
 
   Client ({
     required this.clientID,
@@ -43,6 +90,7 @@ class Client {
     required this.name,
     required this.phoneNumber,
     required this.note,
+    required this.progress,
   });
 
   factory Client.fromJson(Map<String, dynamic> json, String id) {
@@ -52,7 +100,8 @@ class Client {
       house: json["house"],
       name: json["name"],
       phoneNumber: json["phone"],
-      note: json["rejection"],
+      note: json["notes"],
+      progress: json["progress"],
     );
     return house;
   }
@@ -66,7 +115,8 @@ class Client {
     json["house"] = house;
     json["name"] = name;
     json["phone"] = phoneNumber;
-    json["rejection"] = note;
+    json["notes"] = note;
+    json["progress"] = progress;
     json["timestamp"] = DateTime.now().millisecondsSinceEpoch / 60000;
     return json;
   }

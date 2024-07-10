@@ -1,12 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:csmkatalog/models/client.dart';
 
 class SalesList extends StatefulWidget {
-  const SalesList({super.key, required this.changeScreenListener, required this.loadCallback});
-  final Function(Client client) changeScreenListener;
-  final AsyncValueGetter<List<Client>> loadCallback;
+  SalesList({super.key, required this.changeScreenListener, required this.loadCallback});
+  Function(Client client) changeScreenListener;
+  AsyncValueGetter<List<Client>> loadCallback;
 
   @override
   State<SalesList> createState() => _SalesListState();
@@ -14,30 +15,33 @@ class SalesList extends StatefulWidget {
 
 class _SalesListState extends State<SalesList> {
   List<Client> clientList = [];
+  late Future<dynamic> _future;
 
-  void fetchSalesList() async {
+  Future<dynamic> fetchSalesList() async {
     List<Client> temp = await widget.loadCallback();
-    setState(() {
-      clientList = temp;
-    });
+    clientList = temp;
   }
 
   @override
   void initState() {
     super.initState();
-    fetchSalesList();
   }
 
   @override
   Widget build(BuildContext context) {
+    _future = fetchSalesList();
+
     return SizedBox(
       width: MediaQuery.of(context).size.width/3,
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: clientList.length,
-          itemBuilder: (context, index) {
-            return SalesListItem(client: clientList[index], changeScreenListener: widget.changeScreenListener);
-          }
+      child: FutureBuilder(
+        builder: (context, snapshot) {
+          return ListView.builder(
+              itemCount: clientList.length,
+              itemBuilder: (context, index) {
+                return SalesListItem(client: clientList[index], changeScreenListener: widget.changeScreenListener);
+              }
+          );
+        }, future: _future,
       ),
     );
   }
@@ -60,7 +64,7 @@ class SalesListItem extends StatelessWidget {
       fontWeight: FontWeight.bold,
     );
     TextStyle type = TextStyle(
-      fontSize: 36 * widthCoefficient,
+      fontSize: 30 * widthCoefficient,
       fontWeight: FontWeight.w300,
     );
     TextStyle small = TextStyle(
@@ -86,7 +90,15 @@ class SalesListItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(clientTypeToString(client.clientType), style: type,),
+                Container(
+                  width: 150,
+                  color: Colors.blueGrey[50],
+                  child: Text(
+                    clientTypeToString(client.clientType),
+                    style: type,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ],
             ),
             SizedBox(width: 20,),

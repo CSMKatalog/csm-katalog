@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/image_list.dart';
+import '../../utils/file_list.dart';
 
 class ImageListDetail extends StatelessWidget {
-  const ImageListDetail({super.key, required this.uploadFile, required this.deleteFile, required this.listOfImages});
+  const ImageListDetail({super.key, required this.label, required this.uploadFile, required this.deleteFile, required this.listOfImages});
+  final String label;
   final AsyncCallback uploadFile;
   final Function(int) deleteFile;
-  final ImageList listOfImages;
+  final FileList listOfImages;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class ImageListDetail extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("List gambar rumah, denah, atau tabel angsuran:"),
+        Text(label),
         const SizedBox(height: 8.0,),
         Container(
           decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
@@ -31,11 +32,11 @@ class ImageListDetail extends StatelessWidget {
                       return ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: listOfImages.imageList.length,
+                        itemCount: listOfImages.fileList.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ImageListDetailItem(
                             index: index,
-                            image: listOfImages.imageList[index],
+                            file: listOfImages.fileList[index],
                             deleteFile: () {
                               deleteFile(index);
                             },
@@ -55,10 +56,13 @@ class ImageListDetail extends StatelessWidget {
                             onTap: () async {
                               await uploadFile();
                             },
-                            child: const Text(
-                              "Upload Gambar",
-                              style: TextStyle(color: Colors.blueGrey,),
-                              textAlign: TextAlign.center,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: const Text(
+                                "Upload Gambar",
+                                style: TextStyle(color: Colors.blueGrey,),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                         ),
@@ -76,9 +80,9 @@ class ImageListDetail extends StatelessWidget {
 }
 
 class ImageListDetailItem extends StatefulWidget {
-  const ImageListDetailItem({super.key, required this.index, required this.image, required this.deleteFile});
+  const ImageListDetailItem({super.key, required this.index, required this.file, required this.deleteFile});
   final int index;
-  final Uint8List image;
+  final Uint8List file;
   final VoidCallback deleteFile;
 
   @override
@@ -110,7 +114,7 @@ class _ImageListDetailItemState extends State<ImageListDetailItem> {
                   borderRadius: const BorderRadius.all(Radius.circular(4.0))),
               child: Padding(
                 padding: const EdgeInsets.all(2.0),
-                child: Image.memory(widget.image),
+                child: Image.memory(widget.file),
               ),
             ),
           ),

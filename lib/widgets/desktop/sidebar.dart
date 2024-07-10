@@ -5,7 +5,7 @@ class Sidebar extends StatelessWidget {
   const Sidebar({super.key, required this.applicationName, required this.dashboardScreens, required this.changeScreenListener});
   final String applicationName;
   final Function(Widget) changeScreenListener;
-  final List<DashboardScreen> dashboardScreens;
+  final List<Screen> dashboardScreens;
   final int selectedScreen = 0;
 
   @override
@@ -75,7 +75,7 @@ class Sidebar extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         hoverColor: Colors.blueGrey,
-                        onTap: () => changeScreenListener(screen.widget),
+                        onTap: () => changeScreenListener(screen.widgetFunction()),
                         child: Padding(
                           padding: const EdgeInsets.only(left: 16.0, right: 8.0, bottom: 2.0, top: 4.0),
                           child: Container(
