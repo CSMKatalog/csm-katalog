@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:csmkatalog/screens/sales/progress_track.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -309,11 +311,10 @@ class DocumentProgress extends StatefulWidget {
 
 class _DocumentProgressState extends State<DocumentProgress> {
   _DocumentProgressState ();
-  late List<Widget> fields;
   late Future<dynamic> _future;
 
   Future<dynamic> loadWidgets() {
-    fields = [];
+    List<Widget> fields = [];
     fields.add(CheckboxDetail(label: widget.label, value: widget.value, onChanged: widget.onCheck,),);
     fields.add(const SizedBox());
     for(FileListDetail doc in widget.documents) {
@@ -327,12 +328,7 @@ class _DocumentProgressState extends State<DocumentProgress> {
         SubmitButton(text: "Simpan", onPressed: widget.onSubmit),
       ],
     ));
-    return new Future<bool>.value(true);
-  }
-
-  @override
-  void initState() {
-    super.initState();
+    return Future<dynamic>.value(fields);
   }
 
   @override
@@ -345,13 +341,14 @@ class _DocumentProgressState extends State<DocumentProgress> {
         Expanded(
           child: FutureBuilder(
             builder: (context, snapshot) {
+              List<Widget> screens = snapshot.connectionState == ConnectionState.waiting ? [] : snapshot.data;
               return DynamicHeightGridView(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  itemCount: fields.length,
+                  itemCount: screens.length,
                   builder: (context, index) {
-                    return fields[index];
+                    return screens[index];
                   }
               );
             }, future: _future,

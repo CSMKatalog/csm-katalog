@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:csmkatalog/widgets/catalog/submit_button.dart';
 import 'package:csmkatalog/widgets/catalog/text_detail.dart';
 import 'package:csmkatalog/widgets/catalog/combobox_detail.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../firebase/firestore_connector.dart';
 import '../../models/house.dart';
@@ -44,14 +45,16 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
         label: "Simulasi Kredit",
         closeWidgetListener: widget.closeWidgetListener,
         children: [
-          ComboBoxDetail(label: "Tipe Rumah", items: houseTypes, value: selectedHouse,
-              onChanged: (v) {
-                selectedHouse = v;
-                House house = widget.houseList.firstWhere((e) => e.name == v, orElse: House.empty);
-                priceController.text = house.modelID.isNotEmpty ? house.price.toString() : "";
-                dpController.text = house.modelID.isNotEmpty ? house.downPayment.toString() : "";
-                minimumDP = house.modelID.isNotEmpty ? house.price : 0;
-              }),
+          Flexible(
+            child: ComboBoxDetail(label: "Tipe Rumah", items: houseTypes, value: selectedHouse,
+                onChanged: (v) {
+                  selectedHouse = v;
+                  House house = widget.houseList.firstWhere((e) => e.name == v, orElse: House.empty);
+                  priceController.text = house.modelID.isNotEmpty ? house.price.toString() : "";
+                  dpController.text = house.modelID.isNotEmpty ? house.downPayment.toString() : "";
+                  minimumDP = house.modelID.isNotEmpty ? house.price : 0;
+                }),
+          ),
           TextDetail(
             label: "Harga Jual Rumah",
             hintText: "Harga jual (Rp)",
@@ -93,12 +96,12 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
                   double interest = double.parse(interestController.value.text.replaceAll(",", ".")) / 100;
                   List<int> years = [5, 10, 15, 20];
 
-                  if(price < price) {
+                  if(downPayment > price) {
                     widget.moreThanPriceValueToast();
                     return;
                   }
 
-                  if(price > minimumDP) {
+                  if(downPayment < minimumDP) {
                     widget.lessThanMinimumValueToast();
                     return;
                   }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../firebase/firestore_connector.dart';
@@ -78,8 +79,10 @@ class _ContactFormOverlayState extends State<ContactFormOverlay> {
             hintText: "Kontak yang dapat dihubungi",
             textController: phoneController,
           ),
-          ComboBoxDetail(label: "Model Rumah", items: houseTypes, value: selectedHouse,
-            onChanged: (v) { selectedHouse = v; },
+          Flexible(
+            child: ComboBoxDetail(label: "Model Rumah", items: houseTypes, value: selectedHouse,
+              onChanged: (v) { selectedHouse = v; },
+            ),
           ),
           Expanded(child: Row(
             mainAxisAlignment: MainAxisAlignment.end,

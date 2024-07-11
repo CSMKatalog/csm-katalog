@@ -20,10 +20,9 @@ class SalesList extends StatefulWidget {
 
 class _SalesListState extends State<SalesList> {
   List<Client> clientList = [];
-  late Future<dynamic> _future;
   String typeItem = "Semua";
 
-  Future<dynamic> fetchSalesList([ClientType? clientType]) async {
+  void fetchSalesList([ClientType? clientType]) async {
     List<Client> temp = await FirestoreConnector.readClients(clientType);
     setState(() {
         clientList = temp;
@@ -31,11 +30,16 @@ class _SalesListState extends State<SalesList> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    _future = fetchSalesList();
+  void initState() {
+    super.initState();
+    fetchSalesList();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width/3,
+      height: MediaQuery.of(context).size.height,
       child: Column(
         children: [
           ComboBoxDetail(label: "Filter ",
@@ -45,23 +49,19 @@ class _SalesListState extends State<SalesList> {
               setState(() {
               typeItem = e;
                 if(e != "Semua") {
-                  _future = fetchSalesList(stringToClientType(e));
+                  fetchSalesList(stringToClientType(e));
                 } else {
-                  _future = fetchSalesList();
+                  fetchSalesList();
                 }
               });
             }
           ),
           Expanded(
-            child: FutureBuilder(
-              builder: (context, snapshot) {
-                return ListView.builder(
-                    itemCount: clientList.length,
-                    itemBuilder: (context, index) {
-                      return SalesListItem(client: clientList[index], changeScreenListener: widget.changeScreenListener);
-                    }
-                );
-              }, future: _future,
+            child: ListView.builder(
+                itemCount: clientList.length,
+                itemBuilder: (context, index) {
+                  return SalesListItem(client: clientList[index], changeScreenListener: widget.changeScreenListener);
+                }
             ),
           ),
         ],
@@ -87,7 +87,7 @@ class SalesListItem extends StatelessWidget {
       fontWeight: FontWeight.bold,
     );
     TextStyle type = TextStyle(
-      fontSize: 30 * widthCoefficient,
+      fontSize: 26 * widthCoefficient,
       fontWeight: FontWeight.w300,
     );
     TextStyle small = TextStyle(
@@ -102,12 +102,15 @@ class SalesListItem extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(client.name, style: name),
-                Text(client.phoneNumber, style: phone,),
-              ],
+            SizedBox(
+              width: 250,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(client.name, style: name),
+                  Text(client.phoneNumber, style: phone,),
+                ],
+              ),
             ),
             SizedBox(width: 20,),
             Column(

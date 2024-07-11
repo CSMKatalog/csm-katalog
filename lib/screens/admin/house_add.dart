@@ -16,6 +16,21 @@ import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 import 'package:csmkatalog/widgets/desktop/text_list_detail.dart';
 
 
+// class HouseAdd extends StatefulWidget {
+//   const HouseAdd({super.key, required this.house, required this.changeScreenListener, required this.missingValueToast, required this.moreThanPriceToast,
+//     required this.successAddToast, required this.successCreateToast, required this.successDeleteToast});
+//   final House house;
+//   final VoidCallback changeScreenListener;
+//   final VoidCallback missingValueToast;
+//   final VoidCallback moreThanPriceToast;
+//   final VoidCallback successAddToast;
+//   final VoidCallback successCreateToast;
+//   final VoidCallback successDeleteToast;
+//
+//   @override
+//   State<HouseAdd> createState() => _HouseAddState();
+// }
+
 class HouseAdd extends StatefulWidget {
   const HouseAdd({super.key, required this.house, required this.changeScreenListener});
   final House house;
@@ -61,7 +76,7 @@ class _HouseAddState extends State<HouseAdd> {
     int dp = int.parse(dpController.value.text.replaceAll(",", "").replaceAll(".", ""));
 
     if(price < dp) {
-      //TODO: Add toast
+      // widget.missingValueToast();
       return false;
     }
 

@@ -74,8 +74,9 @@ class FirestoreConnector {
   static Future<Map<String, String>> readSettings() async {
     Map<String, String> settings = {};
     await db.collection("settings").get().then((event) {
-      settings["interest_rate"] = event.docs.first.data()['interest_rate'];
-      settings["office_contact"] = event.docs.first.data()['office_contact'];
+      var first = event.docs.first.data();
+      settings["interest_rate"] = first['interest_rate'];
+      settings["office_contact"] = first['office_contact'];
     });
     return settings;
   }

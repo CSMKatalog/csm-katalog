@@ -136,7 +136,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                           });
                         },
                         missingValueToast: () {
-                          showToast("Ada data penting yang belum diisi");
+                          showToast("Silahkan pilih tipe rumah terlebih dahulu");
                         },
                         moreThanPriceValueToast: () {
                           showToast("DP tidak dapat lebih dari harga rumah");

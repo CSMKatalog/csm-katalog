@@ -23,36 +23,34 @@ class _ComboBoxDetailState extends State<ComboBoxDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("${widget.label}:",
-              style: TextStyle(
-                  fontSize: 18
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text("${widget.label}:",
+            style: TextStyle(
+                fontSize: 18
             ),
-            const SizedBox(width: 30.0,),
-            Expanded(
-              child: DropdownButton(
-                isExpanded: true,
-                items: widget.items.map((e) =>
-                    DropdownMenuItem<String>(value: e, child: Text(e),)).toList(),
-                value: dropdownValue,
-                onChanged: (e) {
-                  if (e == null) return;
-                  widget.onChanged(e);
-                  setState(() {
-                    dropdownValue = e;
-                  });
-                }
-              ),
+          ),
+          const SizedBox(width: 30.0,),
+          Expanded(
+            child: DropdownButton(
+              isExpanded: true,
+              items: widget.items.map((e) =>
+                  DropdownMenuItem<String>(value: e, child: Text(e),)).toList(),
+              value: dropdownValue,
+              onChanged: (e) {
+                if (e == null) return;
+                widget.onChanged(e);
+                setState(() {
+                  dropdownValue = e;
+                });
+              }
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
