@@ -10,7 +10,8 @@ import 'package:csmkatalog/widgets/desktop/image_list_detail.dart';
 import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 
 class HouseCover extends StatefulWidget {
-  const HouseCover({super.key});
+  const HouseCover({super.key, required this.successUpdateToast});
+  final VoidCallback successUpdateToast;
 
   @override
   State<HouseCover> createState() => _HouseCoverState();
@@ -31,6 +32,7 @@ class _HouseCoverState extends State<HouseCover> {
       newImageUrls.add(imageUrl);
     }
     await FirestoreConnector.updateCover("coverCSM", {"imageUrls": newImageUrls});
+    widget.successUpdateToast();
     loadImages();
   }
 

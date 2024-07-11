@@ -6,8 +6,13 @@ import '../../firebase/firestore_connector.dart';
 import '../../widgets/desktop/header.dart';
 
 class ChangeSettings extends StatefulWidget {
-  const ChangeSettings({super.key, required this.changeScreenListener});
+  const ChangeSettings({super.key, required this.changeScreenListener,
+    required this.missingValueToast, required this.notANumberToast,
+    required this.successUpdateToast});
   final VoidCallback changeScreenListener;
+  final VoidCallback missingValueToast;
+  final VoidCallback notANumberToast;
+  final VoidCallback successUpdateToast;
 
   @override
   State<ChangeSettings> createState() => _ChangeSettingsState();
@@ -18,8 +23,22 @@ class _ChangeSettingsState extends State<ChangeSettings> {
   final TextEditingController interestController = TextEditingController();
 
   Future<void> uploadSettings() async {
+    if(interestController.value.text.isEmpty ||
+        contactController.value.text.isEmpty) {
+      widget.missingValueToast();
+      return;
+    }
+
+    double interest;
+    try {
+     interest = double.parse(interestController.value.text.replaceAll(",", "."));
+    } catch (formatException) {
+      widget.notANumberToast();
+      return;
+    }
+
     await FirestoreConnector.updateSettings("settingCSM", {
-      "interest_rate": interestController.value.text,
+      "interest_rate": interest.toString(),
       "office_contact": contactController.value.text,
     });
     widget.changeScreenListener();
@@ -29,6 +48,7 @@ class _ChangeSettingsState extends State<ChangeSettings> {
     Map<String, String> temp = await FirestoreConnector.readSettings();
     contactController.text = temp['office_contact']!;
     interestController.text = temp['interest_rate']!;
+    widget.successUpdateToast();
   }
 
   @override

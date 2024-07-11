@@ -11,10 +11,23 @@ import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 
 class SalesAdd extends StatefulWidget {
-  const SalesAdd({super.key, required this.client, required this.changeScreenListener, required this.progressScreenListener});
+  const SalesAdd({super.key,
+    required this.client,
+    required this.changeScreenListener,
+    required this.progressScreenListener,
+    required this.missingValueToast,
+    required this.tooLongToast,
+    required this.successUpdateToast,
+    required this.successCreateToast,
+    required this.successDeleteToast});
   final Client client;
   final VoidCallback changeScreenListener;
   final VoidCallback progressScreenListener;
+  final VoidCallback missingValueToast;
+  final VoidCallback tooLongToast;
+  final VoidCallback successUpdateToast;
+  final VoidCallback successCreateToast;
+  final VoidCallback successDeleteToast;
 
   @override
   State<SalesAdd> createState() => _SalesAddState();
@@ -23,7 +36,6 @@ class SalesAdd extends StatefulWidget {
 class _SalesAddState extends State<SalesAdd> {
   _SalesAddState ();
 
-  // TODO: Ini untuk data-data yang diperlukan untuk menampung data input
   late List<Widget> fields;
   final houseController = TextEditingController();
   final nameController = TextEditingController();
@@ -33,6 +45,11 @@ class _SalesAddState extends State<SalesAdd> {
   String headerText = "Tambah Data Klien Baru";
 
   Future<void> uploadClientDetail() async {
+    if(nameController.value.text.isEmpty || phoneController.value.text.isEmpty) {
+      widget.missingValueToast();
+      return;
+    }
+
     Client client =  Client(
       clientID: widget.client.clientID,
       clientType: stringToClientType(typeItem),
@@ -43,18 +60,26 @@ class _SalesAddState extends State<SalesAdd> {
       progress: widget.client.clientID.isNotEmpty ? widget.client.progress : getBlankProgress()
     );
 
+    if(noteController.value.text.length > 200) {
+      widget.tooLongToast();
+      return;
+    }
+
     if (widget.client.clientID.isNotEmpty) {
       await FirestoreConnector.updateClient(widget.client.clientID, client)
           .then((value) => widget.changeScreenListener());
+      widget.successUpdateToast();
     } else {
       await FirestoreConnector.createClient(client)
           .then((value) => widget.changeScreenListener());
+      widget.successCreateToast();
     }
   }
 
   Future<void> deleteClientDetail() async {
     await FirestoreConnector.deleteClient(widget.client.clientID)
         .then((value) => widget.changeScreenListener());
+    widget.successDeleteToast();
   }
 
   @override

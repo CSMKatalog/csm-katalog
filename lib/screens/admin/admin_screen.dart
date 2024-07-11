@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:csmkatalog/screens/admin/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,29 +25,75 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  void missingValueToast() {
+  void showToast(String message) async {
+    setState(() {
+      toastOverlay = Toast(message: message);
+      timer = Timer(Duration(seconds: 2), () {
+        setState(() {
+          toastOverlay = null;
+        });
+      });
+    });
+  }
 
+  void missingValueToast() {
+    showToast("Ada data penting yang belum diisi");
+  }
+
+  void notANumberToast() {
+    showToast("Ada data angka yang tidak valid");
+  }
+
+  void moreThanPriceToast() {
+    showToast("DP tidak dapat lebih dari harga rumah");
+  }
+
+  void tooLongToast() {
+    showToast("Deskripsi rumah terlalu panjang");
+  }
+
+  void successUpdateToast() {
+    showToast("Data berhasil diedit");
+  }
+
+  void successCreateToast() {
+    showToast("Data berhasil ditambah");
+  }
+
+  void successDeleteToast() {
+    showToast("Data berhasil dihapus");
   }
 
   Widget? toastOverlay;
+  Timer? timer;
 
   Widget getHouseAdd() {
     return HouseAdd(
-        house: House.empty(),
-        changeScreenListener: () {
-          setState(() { selectedScreen = getHouseList(); });
-        },
+      house: House.empty(),
+      changeScreenListener: () {
+        setState(() { selectedScreen = getHouseList(); });
+      },
+      missingValueToast: missingValueToast,
+      moreThanPriceToast: moreThanPriceToast,
+      tooLongToast: tooLongToast,
+      successUpdateToast: successUpdateToast,
+      successCreateToast: successCreateToast,
+      successDeleteToast: successDeleteToast,
     );
   }
 
   Widget getHouseEdit(House house) {
     return HouseAdd(
-        house: house,
-        changeScreenListener: () {
-          setState(() {
-            selectedScreen = getHouseList();
-          });
-        }
+      house: house,
+      changeScreenListener: () {
+        setState(() { selectedScreen = getHouseList(); });
+      },
+      missingValueToast: missingValueToast,
+      moreThanPriceToast: moreThanPriceToast,
+      tooLongToast: tooLongToast,
+      successUpdateToast: successUpdateToast,
+      successCreateToast: successCreateToast,
+      successDeleteToast: successDeleteToast,
     );
   }
 
@@ -58,18 +106,23 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   Widget getCover() {
-    return HouseCover();
+    return HouseCover(successUpdateToast: successUpdateToast,);
   }
 
   Widget getClientAdd() {
     return SalesAdd(
-        client: Client.empty(),
-        changeScreenListener: () {
-          setState(() { selectedScreen = getClientList(); });
-        },
-        progressScreenListener: () {
-          setState(() { selectedScreen = getClientProgress(Client.empty()); });
-        },
+      client: Client.empty(),
+      changeScreenListener: () {
+        setState(() { selectedScreen = getClientList(); });
+      },
+      progressScreenListener: () {
+        setState(() { selectedScreen = getClientProgress(Client.empty()); });
+      },
+      missingValueToast: missingValueToast,
+      tooLongToast: tooLongToast,
+      successUpdateToast: successUpdateToast,
+      successCreateToast: successCreateToast,
+      successDeleteToast: successDeleteToast,
     );
   }
 
@@ -82,6 +135,11 @@ class _AdminScreenState extends State<AdminScreen> {
       progressScreenListener: () {
         setState(() { selectedScreen = getClientProgress(client); });
       },
+      missingValueToast: missingValueToast,
+      tooLongToast: tooLongToast,
+      successUpdateToast: successUpdateToast,
+      successCreateToast: successCreateToast,
+      successDeleteToast: successDeleteToast,
     );
   }
 
@@ -101,9 +159,10 @@ class _AdminScreenState extends State<AdminScreen> {
 
   Widget getChangeSettings() {
     return ChangeSettings(
-      changeScreenListener: () {
-        setState(() { selectedScreen = getHouseList(); });
-      },
+      changeScreenListener: () { setState(() { selectedScreen = getHouseList(); }); },
+      missingValueToast: missingValueToast,
+      notANumberToast: notANumberToast,
+      successUpdateToast: successUpdateToast,
     );
   }
 
@@ -125,35 +184,46 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blueAccent)
-        ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Sidebar(
-                applicationName: "Penyusun Katalog",
-                dashboardScreens: dashboardScreens,
-                changeScreenListener: (widget) {
-                  setState(() {
-                    selectedScreen = widget;
-                  });
-                },
+      body: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueAccent)
+            ),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Sidebar(
+                    applicationName: "Penyusun Katalog",
+                    dashboardScreens: dashboardScreens,
+                    changeScreenListener: (widget) {
+                      setState(() {
+                        selectedScreen = widget;
+                      });
+                    },
+                  ),
+                  // Main dashboard
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width > 720) ? (MediaQuery.of(context).size.width*2.95/4) : (MediaQuery.of(context).size.width-190),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 8.0, right: 8.0),
+                      child: selectedScreen,
+                    ),
+                  ),
+                ],
               ),
-              // Main dashboard
-              SizedBox(
-                width: (MediaQuery.of(context).size.width > 720) ? (MediaQuery.of(context).size.width*2.95/4) : (MediaQuery.of(context).size.width-190),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 8.0, right: 8.0),
-                  child: selectedScreen,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          if(toastOverlay != null) Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                toastOverlay!
+              ]
+          ),
+        ],
       )
     );
   }

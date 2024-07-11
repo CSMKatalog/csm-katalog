@@ -15,33 +15,26 @@ import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 import 'package:csmkatalog/widgets/desktop/text_list_detail.dart';
 
+
 class HouseAdd extends StatefulWidget {
-  const HouseAdd({super.key, required this.house, required this.changeScreenListener});
+  const HouseAdd({super.key, required this.house, required this.changeScreenListener, required this.missingValueToast, required this.moreThanPriceToast,
+    required this.tooLongToast, required this.successUpdateToast, required this.successCreateToast, required this.successDeleteToast});
   final House house;
   final VoidCallback changeScreenListener;
+  final VoidCallback missingValueToast;
+  final VoidCallback moreThanPriceToast;
+  final VoidCallback tooLongToast;
+  final VoidCallback successUpdateToast;
+  final VoidCallback successCreateToast;
+  final VoidCallback successDeleteToast;
 
   @override
   State<HouseAdd> createState() => _HouseAddState();
 }
-// class HouseAdd extends StatefulWidget {
-//   const HouseAdd({super.key, required this.house, required this.changeScreenListener, required this.missingValueToast, required this.moreThanPriceToast,
-//     required this.successAddToast, required this.successCreateToast, required this.successDeleteToast});
-//   final House house;
-//   final VoidCallback changeScreenListener;
-//   final VoidCallback missingValueToast;
-//   final VoidCallback moreThanPriceToast;
-//   final VoidCallback successAddToast;
-//   final VoidCallback successCreateToast;
-//   final VoidCallback successDeleteToast;
-//
-//   @override
-//   State<HouseAdd> createState() => _HouseAddState();
-// }
 
 class _HouseAddState extends State<HouseAdd> {
   _HouseAddState ();
 
-  // TODO: Ini untuk data-data yang diperlukan untuk menampung data input
   final nameController = TextEditingController();
   final landAreaController = TextEditingController();
   final houseAreaController = TextEditingController();
@@ -66,16 +59,31 @@ class _HouseAddState extends State<HouseAdd> {
     return imageUrls;
   }
 
-  // TODO: Ini untuk ubah data yang disimpan dan upload
-  Future<bool> uploadHouseDetail() async {
+  Future<void> uploadHouseDetail() async {
+    if(nameController.value.text.isEmpty ||
+        typeController.value.text.isEmpty ||
+        priceController.value.text.isEmpty ||
+        dpController.value.text.isEmpty ||
+        houseAreaController.value.text.isEmpty ||
+        landAreaController.value.text.isEmpty ||
+        descriptionController.value.text.isEmpty) {
+      widget.missingValueToast();
+      return;
+    }
+
     double houseArea = double.parse(houseAreaController.value.text.replaceAll(",", "."));
     double landArea = double.parse(landAreaController.value.text.replaceAll(",", "."));
     int price = int.parse(priceController.value.text.replaceAll(",", "").replaceAll(".", ""));
     int dp = int.parse(dpController.value.text.replaceAll(",", "").replaceAll(".", ""));
 
+    if(descriptionController.value.text.length > 200) {
+      widget.tooLongToast();
+      return;
+    }
+
     if(price < dp) {
-      // widget.missingValueToast();
-      return false;
+      widget.missingValueToast();
+      return;
     }
 
     House house =  House(
@@ -96,18 +104,17 @@ class _HouseAddState extends State<HouseAdd> {
     if (widget.house.modelID.isNotEmpty) {
       await FirestoreConnector.updateHouse(widget.house.modelID, house)
           .then((value) => widget.changeScreenListener());
+      widget.successUpdateToast();
     } else {
       await FirestoreConnector.createHouse(house)
           .then((value) => widget.changeScreenListener());
+      widget.successCreateToast();
     }
-    return true;
+    return;
   }
 
   Future<void> reuploadHouseDetail() async {
-    if (await uploadHouseDetail()) {
-      //TODO: Add toast
-      return;
-    }
+    await uploadHouseDetail();
     for (var imageUrl in widget.house.imageUrls) {
       FirestorageConnector.deleteFile(Uri.parse(imageUrl).pathSegments.last);
     }
@@ -119,6 +126,7 @@ class _HouseAddState extends State<HouseAdd> {
     }
     await FirestoreConnector.deleteHouse(widget.house.modelID)
         .then((value) => widget.changeScreenListener());
+    widget.successDeleteToast();
   }
 
   Future<void> openFile() async {

@@ -126,7 +126,7 @@ class ResultsOverlay extends StatelessWidget {
                   )
               ),
               const Text(
-                  "Anda juga dapat menghubungi kami melalui nomor berikut",
+                  "Anda juga dapat menghubungi kami melalui",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
