@@ -15,7 +15,6 @@ import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 import 'package:csmkatalog/widgets/desktop/text_list_detail.dart';
 
-
 class HouseAdd extends StatefulWidget {
   const HouseAdd({super.key, required this.house, required this.changeScreenListener});
   final House house;
@@ -24,7 +23,6 @@ class HouseAdd extends StatefulWidget {
   @override
   State<HouseAdd> createState() => _HouseAddState();
 }
-
 // class HouseAdd extends StatefulWidget {
 //   const HouseAdd({super.key, required this.house, required this.changeScreenListener, required this.missingValueToast, required this.moreThanPriceToast,
 //     required this.successAddToast, required this.successCreateToast, required this.successDeleteToast});

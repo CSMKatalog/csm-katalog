@@ -2,7 +2,6 @@ import 'package:csmkatalog/screens/admin/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/models/house.dart';
 import 'package:csmkatalog/models/client.dart';
 import 'package:csmkatalog/utils/dashboard_screen.dart';
@@ -12,6 +11,7 @@ import 'package:csmkatalog/screens/admin/house_list.dart';
 import 'package:csmkatalog/screens/admin/house_add.dart';
 import 'package:csmkatalog/screens/sales/sales_list.dart';
 import 'package:csmkatalog/screens/sales/sales_add.dart';
+import 'package:csmkatalog/widgets/desktop/toast.dart';
 
 import '../sales/sales_progress.dart';
 
@@ -34,7 +34,7 @@ class _AdminScreenState extends State<AdminScreen> {
         house: House.empty(),
         changeScreenListener: () {
           setState(() { selectedScreen = getHouseList(); });
-        }
+        },
     );
   }
 
