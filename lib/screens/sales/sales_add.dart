@@ -73,20 +73,21 @@ class _SalesAddState extends State<SalesAdd> {
 
     fields.add(TextDetail(label: "Nama", hintText: "Nama klien", textEditingController: nameController),);
     fields.add(const SizedBox());
-    fields.add(ComboBoxDetail(label: "Tipe Klien", onChanged: (e) { typeItem = e; }, value: typeItem,
+    fields.add(ComboBoxDetail(label: "Status Klien", onChanged: (e) { typeItem = e; }, value: typeItem,
       items: ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal"],));
     fields.add(TextDetail(label: "Model Rumah Terkait", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController),);
     fields.add(TextDetail(label: "Nomor Telepon / Email", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController),);
     fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController),);
-    fields.add(Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SubmitButton(
-            text: "Progress",
-            onPressed: () async {widget.progressScreenListener();}),
-      ],
-    ));
+
     if (widget.client.clientID.isNotEmpty) {
+      fields.add(Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SubmitButton(
+              text: "Progress",
+              onPressed: () async {widget.progressScreenListener();}),
+        ],
+      ));
       fields.add(Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -95,6 +96,7 @@ class _SalesAddState extends State<SalesAdd> {
         ],
       ));
     } else {
+      fields.add(SizedBox());
       fields.add(Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

@@ -28,6 +28,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   Widget? catalogWidgetOverlay;
   Widget? toastOverlay;
   String officeContact = '';
+  double interest = 3.0975;
   late Timer timer;
 
   void fetchHouseList() async {
@@ -44,6 +45,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     Map<String, String> temp = await FirestoreConnector.readSettings();
     setState(() {
       officeContact = temp['office_contact']!;
+      interest = double.parse(temp['interest_rate']!);
     });
   }
 
@@ -134,12 +136,15 @@ class _CatalogScreenState extends State<CatalogScreen> {
                           });
                         },
                         missingValueToast: () {
-                          showToast("Tolong isi kolom yang kosong");
+                          showToast("Ada data penting yang belum diisi");
                         },
-                        incorrectValueToast: () {
-                          showToast("DP tidak dapat kurang dari harga rumah");
+                        moreThanPriceValueToast: () {
+                          showToast("DP tidak dapat lebih dari harga rumah");
                         },
-                        houseList: houseList,
+                        lessThanMinimumValueToast: () {
+                          showToast("DP tidak dapat kurang dari DP minimum");
+                        },
+                        houseList: houseList, interest: interest,
                       );
                     });
                   },
@@ -165,7 +170,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                             });
                           },
                           missingValueToast: () {
-                            showToast("Tolong isi kolom yang kosong");
+                            showToast("Ada data penting yang belum diisi");
                           },
                           houseList: houseList, officeContact: officeContact,
                         );

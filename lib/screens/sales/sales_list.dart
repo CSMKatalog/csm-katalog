@@ -1,13 +1,18 @@
+import 'dart:developer';
+
+import 'package:csmkatalog/widgets/catalog/combobox_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:csmkatalog/models/client.dart';
+import 'package:flutter/widgets.dart';
+
+import '../../firebase/firestore_connector.dart';
 
 class SalesList extends StatefulWidget {
-  SalesList({super.key, required this.changeScreenListener, required this.loadCallback});
+  SalesList({super.key, required this.changeScreenListener});
   Function(Client client) changeScreenListener;
-  AsyncValueGetter<List<Client>> loadCallback;
 
   @override
   State<SalesList> createState() => _SalesListState();
@@ -16,15 +21,13 @@ class SalesList extends StatefulWidget {
 class _SalesListState extends State<SalesList> {
   List<Client> clientList = [];
   late Future<dynamic> _future;
+  String typeItem = "Semua";
 
-  Future<dynamic> fetchSalesList() async {
-    List<Client> temp = await widget.loadCallback();
-    clientList = temp;
-  }
-
-  @override
-  void initState() {
-    super.initState();
+  Future<dynamic> fetchSalesList([ClientType? clientType]) async {
+    List<Client> temp = await FirestoreConnector.readClients(clientType);
+    setState(() {
+        clientList = temp;
+    });
   }
 
   @override
@@ -33,15 +36,35 @@ class _SalesListState extends State<SalesList> {
 
     return SizedBox(
       width: MediaQuery.of(context).size.width/3,
-      child: FutureBuilder(
-        builder: (context, snapshot) {
-          return ListView.builder(
-              itemCount: clientList.length,
-              itemBuilder: (context, index) {
-                return SalesListItem(client: clientList[index], changeScreenListener: widget.changeScreenListener);
-              }
-          );
-        }, future: _future,
+      child: Column(
+        children: [
+          ComboBoxDetail(label: "Filter ",
+            items: ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal", "Semua"],
+            value: typeItem,
+            onChanged: (e) {
+              setState(() {
+              typeItem = e;
+                if(e != "Semua") {
+                  _future = fetchSalesList(stringToClientType(e));
+                } else {
+                  _future = fetchSalesList();
+                }
+              });
+            }
+          ),
+          Expanded(
+            child: FutureBuilder(
+              builder: (context, snapshot) {
+                return ListView.builder(
+                    itemCount: clientList.length,
+                    itemBuilder: (context, index) {
+                      return SalesListItem(client: clientList[index], changeScreenListener: widget.changeScreenListener);
+                    }
+                );
+              }, future: _future,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -10,11 +10,13 @@ import '../../models/house.dart';
 import 'catalog_widget.dart';
 
 class CalculatorOverlay extends StatefulWidget {
-  const CalculatorOverlay({super.key, required this.houseList, required this.closeWidgetListener, required this.missingValueToast, required this.incorrectValueToast});
+  const CalculatorOverlay({super.key, required this.houseList, required this.interest, required this.closeWidgetListener, required this.missingValueToast, required this.moreThanPriceValueToast, required this.lessThanMinimumValueToast});
   final List<House> houseList;
+  final double interest;
   final VoidCallback closeWidgetListener;
   final VoidCallback missingValueToast;
-  final VoidCallback incorrectValueToast;
+  final VoidCallback moreThanPriceValueToast;
+  final VoidCallback lessThanMinimumValueToast;
 
   @override
   State<CalculatorOverlay> createState() => _CalculatorOverlayState();
@@ -24,6 +26,7 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
   final priceController = TextEditingController();
   final dpController = TextEditingController();
   final interestController = TextEditingController();
+  int minimumDP = 0;
 
   late List<String> houseTypes = [...widget.houseList.where((e) => e.name.isNotEmpty).map((e) => e.name).toList(), "Belum Tentu"];
   late String selectedHouse = houseTypes.last;
@@ -32,7 +35,7 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
   @override
   void initState() {
     super.initState();
-    interestController.text = "3,09759";
+    interestController.text = widget.interest.toString();
   }
 
   @override
@@ -47,6 +50,7 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
                 House house = widget.houseList.firstWhere((e) => e.name == v, orElse: House.empty);
                 priceController.text = house.modelID.isNotEmpty ? house.price.toString() : "";
                 dpController.text = house.modelID.isNotEmpty ? house.downPayment.toString() : "";
+                minimumDP = house.modelID.isNotEmpty ? house.price : 0;
               }),
           TextDetail(
             label: "Harga Jual Rumah",
@@ -89,8 +93,13 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
                   double interest = double.parse(interestController.value.text.replaceAll(",", ".")) / 100;
                   List<int> years = [5, 10, 15, 20];
 
-                  if(price < downPayment) {
-                    widget.incorrectValueToast();
+                  if(price < price) {
+                    widget.moreThanPriceValueToast();
+                    return;
+                  }
+
+                  if(price > minimumDP) {
+                    widget.lessThanMinimumValueToast();
                     return;
                   }
 
@@ -103,8 +112,8 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
                         return TextDetail(
                           label: "$e tahun",
                           textController: _,
-                          prefix: "± Rp.",
-                          suffix: ",— / bulan",
+                          prefix: "±Rp.",
+                          suffix: ",—/bln",
                           numberInput: true,
                           readOnly: true,
                         );

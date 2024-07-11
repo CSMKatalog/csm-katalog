@@ -41,7 +41,9 @@ class FirestoreConnector {
         clients.add(client);
       }
     });
-    clients = clients.where((e) => e.clientType == clientType).toList();
+    if(clientType != null) {
+      clients = clients.where((e) => e.clientType == clientType).toList();
+    }
     return clients;
   }
 

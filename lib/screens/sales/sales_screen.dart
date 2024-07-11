@@ -26,7 +26,7 @@ class _SalesScreenState extends State<SalesScreen> {
     return SalesAdd(
       client: Client.empty(),
       changeScreenListener: () {
-        setState(() { selectedScreen = getActiveClientList(); });
+        setState(() { selectedScreen = getClientList(); });
       },
       progressScreenListener: () {
         setState(() { selectedScreen = getClientProgress(Client.empty()); });
@@ -38,7 +38,7 @@ class _SalesScreenState extends State<SalesScreen> {
     return SalesAdd(
       client: client,
       changeScreenListener: () {
-        setState(() { selectedScreen = getActiveClientList(); });
+        setState(() { selectedScreen = getClientList(); });
       },
       progressScreenListener: () {
         setState(() { selectedScreen = getClientProgress(client); });
@@ -49,46 +49,21 @@ class _SalesScreenState extends State<SalesScreen> {
   Widget getClientProgress(Client client) {
     return SalesProgress(client: client, changeScreenListener: () {
       setState(() {
-        selectedScreen = getPotentialClientList();
+        selectedScreen = getClientList();
       });
     });
   }
 
-  Widget getPotentialClientList() {
+  Widget getClientList() {
     return SalesList(
       changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
-      loadCallback: () => FirestoreConnector.readClients(ClientType.interested),
-    );
-  }
-
-  Widget getActiveClientList() {
-    return SalesList(
-      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
-      loadCallback: () => FirestoreConnector.readClients(ClientType.inProgress),
-    );
-  }
-
-  Widget getInactiveClientList() {
-    return SalesList(
-      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
-      loadCallback: () => FirestoreConnector.readClients(ClientType.cancelled),
-    );
-  }
-
-  Widget getPastClientList() {
-    return SalesList(
-      changeScreenListener: (Client client) {setState(() {selectedScreen = getClientEdit(client);});},
-      loadCallback: () => FirestoreConnector.readClients(ClientType.bought),
     );
   }
 
   _SalesScreenState () {
     dashboardScreens = [
-      Screen(label: "Daftar Peminat", icon: Icons.abc_outlined, widgetFunction: getPotentialClientList),
-      Screen(label: "Daftar Klien", icon: Icons.abc_outlined, widgetFunction: getActiveClientList),
+      Screen(label: "Daftar Klien", icon: Icons.abc_outlined, widgetFunction: getClientList),
       Screen(label: "Tambah Klien", icon: Icons.abc_outlined, widgetFunction: getClientAdd),
-      Screen(label: "Riwayat Pembelian", icon: Icons.abc_outlined, widgetFunction: getPastClientList),
-      Screen(label: "Riwayat Penawaran", icon: Icons.abc_outlined, widgetFunction: getInactiveClientList),
     ];
     selectedScreen = dashboardScreens[0].widgetFunction();
   }
