@@ -1,4 +1,5 @@
 import 'package:csmkatalog/screens/admin/settings.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:csmkatalog/firebase/firestore_connector.dart';
@@ -22,6 +23,12 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
+  void missingValueToast() {
+
+  }
+
+  Widget? toastOverlay;
+
   Widget getHouseAdd() {
     return HouseAdd(
         house: House.empty(),

@@ -9,7 +9,7 @@ class Toast extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(50),
       child: Container(
-        width: MediaQuery.of(context).size.width/3,
+        width: MediaQuery.of(context).size.width/2,
         height: 50,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),

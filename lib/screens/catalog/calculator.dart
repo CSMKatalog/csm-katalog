@@ -52,7 +52,7 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
                   House house = widget.houseList.firstWhere((e) => e.name == v, orElse: House.empty);
                   priceController.text = house.modelID.isNotEmpty ? house.price.toString() : "";
                   dpController.text = house.modelID.isNotEmpty ? house.downPayment.toString() : "";
-                  minimumDP = house.modelID.isNotEmpty ? house.price : 0;
+                  minimumDP = house.modelID.isNotEmpty ? house.downPayment : 0;
                 }),
           ),
           TextDetail(
