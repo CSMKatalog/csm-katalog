@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +33,6 @@ class _FileListDetailState extends State<FileListDetail> {
       String fileName = "file-${DateTime.now()}";
       String imageUrl = await FirestorageConnector.uploadFile(image, fileName, "documents/");
       widget.fileAddListener(imageUrl);
-      setState(() {
-        widget.listOfUrls.add(imageUrl);
-      });
     }
   }
 
@@ -69,9 +68,6 @@ class _FileListDetailState extends State<FileListDetail> {
                         url: listOfUrls[index],
                         deleteFile: () {
                           widget.fileDeleteListener(index);
-                          setState(() {
-                            listOfUrls.removeAt(index);
-                          });
                         },
                       );
                     },
@@ -122,7 +118,9 @@ class _FileListDetailItemState extends State<FileListDetailItem> {
   bool isHovered = false;
 
   Future<void> deleteDocument() async {
-    FirestorageConnector.deleteFile(Uri.parse(widget.url).pathSegments.last);
+    String uri = Uri.parse(widget.url).pathSegments.last;
+    log(uri);
+    FirestorageConnector.deleteFile(uri);
   }
 
   @override

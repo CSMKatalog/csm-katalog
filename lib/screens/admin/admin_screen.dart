@@ -145,10 +145,8 @@ class _AdminScreenState extends State<AdminScreen> {
 
   Widget getClientProgress(Client client) {
     return SalesProgress(client: client, changeScreenListener: () {
-      setState(() {
-        selectedScreen = getClientList();
-      });
-    });
+      setState(() { selectedScreen = getClientList(); });
+    }, successUpdateToast: successUpdateToast,);
   }
 
   Widget getClientList() {

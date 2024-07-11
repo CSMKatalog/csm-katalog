@@ -41,6 +41,7 @@ class _ChangeSettingsState extends State<ChangeSettings> {
       "interest_rate": interest.toString(),
       "office_contact": contactController.value.text,
     });
+    widget.successUpdateToast();
     widget.changeScreenListener();
   }
 
@@ -48,7 +49,6 @@ class _ChangeSettingsState extends State<ChangeSettings> {
     Map<String, String> temp = await FirestoreConnector.readSettings();
     contactController.text = temp['office_contact']!;
     interestController.text = temp['interest_rate']!;
-    widget.successUpdateToast();
   }
 
   @override

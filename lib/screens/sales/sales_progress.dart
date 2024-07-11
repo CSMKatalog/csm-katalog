@@ -10,15 +10,16 @@ import 'package:csmkatalog/models/client.dart';
 import 'package:csmkatalog/widgets/desktop/header.dart';
 import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/checkbox_detail.dart';
-import 'package:csmkatalog/widgets/desktop/file_list_detail.dart';
+import 'package:csmkatalog/widgets/desktop/document_list_detail.dart';
 
 import '../../firebase/firestore_connector.dart';
 import '../../utils/dashboard_screen.dart';
 
 class SalesProgress extends StatefulWidget {
-  const SalesProgress({super.key, required this.client, required this.changeScreenListener});
+  const SalesProgress({super.key, required this.client, required this.changeScreenListener, required this.successUpdateToast});
   final Client client;
   final VoidCallback changeScreenListener;
+  final VoidCallback successUpdateToast;
 
   @override
   State<SalesProgress> createState() => _SalesProgressState();
@@ -28,8 +29,11 @@ class _SalesProgressState extends State<SalesProgress> {
   late Client client;
 
   Future<void> uploadClientDetail() async {
-    await FirestoreConnector.updateClient(client.clientID, client)
-        .then((value) => widget.changeScreenListener());
+    Client updatedClient = await FirestoreConnector.updateClient(client.clientID, client);
+    setState(() {
+      client = updatedClient;
+    });
+    widget.successUpdateToast();
   }
 
   Widget getKTPKKScreen() {
@@ -59,7 +63,6 @@ class _SalesProgressState extends State<SalesProgress> {
     );
   }
 
-
   Widget getDPScreen() {
     return DocumentProgress(
         label: "DP telah dibayar dan dikonfirmasi",
@@ -81,7 +84,6 @@ class _SalesProgressState extends State<SalesProgress> {
     );
   }
 
-
   Widget getBIScreen() {
     return DocumentProgress(
         label: "Pengecek BI telah dilakukan",
@@ -102,7 +104,6 @@ class _SalesProgressState extends State<SalesProgress> {
         onSubmit: uploadClientDetail
     );
   }
-
 
   Widget getDocumentsScreen() {
     return DocumentProgress(
@@ -191,7 +192,6 @@ class _SalesProgressState extends State<SalesProgress> {
     );
   }
 
-
   Widget getSurveyScreen() {
     return DocumentProgress(
         label: "Survei telah dilakukan",
@@ -213,7 +213,6 @@ class _SalesProgressState extends State<SalesProgress> {
     );
   }
 
-
   Widget getCreditScreen() {
     return DocumentProgress(
         label: "Akad kredit telah diterima",
@@ -234,7 +233,6 @@ class _SalesProgressState extends State<SalesProgress> {
         onSubmit: uploadClientDetail
     );
   }
-
 
   Widget getKeyScreen() {
     return DocumentProgress(
@@ -262,13 +260,13 @@ class _SalesProgressState extends State<SalesProgress> {
     super.initState();
     client = widget.client;
     documents = [
-      Screen(label: "KTP KK", icon: Icons.abc_outlined, widgetFunction: getKTPKKScreen),
-      Screen(label: "DP", icon: Icons.abc_outlined, widgetFunction: getDPScreen),
-      Screen(label: "BI", icon: Icons.abc_outlined, widgetFunction: getBIScreen),
-      Screen(label: "Dokumen", icon: Icons.abc_outlined, widgetFunction: getDocumentsScreen),
-      Screen(label: "Survei", icon: Icons.abc_outlined, widgetFunction: getSurveyScreen),
-      Screen(label: "Kredit", icon: Icons.abc_outlined, widgetFunction: getCreditScreen),
-      Screen(label: "Kunci", icon: Icons.abc_outlined, widgetFunction: getKeyScreen),
+      Screen(label: "KTP KK", icon: Icons.perm_identity, widgetFunction: getKTPKKScreen),
+      Screen(label: "DP", icon: Icons.payments_outlined, widgetFunction: getDPScreen),
+      Screen(label: "BI", icon: Icons.account_balance_outlined, widgetFunction: getBIScreen),
+      Screen(label: "Dokumen", icon: Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
+      Screen(label: "Survei", icon: Icons.search, widgetFunction: getSurveyScreen),
+      Screen(label: "Kredit", icon: Icons.credit_card, widgetFunction: getCreditScreen),
+      Screen(label: "Kunci", icon: Icons.key, widgetFunction: getKeyScreen),
     ];
     selectedScreen = documents[0].widgetFunction();
   }
@@ -288,7 +286,7 @@ class _SalesProgressState extends State<SalesProgress> {
               setState(() {
                 selectedScreen = e.widgetFunction();
               });
-            }
+            },
         )).toList()),
         Flexible(child: selectedScreen),
       ],
