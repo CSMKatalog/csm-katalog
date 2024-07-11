@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:csmkatalog/firebase_options.dart';
-import 'package:csmkatalog/screens/catalog_screen.dart';
+import 'package:csmkatalog/screens/catalog/catalog_screen.dart';
 import 'package:csmkatalog/screens/admin/admin_screen.dart';
 import 'package:csmkatalog/screens/sales/sales_screen.dart';
 
@@ -37,8 +37,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
-      // home: const CatalogScreen(),
-      home: const AdminScreen(),
+      home: const CatalogScreen(),
+      // home: const AdminScreen(),
       // home: const SalesScreen(),
     );
   }

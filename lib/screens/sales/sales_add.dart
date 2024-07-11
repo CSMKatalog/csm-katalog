@@ -74,9 +74,9 @@ class _SalesAddState extends State<SalesAdd> {
     fields.add(TextDetail(label: "Nama", hintText: "Nama klien", textEditingController: nameController),);
     fields.add(const SizedBox());
     fields.add(ComboBoxDetail(label: "Tipe Klien", onChanged: (e) { typeItem = e; }, value: typeItem,
-      items: ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal", "Belum Tentu"],));
+      items: ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal"],));
     fields.add(TextDetail(label: "Model Rumah Terkait", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController),);
-    fields.add(TextDetail(label: "Nomor Telepon", hintText: "Nomor telepon kontak klien", textEditingController: phoneController),);
+    fields.add(TextDetail(label: "Nomor Telepon / Email", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController),);
     fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController),);
     fields.add(Row(
       mainAxisAlignment: MainAxisAlignment.start,

@@ -21,11 +21,6 @@ class _HouseListState extends State<HouseList> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     _future = fetchHouseList();
 

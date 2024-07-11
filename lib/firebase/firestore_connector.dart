@@ -60,8 +60,21 @@ class FirestoreConnector {
   static Future<Map<String, dynamic>> readCover() async {
     Map<String, dynamic> data = {};
     await db.collection("covers").get().then((event) {
-      data["imageUrls"] = event.docs[0].data()["imageUrls"];
+      data["imageUrls"] = event.docs.first.data()["imageUrls"];
     });
     return data;
+  }
+
+  static Future<void> updateSettings(String id, Map<String, String> settings) async {
+    await db.collection("settings").doc(id).set(settings);
+  }
+
+  static Future<Map<String, String>> readSettings() async {
+    Map<String, String> settings = {};
+    await db.collection("settings").get().then((event) {
+      settings["interest_rate"] = event.docs.first.data()['interest_rate'];
+      settings["office_contact"] = event.docs.first.data()['office_contact'];
+    });
+    return settings;
   }
 }

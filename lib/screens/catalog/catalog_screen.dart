@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:csmkatalog/screens/catalog/catalog_widget.dart';
+import 'package:csmkatalog/screens/catalog/contact_form.dart';
+import 'package:csmkatalog/widgets/catalog/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +10,8 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/models/house.dart';
+
+import 'calculator.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -18,6 +25,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
   bool isVideo = false;
   List<ScrollController> rowControllers = [];
   List<House> houseList = [];
+  Widget? catalogWidgetOverlay;
+  Widget? toastOverlay;
+  String officeContact = '';
+  late Timer timer;
 
   void fetchHouseList() async {
     List<House> temp = await FirestoreConnector.readHouses();
@@ -29,10 +40,35 @@ class _CatalogScreenState extends State<CatalogScreen> {
     });
   }
 
+  void fetchOfficeContact() async {
+    Map<String, String> temp = await FirestoreConnector.readSettings();
+    setState(() {
+      officeContact = temp['office_contact']!;
+    });
+  }
+
+  void showToast(String message) async {
+    setState(() {
+      toastOverlay = Toast(message: message);
+      timer = Timer(Duration(seconds: 2), () {
+        setState(() {
+          toastOverlay = null;
+        });
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
     fetchHouseList();
+    fetchOfficeContact();
   }
 
   @override
@@ -68,14 +104,86 @@ class _CatalogScreenState extends State<CatalogScreen> {
     };
 
     return Scaffold(
-      body: ListView.builder(
-        controller: _columnController,
-        physics: ImmediatePageScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          return CatalogRow(houseList: houseList, houseIndex: index, controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
-        },
-        itemCount: houseList.length,
+      body: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          ListView.builder(
+            controller: _columnController,
+            physics: ImmediatePageScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              return CatalogRow(houseList: houseList, houseIndex: index, controller: rowControllers[index], scrollCallbacks: scrollCallbacks);
+            },
+            itemCount: houseList.length,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CatalogWidget(
+                  icon: Icons.calculate_outlined,
+                  openWidgetListener: () {
+                    setState(() {
+                      catalogWidgetOverlay = CalculatorOverlay(
+                        closeWidgetListener: () {
+                          setState(() {
+                            catalogWidgetOverlay = null;
+                          });
+                        },
+                        missingValueToast: () {
+                          showToast("Tolong isi kolom yang kosong");
+                        },
+                        incorrectValueToast: () {
+                          showToast("DP tidak dapat kurang dari harga rumah");
+                        },
+                        houseList: houseList,
+                      );
+                    });
+                  },
+                ),
+                SizedBox(height: 10,),
+                CatalogWidget(
+                    icon: Icons.phone,
+                    openWidgetListener: () {
+                      setState(() {
+                        catalogWidgetOverlay = ContactFormOverlay(
+                          closeWidgetListener: () {
+                            setState(() {
+                              catalogWidgetOverlay = null;
+                            });
+                          },
+                          submitWidgetListener: () {
+                            setState(() {
+                              catalogWidgetOverlay = ResultsOverlay(closeWidgetListener: () {
+                                setState(() {
+                                  catalogWidgetOverlay = null;
+                                });
+                              }, officeContact: officeContact,);
+                            });
+                          },
+                          missingValueToast: () {
+                            showToast("Tolong isi kolom yang kosong");
+                          },
+                          houseList: houseList, officeContact: officeContact,
+                        );
+                      });
+                    },
+                ),
+                SizedBox(height: 20,),
+              ],
+            ),
+          ),
+          if(catalogWidgetOverlay != null) catalogWidgetOverlay!,
+          if(toastOverlay != null) Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              toastOverlay!
+            ]
+          ),
+        ]
       ),
     );
   }

@@ -54,11 +54,16 @@ class _HouseAddState extends State<HouseAdd> {
   }
 
   // TODO: Ini untuk ubah data yang disimpan dan upload
-  Future<void> uploadHouseDetail() async {
+  Future<bool> uploadHouseDetail() async {
     double houseArea = double.parse(houseAreaController.value.text.replaceAll(",", "."));
     double landArea = double.parse(landAreaController.value.text.replaceAll(",", "."));
     int price = int.parse(priceController.value.text.replaceAll(",", "").replaceAll(".", ""));
     int dp = int.parse(dpController.value.text.replaceAll(",", "").replaceAll(".", ""));
+
+    if(price < dp) {
+      //TODO: Add toast
+      return false;
+    }
 
     House house =  House(
       modelID: widget.house.modelID,
@@ -82,13 +87,17 @@ class _HouseAddState extends State<HouseAdd> {
       await FirestoreConnector.createHouse(house)
           .then((value) => widget.changeScreenListener());
     }
+    return true;
   }
 
   Future<void> reuploadHouseDetail() async {
+    if (await uploadHouseDetail()) {
+      //TODO: Add toast
+      return;
+    }
     for (var imageUrl in widget.house.imageUrls) {
       FirestorageConnector.deleteFile(Uri.parse(imageUrl).pathSegments.last);
     }
-    await uploadHouseDetail();
   }
 
   Future<void> deleteHouseDetail() async {

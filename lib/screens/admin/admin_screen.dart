@@ -1,3 +1,4 @@
+import 'package:csmkatalog/screens/admin/settings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:csmkatalog/firebase/firestore_connector.dart';
@@ -113,6 +114,14 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
+  Widget getChangeSettings() {
+    return ChangeSettings(
+      changeScreenListener: () {
+        setState(() { selectedScreen = getHouseList(); });
+      },
+    );
+  }
+
   _AdminScreenState () {
     dashboardScreens = [
       Screen(label: "Daftar Item", icon: Icons.abc_outlined, widgetFunction: getHouseList),
@@ -124,6 +133,7 @@ class _AdminScreenState extends State<AdminScreen> {
       Screen(label: "Tambah Klien", icon: Icons.abc_outlined, widgetFunction: getClientAdd),
       Screen(label: "Riwayat Pembelian", icon: Icons.abc_outlined, widgetFunction: getPastClientList),
       Screen(label: "Riwayat Penawaran", icon: Icons.abc_outlined, widgetFunction: getInactiveClientList),
+      Screen(label: "Pengaturan", icon: Icons.abc_outlined, widgetFunction: getChangeSettings),
     ];
     selectedScreen = dashboardScreens[0].widgetFunction();
   }
