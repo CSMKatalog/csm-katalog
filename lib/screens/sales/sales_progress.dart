@@ -230,7 +230,7 @@ class _SalesProgressState extends State<SalesProgress> {
 
   Widget getCreditScreen(Client client) {
     return DocumentProgress(
-        label: "Akad kredit telah diterima",
+        label: "Akad kredit telah dilakukan",
         headerText: "Kontrak Akad Kredit",
         value: client.progress['kredit']['done'],
         documents: [
@@ -256,7 +256,7 @@ class _SalesProgressState extends State<SalesProgress> {
         value: client.progress['kunci']['done'],
         documents: [
           FileListDetail(
-            label: "Foto penyerahan kunci",
+            label: "Foto serah terima",
             listOfUrls: client.progress['kunci']['kunci'],
             fileAddListener: (s) { client.progress['kunci']['kunci'].add(s); },
             fileDeleteListener: (i) { client.progress['kunci']['kunci'].removeAt(i); },
@@ -281,7 +281,7 @@ class _SalesProgressState extends State<SalesProgress> {
       ProgressScreen(label: "Dokumen", valueKey: 'pendamping', icon: Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
       ProgressScreen(label: "Survei", valueKey: 'survei', icon: Icons.search, widgetFunction: getSurveyScreen),
       ProgressScreen(label: "Kredit", valueKey: 'kredit', icon: Icons.credit_card, widgetFunction: getCreditScreen),
-      ProgressScreen(label: "Kunci", valueKey: 'kunci', icon: Icons.key, widgetFunction: getKeyScreen),
+      ProgressScreen(label: "Serah Terima", valueKey: 'kunci', icon: Icons.key, widgetFunction: getKeyScreen),
     ];
     selectedScreenFunction = documents[index].widgetFunction;
   }
