@@ -22,7 +22,7 @@ class _CheckboxDetailState extends State<CheckboxDetail> {
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
-      title: Text("${widget.label}:"),
+      title: Text(widget.label),
       value: checkValue,
       onChanged: (b) => {
         widget.onChanged(),

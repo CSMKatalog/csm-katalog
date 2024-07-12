@@ -11,13 +11,13 @@ import '../../models/house.dart';
 import 'catalog_widget.dart';
 
 class CalculatorOverlay extends StatefulWidget {
-  const CalculatorOverlay({super.key, required this.houseList, required this.interest, required this.closeWidgetListener, required this.missingValueToast, required this.moreThanPriceValueToast, required this.lessThanMinimumValueToast});
+  const CalculatorOverlay({super.key, required this.houseList, required this.interest, required this.closeWidgetListener, required this.missingValueToast, required this.moreThanPriceToast, required this.lessThanMinimumToast});
   final List<House> houseList;
   final double interest;
   final VoidCallback closeWidgetListener;
   final VoidCallback missingValueToast;
-  final VoidCallback moreThanPriceValueToast;
-  final VoidCallback lessThanMinimumValueToast;
+  final VoidCallback moreThanPriceToast;
+  final VoidCallback lessThanMinimumToast;
 
   @override
   State<CalculatorOverlay> createState() => _CalculatorOverlayState();
@@ -97,12 +97,12 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
                   List<int> years = [5, 10, 15, 20];
 
                   if(downPayment > price) {
-                    widget.moreThanPriceValueToast();
+                    widget.moreThanPriceToast();
                     return;
                   }
 
                   if(downPayment < minimumDP) {
-                    widget.lessThanMinimumValueToast();
+                    widget.lessThanMinimumToast();
                     return;
                   }
 

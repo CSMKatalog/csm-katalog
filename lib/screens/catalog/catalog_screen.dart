@@ -11,6 +11,7 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/models/house.dart';
 
+import '../../utils/utils.dart';
 import 'calculator.dart';
 
 class CatalogScreen extends StatefulWidget {
@@ -21,8 +22,7 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
-  final ScrollController _columnController = ScrollController();
-  bool isVideo = false;
+  final ScrollController columnController = ScrollController();
   List<ScrollController> rowControllers = [];
   List<House> houseList = [];
   Widget? catalogWidgetOverlay;
@@ -79,21 +79,21 @@ class _CatalogScreenState extends State<CatalogScreen> {
     var width = MediaQuery.of(context).size.width*11/12;
 
     void scrollUp() {
-      var columnOffset = _columnController.offset;
-      _columnController.animateTo(columnOffset - height, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+      var columnOffset = columnController.offset;
+      columnController.animateTo(columnOffset - height, duration: const Duration(milliseconds: 300), curve: Curves.ease);
     }
     void scrollDown() {
-      var columnOffset = _columnController.offset;
-      _columnController.animateTo(columnOffset + height, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+      var columnOffset = columnController.offset;
+      columnController.animateTo(columnOffset + height, duration: const Duration(milliseconds: 300), curve: Curves.ease);
     }
     void scrollLeft() {
-      var curRow = _columnController.offset ~/ height;
+      var curRow = columnController.offset ~/ height;
       var rowController = rowControllers[curRow];
       var rowOffset = rowController.offset;
       rowController.animateTo(rowOffset - width, duration: const Duration(milliseconds: 300), curve: Curves.ease);
     }
     void scrollRight() {
-      var curRow = _columnController.offset ~/ height;
+      var curRow = columnController.offset ~/ height;
       var rowController = rowControllers[curRow];
       var rowOffset = rowController.offset;
       rowController.animateTo(rowOffset + width, duration: const Duration(milliseconds: 300), curve: Curves.ease);
@@ -110,7 +110,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         alignment: AlignmentDirectional.center,
         children: [
           ListView.builder(
-            controller: _columnController,
+            controller: columnController,
             physics: ImmediatePageScrollPhysics(),
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
@@ -138,10 +138,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                         missingValueToast: () {
                           showToast("Silahkan pilih tipe rumah terlebih dahulu");
                         },
-                        moreThanPriceValueToast: () {
+                        moreThanPriceToast: () {
                           showToast("DP tidak dapat lebih dari harga rumah");
                         },
-                        lessThanMinimumValueToast: () {
+                        lessThanMinimumToast: () {
                           showToast("DP tidak dapat kurang dari DP minimum");
                         },
                         houseList: houseList, interest: interest,
@@ -327,11 +327,6 @@ class CatalogImageItem extends StatelessWidget {
 class CatalogDetailItem extends StatelessWidget {
   const CatalogDetailItem({super.key, required this.house});
   final House house;
-
-  String getRupiah(nominal) {
-    var formatter = NumberFormat('###,###,###,###');
-    return "Rp. ${formatter.format(nominal).replaceAll(",", ".")},-";
-  }
 
   @override
   Widget build(BuildContext context) {

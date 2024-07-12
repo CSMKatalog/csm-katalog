@@ -111,7 +111,7 @@ class _SalesProgressState extends State<SalesProgress> {
 
   Widget getDocumentsScreen(Client client) {
     return DocumentProgress(
-        label: "Data-data telah diupload",
+        label: "Data-data telah diterima",
         headerText: "Upload Dokumen-dokumen Pendamping",
         value: client.progress['pendamping']['done'],
         documents: [
