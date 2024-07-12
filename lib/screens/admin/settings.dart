@@ -37,7 +37,7 @@ class _ChangeSettingsState extends State<ChangeSettings> {
       return;
     }
 
-    await FirestoreConnector.updateSettings("settingCSM", {
+    await FirestoreConnector.updateSettings({
       "interest_rate": interest.toString(),
       "office_contact": contactController.value.text,
     });

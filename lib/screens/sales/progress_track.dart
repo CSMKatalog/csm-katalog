@@ -40,10 +40,11 @@ class ProgressTrack extends StatelessWidget {
 }
 
 class ProgressTrackItem extends StatefulWidget {
-  const ProgressTrackItem({super.key, required this.icon, required this.label, required this.changeScreenListener,});
+  const ProgressTrackItem({super.key, required this.icon, required this.label, required this.checkValue, required this.changeScreenListener,});
   final IconData icon;
   final String label;
   final VoidCallback changeScreenListener;
+  final bool checkValue;
 
   @override
   State<ProgressTrackItem> createState() => _ProgressTrackItemState();

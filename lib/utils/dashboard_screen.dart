@@ -13,8 +13,9 @@ class ProgressScreen {
   String label;
   IconData icon;
   Widget Function(Client client) widgetFunction;
+  String valueKey;
 
-  ProgressScreen({required this.label, required this.icon, required this.widgetFunction});
+  ProgressScreen({required this.label, required this.valueKey, required this.icon, required this.widgetFunction});
 }
 
 class LoadingScreen extends StatelessWidget {

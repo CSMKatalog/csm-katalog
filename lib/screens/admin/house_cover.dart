@@ -31,7 +31,7 @@ class _HouseCoverState extends State<HouseCover> {
       String imageUrl = await FirestorageConnector.uploadFile(image, fileName, "images/");
       newImageUrls.add(imageUrl);
     }
-    await FirestoreConnector.updateCover("coverCSM", {"imageUrls": newImageUrls});
+    await FirestoreConnector.updateCover({"imageUrls": newImageUrls});
     widget.successUpdateToast();
     loadImages();
   }

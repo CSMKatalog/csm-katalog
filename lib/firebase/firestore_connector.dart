@@ -60,8 +60,8 @@ class FirestoreConnector {
     await db.collection("clients").doc(id).delete();
   }
 
-  static Future<void> updateCover(String id, Map<String, dynamic> imageList) async {
-    await db.collection("covers").doc(id).set(imageList);
+  static Future<void> updateCover(Map<String, dynamic> imageList) async {
+    await db.collection("covers").doc("coverCSM").set(imageList);
   }
 
   static Future<Map<String, dynamic>> readCover() async {
@@ -72,8 +72,8 @@ class FirestoreConnector {
     return data;
   }
 
-  static Future<void> updateSettings(String id, Map<String, String> settings) async {
-    await db.collection("settings").doc(id).set(settings);
+  static Future<void> updateSettings(Map<String, String> settings) async {
+    await db.collection("settings").doc("settingCSM").set(settings);
   }
 
   static Future<Map<String, String>> readSettings() async {

@@ -275,13 +275,13 @@ class _SalesProgressState extends State<SalesProgress> {
     super.initState();
     client = widget.client;
     documents = [
-      ProgressScreen(label: "KTP KK", icon: (client.progress['ktpkk']['done'] == true) ? Icons.check : Icons.perm_identity, widgetFunction: getKTPKKScreen),
-      ProgressScreen(label: "DP", icon: (client.progress['dp']['done'] == true) ? Icons.check : Icons.payments_outlined, widgetFunction: getDPScreen),
-      ProgressScreen(label: "BI", icon: (client.progress['bi']['done'] == true) ? Icons.check : Icons.account_balance_outlined, widgetFunction: getBIScreen),
-      ProgressScreen(label: "Dokumen", icon: (client.progress['pendamping']['done'] == true) ? Icons.check : Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
-      ProgressScreen(label: "Survei", icon: (client.progress['survei']['done'] == true) ? Icons.check : Icons.search, widgetFunction: getSurveyScreen),
-      ProgressScreen(label: "Kredit", icon: (client.progress['kredit']['done'] == true) ? Icons.check : Icons.credit_card, widgetFunction: getCreditScreen),
-      ProgressScreen(label: "Kunci", icon: (client.progress['kunci']['done'] == true) ? Icons.check : Icons.key, widgetFunction: getKeyScreen),
+      ProgressScreen(label: "KTP KK", valueKey: 'ktpkk', icon: Icons.perm_identity, widgetFunction: getKTPKKScreen),
+      ProgressScreen(label: "DP", valueKey: 'dp', icon: Icons.payments_outlined, widgetFunction: getDPScreen),
+      ProgressScreen(label: "BI", valueKey: 'bi', icon: Icons.account_balance_outlined, widgetFunction: getBIScreen),
+      ProgressScreen(label: "Dokumen", valueKey: 'pendamping', icon: Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
+      ProgressScreen(label: "Survei", valueKey: 'survei', icon: Icons.search, widgetFunction: getSurveyScreen),
+      ProgressScreen(label: "Kredit", valueKey: 'kredit', icon: Icons.credit_card, widgetFunction: getCreditScreen),
+      ProgressScreen(label: "Kunci", valueKey: 'kunci', icon: Icons.key, widgetFunction: getKeyScreen),
     ];
     selectedScreenFunction = documents[index].widgetFunction;
   }
@@ -298,6 +298,7 @@ class _SalesProgressState extends State<SalesProgress> {
         ProgressTrack(items: documents.map((e) => ProgressTrackItem(
             icon: e.icon,
             label: e.label,
+            checkValue: client.progress[e.valueKey]['done'],
             changeScreenListener: () {
               setState(() {
                 selectedScreenFunction = e.widgetFunction;
