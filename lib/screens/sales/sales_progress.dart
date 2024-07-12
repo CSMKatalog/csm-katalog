@@ -275,13 +275,13 @@ class _SalesProgressState extends State<SalesProgress> {
     super.initState();
     client = widget.client;
     documents = [
-      ProgressScreen(label: "KTP KK", icon: Icons.perm_identity, widgetFunction: getKTPKKScreen),
-      ProgressScreen(label: "DP", icon: Icons.payments_outlined, widgetFunction: getDPScreen),
-      ProgressScreen(label: "BI", icon: Icons.account_balance_outlined, widgetFunction: getBIScreen),
-      ProgressScreen(label: "Dokumen", icon: Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
-      ProgressScreen(label: "Survei", icon: Icons.search, widgetFunction: getSurveyScreen),
-      ProgressScreen(label: "Kredit", icon: Icons.credit_card, widgetFunction: getCreditScreen),
-      ProgressScreen(label: "Kunci", icon: Icons.key, widgetFunction: getKeyScreen),
+      ProgressScreen(label: "KTP KK", icon: (client.progress['ktpkk']['done'] == true) ? Icons.check : Icons.perm_identity, widgetFunction: getKTPKKScreen),
+      ProgressScreen(label: "DP", icon: (client.progress['dp']['done'] == true) ? Icons.check : Icons.payments_outlined, widgetFunction: getDPScreen),
+      ProgressScreen(label: "BI", icon: (client.progress['bi']['done'] == true) ? Icons.check : Icons.account_balance_outlined, widgetFunction: getBIScreen),
+      ProgressScreen(label: "Dokumen", icon: (client.progress['pendamping']['done'] == true) ? Icons.check : Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
+      ProgressScreen(label: "Survei", icon: (client.progress['survei']['done'] == true) ? Icons.check : Icons.search, widgetFunction: getSurveyScreen),
+      ProgressScreen(label: "Kredit", icon: (client.progress['kredit']['done'] == true) ? Icons.check : Icons.credit_card, widgetFunction: getCreditScreen),
+      ProgressScreen(label: "Kunci", icon: (client.progress['kunci']['done'] == true) ? Icons.check : Icons.key, widgetFunction: getKeyScreen),
     ];
     selectedScreenFunction = documents[index].widgetFunction;
   }
