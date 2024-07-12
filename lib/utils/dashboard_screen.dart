@@ -17,12 +17,3 @@ class ProgressScreen {
 
   ProgressScreen({required this.label, required this.valueKey, required this.icon, required this.widgetFunction});
 }
-
-class LoadingScreen extends StatelessWidget {
-  const LoadingScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
