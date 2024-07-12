@@ -72,7 +72,7 @@ class _ProgressTrackItemState extends State<ProgressTrackItem> {
             height: MediaQuery.of(context).size.width/12,
             width: MediaQuery.of(context).size.width/12,
             child: Icon(
-              widget.icon,
+              widget.checkValue ? Icons.check : widget.icon,
               size: 60,
               color: isHovered ? Colors.white : Colors.blueGrey,
             ),

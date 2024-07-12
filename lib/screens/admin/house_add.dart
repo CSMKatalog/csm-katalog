@@ -33,8 +33,6 @@ class HouseAdd extends StatefulWidget {
 }
 
 class _HouseAddState extends State<HouseAdd> {
-  _HouseAddState ();
-
   final nameController = TextEditingController();
   final landAreaController = TextEditingController();
   final houseAreaController = TextEditingController();
