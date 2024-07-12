@@ -1,3 +1,5 @@
+
+
 import 'dart:developer';
 
 import 'package:file_picker/file_picker.dart';
@@ -6,12 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../firebase/firestorage_connector.dart';
-import '../../utils/file_list.dart';
 
 class FileListDetail extends StatefulWidget {
-  const FileListDetail({super.key, required this.label, required this.listOfUrls, required this.fileAddListener, required this.fileDeleteListener});
+  const FileListDetail({super.key, required this.label, required this.listOfUrls,
+    required this.onSubmit, required this.fileAddListener, required this.fileDeleteListener});
   final String label;
   final List<dynamic> listOfUrls;
+  final AsyncCallback onSubmit;
   final void Function(String) fileAddListener;
   final void Function(int) fileDeleteListener;
 
@@ -20,18 +23,20 @@ class FileListDetail extends StatefulWidget {
 }
 
 class _FileListDetailState extends State<FileListDetail> {
-  late List<dynamic> listOfUrls;
-
   Future<void> openFile() async {
+    log('1');
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.any,
       withData: true,
     );
+    log('2');
 
     if (result != null) {
       Uint8List image = result.files.single.bytes!;
       String fileName = "file-${DateTime.now()}";
+      log('3');
       String imageUrl = await FirestorageConnector.uploadFile(image, fileName, "documents/");
+      log('4');
       widget.fileAddListener(imageUrl);
     }
   }
@@ -39,7 +44,6 @@ class _FileListDetailState extends State<FileListDetail> {
   @override
   void initState() {
     super.initState();
-    listOfUrls = widget.listOfUrls;
   }
 
   @override
@@ -51,7 +55,13 @@ class _FileListDetailState extends State<FileListDetail> {
         Text(widget.label),
         const SizedBox(height: 8.0,),
         Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),
+          decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black45, width: widget.listOfUrls.isEmpty ? 3 : 1,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(4.0)
+              )
+          ),
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Column(
@@ -61,13 +71,14 @@ class _FileListDetailState extends State<FileListDetail> {
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: listOfUrls.length,
+                    itemCount: widget.listOfUrls.length,
                     itemBuilder: (BuildContext context, int index) {
                       return FileListDetailItem(
                         index: index,
-                        url: listOfUrls[index],
+                        url: widget.listOfUrls[index],
                         deleteFile: () {
                           widget.fileDeleteListener(index);
+                          widget.onSubmit();
                         },
                       );
                     },
@@ -80,7 +91,10 @@ class _FileListDetailState extends State<FileListDetail> {
                       children: [
                         Expanded(
                           child: InkWell(
-                            onTap: openFile,
+                            onTap: () async {
+                              await openFile();
+                              widget.onSubmit();
+                            },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: const Text(
@@ -119,15 +133,14 @@ class _FileListDetailItemState extends State<FileListDetailItem> {
 
   Future<void> deleteDocument() async {
     String uri = Uri.parse(widget.url).pathSegments.last;
-    log(uri);
     FirestorageConnector.deleteFile(uri);
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        deleteDocument();
+      onTap: () async {
+        await deleteDocument();
         widget.deleteFile();
       },
       onHover: (b) {

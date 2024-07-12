@@ -47,10 +47,13 @@ class FirestoreConnector {
     return clients;
   }
 
-  static Future<Client> updateClient(String id, Client client) async {
-    await db.collection("clients").doc(id).set(client.toJson());
+  static Future<Client> getClient(String id) async {
     var results = await db.collection("clients").doc(id).get();
     return Client.fromJson(results.data()!, id);
+  }
+
+  static Future<void> updateClient(String id, Client client) async {
+    await db.collection("clients").doc(id).set(client.toJson());
   }
 
   static Future<void> deleteClient(String id) async {

@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
 
+class LoadScreen extends StatelessWidget {
+  const LoadScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text("Loading..."),
+    );
+  }
+}
+
+
 class ProgressTrack extends StatelessWidget {
   const ProgressTrack({super.key, required this.items});
   final List<ProgressTrackItem> items;

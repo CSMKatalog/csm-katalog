@@ -5,7 +5,7 @@ class Sidebar extends StatelessWidget {
   const Sidebar({super.key, required this.applicationName, required this.dashboardScreens, required this.changeScreenListener});
   final String applicationName;
   final Function(Widget) changeScreenListener;
-  final List<Screen> dashboardScreens;
+  final List<DashboardScreen> dashboardScreens;
   final int selectedScreen = 0;
 
   @override

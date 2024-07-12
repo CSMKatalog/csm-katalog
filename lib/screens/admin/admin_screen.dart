@@ -166,17 +166,17 @@ class _AdminScreenState extends State<AdminScreen> {
 
   _AdminScreenState () {
     dashboardScreens = [
-      Screen(label: "Daftar Item", icon: Icons.abc_outlined, widgetFunction: getHouseList),
-      Screen(label: "Tambah Item", icon: Icons.abc_outlined, widgetFunction: getHouseAdd),
-      Screen(label: "Halaman Depan", icon: Icons.abc_outlined, widgetFunction: getCover),
+      DashboardScreen(label: "Daftar Item", icon: Icons.abc_outlined, widgetFunction: getHouseList),
+      DashboardScreen(label: "Tambah Item", icon: Icons.abc_outlined, widgetFunction: getHouseAdd),
+      DashboardScreen(label: "Halaman Depan", icon: Icons.abc_outlined, widgetFunction: getCover),
       // DashboardScreen(label: "", icon: const Icon(Icons.abc_outlined), widget: SizedBox(height: 10,)),
-      Screen(label: "Daftar Klien", icon: Icons.abc_outlined, widgetFunction: getClientList),
-      Screen(label: "Tambah Klien", icon: Icons.abc_outlined, widgetFunction: getClientAdd),
-      Screen(label: "Pengaturan", icon: Icons.abc_outlined, widgetFunction: getChangeSettings),
+      DashboardScreen(label: "Daftar Klien", icon: Icons.abc_outlined, widgetFunction: getClientList),
+      DashboardScreen(label: "Tambah Klien", icon: Icons.abc_outlined, widgetFunction: getClientAdd),
+      DashboardScreen(label: "Pengaturan", icon: Icons.abc_outlined, widgetFunction: getChangeSettings),
     ];
     selectedScreen = dashboardScreens[0].widgetFunction();
   }
-  late List<Screen> dashboardScreens;
+  late List<DashboardScreen> dashboardScreens;
   late Widget selectedScreen;
 
   @override

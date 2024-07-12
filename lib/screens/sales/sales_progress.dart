@@ -1,14 +1,13 @@
+
+
 import 'dart:developer';
 
 import 'package:csmkatalog/screens/sales/progress_track.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 
 import 'package:csmkatalog/models/client.dart';
 import 'package:csmkatalog/widgets/desktop/header.dart';
-import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/checkbox_detail.dart';
 import 'package:csmkatalog/widgets/desktop/document_list_detail.dart';
 
@@ -29,14 +28,18 @@ class _SalesProgressState extends State<SalesProgress> {
   late Client client;
 
   Future<void> uploadClientDetail() async {
-    Client updatedClient = await FirestoreConnector.updateClient(client.clientID, client);
+    log('5');
+    await FirestoreConnector.updateClient(client.clientID, client);
+    log('6');
+    Client updatedClient = await FirestoreConnector.getClient(client.clientID);
+    log('7');
+    widget.successUpdateToast();
     setState(() {
       client = updatedClient;
     });
-    widget.successUpdateToast();
   }
 
-  Widget getKTPKKScreen() {
+  Widget getKTPKKScreen(Client client) {
     return DocumentProgress(
       label: "KTP dan KK telah diupload",
       headerText: "Upload KTP dan KK",
@@ -47,23 +50,24 @@ class _SalesProgressState extends State<SalesProgress> {
           listOfUrls: client.progress['ktpkk']['ktp'],
           fileAddListener: (s) { client.progress['ktpkk']['ktp'].add(s); },
           fileDeleteListener: (i) { client.progress['ktpkk']['ktp'].removeAt(i); },
+          onSubmit: uploadClientDetail,
         ),
         FileListDetail(
           label: "Foto KK",
           listOfUrls: client.progress['ktpkk']['kk'],
           fileAddListener: (s) { client.progress['ktpkk']['kk'].add(s); },
           fileDeleteListener: (i) { client.progress['ktpkk']['kk'].removeAt(i); },
+          onSubmit: uploadClientDetail,
         ),
       ],
       onCheck: () {
         client.progress['ktpkk']['done'] = !client.progress['ktpkk']['done'];
-        setState(() { client; });
+        uploadClientDetail();
       },
-      onSubmit: uploadClientDetail,
     );
   }
 
-  Widget getDPScreen() {
+  Widget getDPScreen(Client client) {
     return DocumentProgress(
         label: "DP telah dibayar dan dikonfirmasi",
         headerText: "Pembayaran Down Payment",
@@ -74,17 +78,17 @@ class _SalesProgressState extends State<SalesProgress> {
             listOfUrls: client.progress['dp']['dp'],
             fileAddListener: (s) { client.progress['dp']['dp'].add(s); },
             fileDeleteListener: (i) { client.progress['dp']['dp'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
         ],
         onCheck: () {
           client.progress['dp']['done'] = !client.progress['dp']['done'];
-          setState(() { client; });
+          uploadClientDetail();
         },
-        onSubmit: uploadClientDetail
     );
   }
 
-  Widget getBIScreen() {
+  Widget getBIScreen(Client client) {
     return DocumentProgress(
         label: "Pengecek BI telah dilakukan",
         headerText: "Pengecekan Bank Indonesia",
@@ -95,17 +99,17 @@ class _SalesProgressState extends State<SalesProgress> {
             listOfUrls: client.progress['bi']['bi'],
             fileAddListener: (s) { client.progress['bi']['bi'].add(s); },
             fileDeleteListener: (i) { client.progress['bi']['bi'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
         ],
         onCheck: () {
           client.progress['bi']['done'] = !client.progress['bi']['done'];
-          setState(() { client; });
+          uploadClientDetail();
         },
-        onSubmit: uploadClientDetail
     );
   }
 
-  Widget getDocumentsScreen() {
+  Widget getDocumentsScreen(Client client) {
     return DocumentProgress(
         label: "Data-data telah diupload",
         headerText: "Upload Dokumen-dokumen Pendamping",
@@ -116,83 +120,94 @@ class _SalesProgressState extends State<SalesProgress> {
             listOfUrls: client.progress['pendamping']['pasangan'],
             fileAddListener: (s) { client.progress['pendamping']['pasangan'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['pasangan'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Slip gaji 3 bulan terakhir",
             listOfUrls: client.progress['pendamping']['gaji3bln'],
             fileAddListener: (s) { client.progress['pendamping']['gaji3bln'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['gaji3bln'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Daftar gaji SKPG (dilegalisir)",
             listOfUrls: client.progress['pendamping']['gajiskpg'],
             fileAddListener: (s) { client.progress['pendamping']['gajiskpg'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['gajiskpg'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Surat Keterangan Kerja",
             listOfUrls: client.progress['pendamping']['skk'],
             fileAddListener: (s) { client.progress['pendamping']['skk'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['skk'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Kartu pegawai / NIP",
             listOfUrls: client.progress['pendamping']['nip'],
             fileAddListener: (s) { client.progress['pendamping']['nip'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['nip'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Tabungan 3 bulan terakhir",
             listOfUrls: client.progress['pendamping']['tbng3bln'],
             fileAddListener: (s) { client.progress['pendamping']['tbng3bln'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['tbng3bln'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Surat belum punya rumah dari kelurahan",
             listOfUrls: client.progress['pendamping']['rmhlurah'],
             fileAddListener: (s) { client.progress['pendamping']['rmhlurah'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['rmhlurah'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Tabungan Batara (BTN)",
             listOfUrls: client.progress['pendamping']['tbngbtn'],
             fileAddListener: (s) { client.progress['pendamping']['tbngbtn'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['tbngbtn'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Surat Keterangan Usaha (wiraswasta)",
             listOfUrls: client.progress['pendamping']['sku'],
             fileAddListener: (s) { client.progress['pendamping']['sku'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['sku'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Laporan Keuangan Usaha (wiraswasta)",
             listOfUrls: client.progress['pendamping']['lku'],
             fileAddListener: (s) { client.progress['pendamping']['lku'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['lku'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Foto tempat usaha / bukti legalitas (wiraswasta)",
             listOfUrls: client.progress['pendamping']['legalusaha'],
             fileAddListener: (s) { client.progress['pendamping']['legalusaha'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['legalusaha'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
           FileListDetail(
             label: "Materai 6000 (35 lembar)",
             listOfUrls: client.progress['pendamping']['mat600035'],
             fileAddListener: (s) { client.progress['pendamping']['mat600035'].add(s); },
             fileDeleteListener: (i) { client.progress['pendamping']['mat600035'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
         ],
         onCheck: () {
           client.progress['pendamping']['done'] = !client.progress['pendamping']['done'];
-          setState(() { client; });
+          uploadClientDetail();
         },
-        onSubmit: uploadClientDetail
     );
   }
 
-  Widget getSurveyScreen() {
+  Widget getSurveyScreen(Client client) {
     return DocumentProgress(
         label: "Survei telah dilakukan",
         headerText: "Hasil Survei",
@@ -203,17 +218,17 @@ class _SalesProgressState extends State<SalesProgress> {
             listOfUrls: client.progress['survei']['survei'],
             fileAddListener: (s) { client.progress['survei']['survei'].add(s); },
             fileDeleteListener: (i) { client.progress['survei']['survei'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
         ],
         onCheck: () {
           client.progress['survei']['done'] = !client.progress['survei']['done'];
-          setState(() { client; });
+          uploadClientDetail();
         },
-        onSubmit: uploadClientDetail
     );
   }
 
-  Widget getCreditScreen() {
+  Widget getCreditScreen(Client client) {
     return DocumentProgress(
         label: "Akad kredit telah diterima",
         headerText: "Kontrak Akad Kredit",
@@ -224,17 +239,17 @@ class _SalesProgressState extends State<SalesProgress> {
             listOfUrls: client.progress['kredit']['kredit'],
             fileAddListener: (s) { client.progress['kredit']['kredit'].add(s); },
             fileDeleteListener: (i) { client.progress['kredit']['kredit'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
         ],
         onCheck: () {
           client.progress['kredit']['done'] = !client.progress['kredit']['done'];
-          setState(() { client; });
+          uploadClientDetail();
         },
-        onSubmit: uploadClientDetail
     );
   }
 
-  Widget getKeyScreen() {
+  Widget getKeyScreen(Client client) {
     return DocumentProgress(
         label: "Penyerahan kunci telah dilakukan",
         headerText: "Penyerahan Kunci",
@@ -245,13 +260,13 @@ class _SalesProgressState extends State<SalesProgress> {
             listOfUrls: client.progress['kunci']['kunci'],
             fileAddListener: (s) { client.progress['kunci']['kunci'].add(s); },
             fileDeleteListener: (i) { client.progress['kunci']['kunci'].removeAt(i); },
+            onSubmit: uploadClientDetail,
           ),
         ],
         onCheck: () {
           client.progress['kunci']['done'] = !client.progress['kunci']['done'];
-          setState(() { client; });
+          uploadClientDetail();
         },
-        onSubmit: uploadClientDetail
     );
   }
 
@@ -260,19 +275,20 @@ class _SalesProgressState extends State<SalesProgress> {
     super.initState();
     client = widget.client;
     documents = [
-      Screen(label: "KTP KK", icon: Icons.perm_identity, widgetFunction: getKTPKKScreen),
-      Screen(label: "DP", icon: Icons.payments_outlined, widgetFunction: getDPScreen),
-      Screen(label: "BI", icon: Icons.account_balance_outlined, widgetFunction: getBIScreen),
-      Screen(label: "Dokumen", icon: Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
-      Screen(label: "Survei", icon: Icons.search, widgetFunction: getSurveyScreen),
-      Screen(label: "Kredit", icon: Icons.credit_card, widgetFunction: getCreditScreen),
-      Screen(label: "Kunci", icon: Icons.key, widgetFunction: getKeyScreen),
+      ProgressScreen(label: "KTP KK", icon: Icons.perm_identity, widgetFunction: getKTPKKScreen),
+      ProgressScreen(label: "DP", icon: Icons.payments_outlined, widgetFunction: getDPScreen),
+      ProgressScreen(label: "BI", icon: Icons.account_balance_outlined, widgetFunction: getBIScreen),
+      ProgressScreen(label: "Dokumen", icon: Icons.file_copy_outlined, widgetFunction: getDocumentsScreen),
+      ProgressScreen(label: "Survei", icon: Icons.search, widgetFunction: getSurveyScreen),
+      ProgressScreen(label: "Kredit", icon: Icons.credit_card, widgetFunction: getCreditScreen),
+      ProgressScreen(label: "Kunci", icon: Icons.key, widgetFunction: getKeyScreen),
     ];
-    selectedScreen = documents[0].widgetFunction();
+    selectedScreenFunction = documents[index].widgetFunction;
   }
 
-  late List<Screen> documents;
-  late Widget selectedScreen;
+  late List<ProgressScreen> documents;
+  late Widget Function(Client) selectedScreenFunction;
+  int index = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -284,24 +300,23 @@ class _SalesProgressState extends State<SalesProgress> {
             label: e.label,
             changeScreenListener: () {
               setState(() {
-                selectedScreen = e.widgetFunction();
+                selectedScreenFunction = e.widgetFunction;
               });
             },
         )).toList()),
-        Flexible(child: selectedScreen),
+        Flexible(child: selectedScreenFunction(client)),
       ],
     );
   }
 }
 
 class DocumentProgress extends StatefulWidget {
-  const DocumentProgress({super.key, required this.label, required this.headerText, required this.value, required this.documents, required this.onCheck, required this.onSubmit});
+  const DocumentProgress({super.key, required this.label, required this.headerText, required this.value, required this.documents, required this.onCheck});
   final String label;
   final String headerText;
   final bool value;
   final List<FileListDetail> documents;
   final VoidCallback onCheck;
-  final AsyncCallback onSubmit;
 
   @override
   State<DocumentProgress> createState() => _DocumentProgressState();
@@ -320,12 +335,6 @@ class _DocumentProgressState extends State<DocumentProgress> {
     }
     fields.add(SizedBox());
     if(widget.documents.length % 2 == 1) fields.add(SizedBox());
-    fields.add(Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        SubmitButton(text: "Simpan", onPressed: widget.onSubmit),
-      ],
-    ));
     return Future<dynamic>.value(fields);
   }
 
