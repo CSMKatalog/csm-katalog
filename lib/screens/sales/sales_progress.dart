@@ -251,7 +251,7 @@ class _SalesProgressState extends State<SalesProgress> {
 
   Widget getKeyScreen(Client client) {
     return DocumentProgress(
-        label: "Penyerahan kunci telah dilakukan",
+        label: "Serah terima telah dilakukan",
         headerText: "Penyerahan Kunci",
         value: client.progress['kunci']['done'],
         documents: [
