@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
-      home: const CatalogScreen(),
-      // home: const AdminScreen(),
+      // home: const CatalogScreen(),
+      home: const AdminScreen(),
     );
   }
 }

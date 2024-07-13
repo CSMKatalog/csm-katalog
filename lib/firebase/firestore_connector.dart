@@ -41,10 +41,11 @@ class FirestoreConnector {
         clients.add(client);
       }
     });
-    if(clientType != null) {
-      clients = clients.where((e) => e.clientType == clientType).toList();
+    if(clientType == null) {
+      return clients.where((e) => e.clientType != ClientType.deleted).toList();
     }
-    return clients;
+    return clients.where((e) => e.clientType == clientType).toList();
+
   }
 
   static Future<Client> getClient(String id) async {

@@ -13,7 +13,7 @@ class FileListDetail extends StatefulWidget {
   const FileListDetail({super.key, required this.label, required this.listOfUrls,
     required this.onSubmit, required this.fileAddListener, required this.fileDeleteListener});
   final String label;
-  final List<String> listOfUrls;
+  final List<dynamic> listOfUrls;
   final AsyncCallback onSubmit;
   final void Function(String) fileAddListener;
   final void Function(int) fileDeleteListener;

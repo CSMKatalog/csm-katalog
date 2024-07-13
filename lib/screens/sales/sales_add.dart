@@ -86,6 +86,7 @@ class _SalesAddState extends State<SalesAdd> {
   void initState() {
     super.initState();
     fields = [];
+    var spinnerItems = ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal"];
     if (widget.client.clientID.isNotEmpty) {
       Client client = widget.client;
       headerText = "Detail Klien ${client.name}";
@@ -94,12 +95,14 @@ class _SalesAddState extends State<SalesAdd> {
       phoneController.text = client.phoneNumber;
       noteController.text = client.note;
       typeItem = clientTypeToString(client.clientType);
+      if(client.clientType == ClientType.deleted) {
+        spinnerItems.add(clientTypeToString(ClientType.deleted));
+      }
     }
 
     fields.add(TextDetail(label: "Nama", hintText: "Nama klien", textEditingController: nameController),);
     fields.add(const SizedBox());
-    fields.add(ComboBoxDetail(label: "Status Klien", onChanged: (e) { typeItem = e; }, value: typeItem,
-      items: ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal"],));
+    fields.add(ComboBoxDetail(label: "Status Klien", onChanged: (e) { typeItem = e; }, value: typeItem, items: spinnerItems,));
     fields.add(TextDetail(label: "Model Rumah Terkait", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController),);
     fields.add(TextDetail(label: "Nomor Telepon / Email", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController),);
     fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController),);
@@ -117,7 +120,13 @@ class _SalesAddState extends State<SalesAdd> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SubmitButton(text: "Ubah", onPressed: uploadClientDetail),
-          SubmitButton(text: "Hapus", onPressed: deleteClientDetail),
+          SubmitButton(text: "Hapus", onPressed: () async {
+            if(typeItem != clientTypeToString(ClientType.deleted)) {
+              typeItem = clientTypeToString(ClientType.deleted);
+              uploadClientDetail();
+            }
+            // deleteClientDetail();
+          }),
         ],
       ));
     } else {
