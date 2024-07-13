@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
-  const CustomTextField({super.key, required this.hintText, required this.textEditingController, this.type = TextInputType.text});
+  const CustomTextField({super.key,
+    required this.hintText,
+    required this.textEditingController,
+    this.type = TextInputType.text,
+    this.readOnly = false});
   final String hintText;
   final TextEditingController textEditingController;
   final TextInputType type;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      readOnly: readOnly,
       keyboardType: type,
       inputFormatters: [
         if(type == TextInputType.number) FilteringTextInputFormatter.allow(RegExp(r"[\.\,0-9]*")),
@@ -38,18 +44,25 @@ class DimensionDetail extends StatelessWidget {
     required this.label,
     required this.lengthController,
     required this.widthController,
-    required this.hintText
+    required this.hintText,
+    this.readOnly = false,
   });
   final String label;
   final TextEditingController lengthController;
   final TextEditingController widthController;
   final String hintText;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: TextDetail(label: "Panjang $label", hintText: "Panjang $hintText", textEditingController: lengthController)),
+        Expanded(child: TextDetail(
+          label: "Panjang $label",
+          hintText: "Panjang $hintText",
+          textEditingController: lengthController,
+          readOnly: readOnly,
+        )),
         const SizedBox(width: 16.0,),
         Expanded(child: TextDetail(label: "Lebar $label", hintText: "Lebar $hintText", textEditingController: widthController)),
       ],
@@ -58,10 +71,15 @@ class DimensionDetail extends StatelessWidget {
 }
 
 class NumberDetail extends StatelessWidget {
-  const NumberDetail({super.key, required this.label, required this.hintText, required this.textEditingController});
+  const NumberDetail({super.key,
+    required this.label,
+    required this.hintText,
+    required this.textEditingController,
+    this.readOnly = false});
   final String label;
   final String hintText;
   final TextEditingController textEditingController;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +90,10 @@ class NumberDetail extends StatelessWidget {
         Text("$label:"),
         const SizedBox(height: 8.0,),
         CustomTextField(
-            hintText: hintText,
-            textEditingController: textEditingController,
-            type: TextInputType.number
+          hintText: hintText,
+          textEditingController: textEditingController,
+          type: TextInputType.number,
+          readOnly: readOnly,
         ),
       ],
     );
@@ -83,10 +102,16 @@ class NumberDetail extends StatelessWidget {
 
 
 class TextDetail extends StatelessWidget {
-  const TextDetail({super.key, required this.label, required this.hintText, required this.textEditingController});
+  const TextDetail({super.key,
+    required this.label,
+    required this.hintText,
+    required this.textEditingController,
+    this.readOnly = false
+  });
   final String label;
   final String hintText;
   final TextEditingController textEditingController;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +122,10 @@ class TextDetail extends StatelessWidget {
         Text("$label:"),
         const SizedBox(height: 8.0,),
         CustomTextField(
-            hintText: hintText,
-            textEditingController: textEditingController,
-            type: TextInputType.text
+          hintText: hintText,
+          textEditingController: textEditingController,
+          type: TextInputType.text,
+          readOnly: readOnly,
         ),
       ],
     );
@@ -107,10 +133,15 @@ class TextDetail extends StatelessWidget {
 }
 
 class LongTextDetail extends StatelessWidget {
-  const LongTextDetail({super.key, required this.label, required this.hintText, required this.textEditingController});
+  const LongTextDetail({super.key,
+    required this.label,
+    required this.hintText,
+    required this.textEditingController,
+    this.readOnly = false});
   final String label;
   final String hintText;
   final TextEditingController textEditingController;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -121,9 +152,10 @@ class LongTextDetail extends StatelessWidget {
         Text("$label:"),
         const SizedBox(height: 8.0,),
         CustomTextField(
-            hintText: hintText,
-            textEditingController: textEditingController,
-            type: TextInputType.multiline
+          hintText: hintText,
+          textEditingController: textEditingController,
+          type: TextInputType.multiline,
+          readOnly: readOnly,
         ),
       ],
     );

@@ -12,7 +12,7 @@ class FirestoreConnector {
 
   static Future<List<House>> readHouses() async {
     List<House> houses = [];
-    await db.collection("houses").orderBy("timestamp").get().then((event) {
+    await db.collection("houses").orderBy("timestamp", descending: true).get().then((event) {
       for (var doc in event.docs) {
         House house = House.fromJson(doc.data(), doc.id);
         houses.add(house);
@@ -35,14 +35,14 @@ class FirestoreConnector {
 
   static Future<List<Client>> readClients([ClientType? clientType]) async {
     List<Client> clients = [];
-    await db.collection("clients").orderBy("timestamp").get().then((event) {
+    await db.collection("clients").orderBy("timestamp", descending: true).get().then((event) {
       for (var doc in event.docs) {
         Client client = Client.fromJson(doc.data(), doc.id);
         clients.add(client);
       }
     });
     if(clientType == null) {
-      return clients.where((e) => e.clientType != ClientType.deleted).toList();
+      return clients.where((e) => (e.clientType != ClientType.deleted)).toList();
     }
     return clients.where((e) => e.clientType == clientType).toList();
 

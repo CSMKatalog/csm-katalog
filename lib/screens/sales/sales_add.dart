@@ -66,19 +66,16 @@ class _SalesAddState extends State<SalesAdd> {
     }
 
     if (widget.client.clientID.isNotEmpty) {
-      await FirestoreConnector.updateClient(widget.client.clientID, client)
-          .then((value) => widget.changeScreenListener());
+      await FirestoreConnector.updateClient(widget.client.clientID, client);
       widget.successUpdateToast();
     } else {
-      await FirestoreConnector.createClient(client)
-          .then((value) => widget.changeScreenListener());
+      await FirestoreConnector.createClient(client);
       widget.successCreateToast();
     }
   }
 
   Future<void> deleteClientDetail() async {
-    await FirestoreConnector.deleteClient(widget.client.clientID)
-        .then((value) => widget.changeScreenListener());
+    await FirestoreConnector.deleteClient(widget.client.clientID);
     widget.successDeleteToast();
   }
 
@@ -87,6 +84,7 @@ class _SalesAddState extends State<SalesAdd> {
     super.initState();
     fields = [];
     var spinnerItems = ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal"];
+
     if (widget.client.clientID.isNotEmpty) {
       Client client = widget.client;
       headerText = "Detail Klien ${client.name}";
@@ -100,44 +98,75 @@ class _SalesAddState extends State<SalesAdd> {
       }
     }
 
-    fields.add(TextDetail(label: "Nama", hintText: "Nama klien", textEditingController: nameController),);
+    fields.add(TextDetail(label: "Nama", hintText: "Nama klien", textEditingController: nameController,
+      readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
     fields.add(const SizedBox());
-    fields.add(ComboBoxDetail(label: "Status Klien", onChanged: (e) { typeItem = e; }, value: typeItem, items: spinnerItems,));
-    fields.add(TextDetail(label: "Model Rumah Terkait", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController),);
-    fields.add(TextDetail(label: "Nomor Telepon / Email", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController),);
-    fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController),);
+    fields.add(ComboBoxDetail(label: "Status Klien", onChanged: (e) { typeItem = e; }, value: typeItem, items: spinnerItems,
+      readOnly: typeItem == clientTypeToString(ClientType.deleted),));
+    fields.add(TextDetail(label: "Model Rumah Terkait", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController,
+        readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
+    fields.add(TextDetail(label: "Nomor Telepon / Email", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController,
+      readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
+    fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController,
+      readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
 
-    if (widget.client.clientID.isNotEmpty) {
-      fields.add(Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SubmitButton(
-              text: "Progress",
-              onPressed: () async {widget.progressScreenListener();}),
-        ],
-      ));
-      fields.add(Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SubmitButton(text: "Ubah", onPressed: uploadClientDetail),
-          SubmitButton(text: "Hapus", onPressed: () async {
-            if(typeItem != clientTypeToString(ClientType.deleted)) {
-              typeItem = clientTypeToString(ClientType.deleted);
-              uploadClientDetail();
-            }
-            // deleteClientDetail();
-          }),
-        ],
-      ));
-    } else {
+    if (widget.client.clientID.isEmpty) {
       fields.add(SizedBox());
       fields.add(Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          SubmitButton(text: "Tambah", onPressed: uploadClientDetail),
+          SubmitButton(text: "Tambah", onPressed: () async {
+            await uploadClientDetail();
+            widget.changeScreenListener();
+          }),
         ],
       ));
+      return;
     }
+
+    if (widget.client.clientType == ClientType.deleted) {
+      fields.add(SizedBox());
+      fields.add(Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SubmitButton(text: "Pulihkan", onPressed: () async {
+            typeItem = clientTypeToString(ClientType.inProgress);
+            await uploadClientDetail();
+            widget.changeScreenListener();
+          }),
+        ],
+      ));
+      return;
+    }
+
+    fields.add(Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SubmitButton(
+            text: "Progress",
+            onPressed: () async {
+              await uploadClientDetail();
+              widget.progressScreenListener();
+            }),
+      ],
+    ));
+    fields.add(Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SubmitButton(text: "Ubah", onPressed: () async {
+          await uploadClientDetail();
+          widget.changeScreenListener();
+        }),
+        SubmitButton(text: "Hapus", onPressed: () async {
+          if(typeItem != clientTypeToString(ClientType.deleted)) {
+            typeItem = clientTypeToString(ClientType.deleted);
+            await uploadClientDetail();
+            widget.changeScreenListener();
+          }
+          // deleteClientDetail();
+        }),
+      ],
+    ));
   }
 
   @override

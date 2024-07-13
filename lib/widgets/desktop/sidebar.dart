@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/dashboard_screen.dart';
+import 'package:csmkatalog/utils/dashboard_screen.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key, required this.applicationName, required this.dashboardScreens, required this.changeScreenListener});

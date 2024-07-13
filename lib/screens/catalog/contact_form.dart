@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../firebase/firestore_connector.dart';
-import '../../models/client.dart';
-import '../../models/house.dart';
-import '../../widgets/catalog/combobox_detail.dart';
-import '../../widgets/catalog/submit_button.dart';
-import '../../widgets/catalog/text_detail.dart';
+import 'package:csmkatalog/firebase/firestore_connector.dart';
+import 'package:csmkatalog/models/client.dart';
+import 'package:csmkatalog/models/house.dart';
+import 'package:csmkatalog/widgets/catalog/combobox_detail.dart';
+import 'package:csmkatalog/widgets/catalog/submit_button.dart';
+import 'package:csmkatalog/widgets/catalog/text_detail.dart';
 import 'catalog_widget.dart';
 
 class ContactFormOverlay extends StatefulWidget {

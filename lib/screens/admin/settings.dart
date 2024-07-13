@@ -2,8 +2,8 @@ import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 import 'package:flutter/material.dart';
 
-import '../../firebase/firestore_connector.dart';
-import '../../widgets/desktop/header.dart';
+import 'package:csmkatalog/firebase/firestore_connector.dart';
+import 'package:csmkatalog/widgets/desktop/header.dart';
 
 class ChangeSettings extends StatefulWidget {
   const ChangeSettings({super.key, required this.changeScreenListener,

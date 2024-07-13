@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/file_list.dart';
+import 'package:csmkatalog/utils/file_list.dart';
 
 class ImageListDetail extends StatelessWidget {
   const ImageListDetail({super.key, required this.label, required this.uploadFile, required this.deleteFile, required this.listOfImages});

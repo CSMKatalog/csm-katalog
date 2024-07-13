@@ -15,7 +15,7 @@ import 'package:csmkatalog/screens/sales/sales_list.dart';
 import 'package:csmkatalog/screens/sales/sales_add.dart';
 import 'package:csmkatalog/widgets/desktop/toast.dart';
 
-import '../sales/sales_progress.dart';
+import 'package:csmkatalog/screens/sales/sales_progress.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});

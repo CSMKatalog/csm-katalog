@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/models/house.dart';
+import 'package:csmkatalog/utils/utils.dart';
 
 class HouseList extends StatefulWidget {
   const HouseList({super.key, required this.changeScreenListener});
@@ -81,7 +82,7 @@ class HouseListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(house.name),
-                Text("Rp. ${house.price}"),
+                Text(getRupiah(house.price)),
               ],
             )
           ],

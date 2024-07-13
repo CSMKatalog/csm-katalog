@@ -11,8 +11,8 @@ import 'package:csmkatalog/widgets/desktop/header.dart';
 import 'package:csmkatalog/widgets/desktop/checkbox_detail.dart';
 import 'package:csmkatalog/widgets/desktop/document_list_detail.dart';
 
-import '../../firebase/firestore_connector.dart';
-import '../../utils/dashboard_screen.dart';
+import 'package:csmkatalog/firebase/firestore_connector.dart';
+import 'package:csmkatalog/utils/dashboard_screen.dart';
 
 class SalesProgress extends StatefulWidget {
   const SalesProgress({super.key, required this.client, required this.changeScreenListener, required this.successUpdateToast});

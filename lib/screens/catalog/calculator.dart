@@ -6,8 +6,7 @@ import 'package:csmkatalog/widgets/catalog/text_detail.dart';
 import 'package:csmkatalog/widgets/catalog/combobox_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../firebase/firestore_connector.dart';
-import '../../models/house.dart';
+import 'package:csmkatalog/models/house.dart';
 import 'catalog_widget.dart';
 
 class CalculatorOverlay extends StatefulWidget {

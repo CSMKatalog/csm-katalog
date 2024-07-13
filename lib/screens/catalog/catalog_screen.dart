@@ -5,13 +5,12 @@ import 'package:csmkatalog/screens/catalog/contact_form.dart';
 import 'package:csmkatalog/widgets/catalog/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import 'package:csmkatalog/firebase/firestore_connector.dart';
 import 'package:csmkatalog/models/house.dart';
 
-import '../../utils/utils.dart';
+import 'package:csmkatalog/utils/utils.dart';
 import 'calculator.dart';
 
 class CatalogScreen extends StatefulWidget {

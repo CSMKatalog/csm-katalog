@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:csmkatalog/models/client.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../firebase/firestore_connector.dart';
+import 'package:csmkatalog/firebase/firestore_connector.dart';
 
 class SalesList extends StatefulWidget {
   SalesList({super.key, required this.changeScreenListener});

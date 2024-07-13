@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ComboBoxDetail extends StatefulWidget {
-  const ComboBoxDetail({super.key, required this.label, required this.items, required this.value, required this.onChanged});
+  const ComboBoxDetail({super.key, required this.label, required this.items, required this.value, required this.onChanged, this.readOnly = false});
   final String label;
   final List<String> items;
   final String value;
   final void Function(String) onChanged;
+  final bool readOnly;
 
   @override
   State<ComboBoxDetail> createState() => _ComboBoxDetailState();
@@ -34,7 +35,7 @@ class _ComboBoxDetailState extends State<ComboBoxDetail> {
               DropdownMenuItem<String>(value: e, child: Text(e),)).toList(),
           value: dropdownValue,
           onChanged: (e) {
-            if (e == null) return;
+            if (e == null || widget.readOnly) return;
             widget.onChanged(e);
             setState(() {
               dropdownValue = e;
