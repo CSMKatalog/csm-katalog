@@ -74,7 +74,8 @@ class _HouseAddState extends State<HouseAdd> {
     int price = int.parse(priceController.value.text.replaceAll(",", "").replaceAll(".", ""));
     int dp = int.parse(dpController.value.text.replaceAll(",", "").replaceAll(".", ""));
 
-    if(descriptionController.value.text.length > 200) {
+    if(descriptionController.value.text.length > 200 || 
+        listOfFeatures.any((e) => e.value.text.length > 50)) {
       widget.tooLongToast();
       return;
     }

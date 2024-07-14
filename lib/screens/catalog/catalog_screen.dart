@@ -172,7 +172,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                             showToast("Ada data penting yang belum diisi");
                           },
                           notAPhoneNumberToast: () {
-                            showToast("Data yang dimasukkan bukan nomor telepon");
+                            showToast("Nomor telepon tidak valid");
                           },
                           houseList: houseList, officeContact: officeContact,
                         );

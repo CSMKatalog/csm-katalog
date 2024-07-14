@@ -53,7 +53,7 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   void notAPhoneNumberToast() {
-    showToast("Data yang dimasukkan bukan nomor telepon");
+    showToast("Nomor telepon tidak valid");
   }
 
   void successUpdateToast() {

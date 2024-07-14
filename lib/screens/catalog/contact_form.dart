@@ -7,6 +7,7 @@ import 'package:csmkatalog/models/house.dart';
 import 'package:csmkatalog/widgets/catalog/combobox_detail.dart';
 import 'package:csmkatalog/widgets/catalog/submit_button.dart';
 import 'package:csmkatalog/widgets/catalog/text_detail.dart';
+import '../../utils/utils.dart';
 import 'catalog_widget.dart';
 
 class ContactFormOverlay extends StatefulWidget {
@@ -36,6 +37,10 @@ class _ContactFormOverlayState extends State<ContactFormOverlay> {
         officeController.value.text.isEmpty) {
       widget.missingValueToast();
       return;
+    }
+
+    if(!isPhoneNumber(phoneController.value.text)) {
+      widget.notAPhoneNumberToast();
     }
 
     Client client =  Client(
