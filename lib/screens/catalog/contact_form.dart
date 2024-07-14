@@ -84,7 +84,7 @@ class _ContactFormOverlayState extends State<ContactFormOverlay> {
             label: "Nomor Telepon *",
             hintText: "Kontak yang dapat dihubungi",
             textController: phoneController,
-          ),
+            numberInput: true,),
           Flexible(
             child: ComboBoxDetail(label: "Model Rumah", items: houseTypes, value: selectedHouse,
               onChanged: (v) { selectedHouse = v; },
