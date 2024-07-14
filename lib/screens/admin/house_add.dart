@@ -63,8 +63,7 @@ class _HouseAddState extends State<HouseAdd> {
         priceController.value.text.isEmpty ||
         dpController.value.text.isEmpty ||
         houseAreaController.value.text.isEmpty ||
-        landAreaController.value.text.isEmpty ||
-        descriptionController.value.text.isEmpty) {
+        landAreaController.value.text.isEmpty) {
       widget.missingValueToast();
       return;
     }

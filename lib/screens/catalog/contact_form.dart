@@ -41,6 +41,7 @@ class _ContactFormOverlayState extends State<ContactFormOverlay> {
 
     if(!isPhoneNumber(phoneController.value.text)) {
       widget.notAPhoneNumberToast();
+      return;
     }
 
     Client client =  Client(
