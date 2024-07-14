@@ -38,7 +38,7 @@ class _TextListDetailState extends State<TextListDetail> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("${widget.label}:"),
+        Text(widget.label),
         const SizedBox(height: 8.0,),
         Container(
           decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1), borderRadius: const BorderRadius.all(Radius.circular(4.0))),

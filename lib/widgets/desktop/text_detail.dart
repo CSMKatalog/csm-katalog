@@ -94,7 +94,7 @@ class NumberDetail extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("$label:"),
+        Text(label),
         const SizedBox(height: 8.0,),
         CustomTextField(
           hintText: hintText,
@@ -127,7 +127,7 @@ class TextDetail extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("$label:"),
+        Text(label),
         const SizedBox(height: 8.0,),
         CustomTextField(
           hintText: hintText,
@@ -158,7 +158,7 @@ class LongTextDetail extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("$label:"),
+        Text(label),
         const SizedBox(height: 8.0,),
         CustomTextField(
           hintText: hintText,

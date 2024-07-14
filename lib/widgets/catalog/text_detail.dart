@@ -18,8 +18,11 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var isPhone = hintText == "Kontak yang dapat dihubungi";
+    var alignRight = !isPhone && type == TextInputType.number;
+
     return TextField(
-      textAlign: type == TextInputType.number ? TextAlign.end : TextAlign.start,
+      textAlign: alignRight ? TextAlign.end : TextAlign.start,
       readOnly: readOnly,
       keyboardType: type,
       inputFormatters: [
@@ -37,7 +40,7 @@ class CustomTextField extends StatelessWidget {
         ),
         hintText: hintText,
         hintStyle: TextStyle(fontSize: 13),
-        hintTextDirection: type == TextInputType.number ? TextDirection.rtl : TextDirection.ltr,
+        hintTextDirection: alignRight ? TextDirection.rtl : TextDirection.ltr,
       ),
       controller: textEditingController,
     );
