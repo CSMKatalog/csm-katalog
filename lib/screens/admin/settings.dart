@@ -74,7 +74,7 @@ class _ChangeSettingsState extends State<ChangeSettings> {
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: TextDetail(
+          child: NumberDetail(
               label: "Suku Bunga Kredit Rumah",
               hintText: "Bunga untuk simulasi angsuran rumah",
               textEditingController: interestController

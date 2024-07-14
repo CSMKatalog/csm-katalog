@@ -45,7 +45,17 @@ class CustomTextField extends StatelessWidget {
 }
 
 class TextDetail extends StatelessWidget {
-  const TextDetail({super.key, required this.label, this.hintText = "", this.prefix, this.suffix, required this.textController, this.numberInput = false, this.readOnly = false});
+  const TextDetail({
+    super.key,
+    required this.label,
+    this.hintText = "",
+    this.prefix,
+    this.suffix,
+    required this.textController,
+    this.numberInput = false,
+    this.readOnly = false,
+    this.limit = -1,
+  });
   final String label;
   final String hintText;
   final String? prefix;
@@ -53,6 +63,7 @@ class TextDetail extends StatelessWidget {
   final TextEditingController textController;
   final bool numberInput;
   final bool readOnly;
+  final int limit;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +104,7 @@ class TextDetail extends StatelessWidget {
                       textEditingController: textController,
                       type: (numberInput != null && numberInput != false) ? TextInputType.number : TextInputType.text,
                       readOnly: readOnly != null ? readOnly! : false,
-                      limit: 50,
+                      limit: (numberInput != null && numberInput != false) ? 20 : 50,
                     ),
                   ),
                   if(suffix != null) Padding(

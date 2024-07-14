@@ -84,8 +84,18 @@ class HouseListItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(house.name),
-                Text(getRupiah(house.price)),
+                Text(house.name,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                Text(getRupiah(house.price),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal
+                  ),
+                ),
               ],
             )
           ],

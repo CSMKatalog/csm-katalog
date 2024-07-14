@@ -48,8 +48,8 @@ class _AdminScreenState extends State<AdminScreen> {
     showToast("DP tidak dapat lebih dari harga rumah");
   }
 
-  void tooLongToast() {
-    showToast("Deskripsi rumah terlalu panjang");
+  void tooLongToast(String text) {
+    showToast("$text terlalu panjang");
   }
 
   void notAPhoneNumberToast() {

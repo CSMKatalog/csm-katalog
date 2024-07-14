@@ -2,12 +2,22 @@ import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 import 'package:flutter/material.dart';
 
 class TextListDetail extends StatefulWidget {
-  const TextListDetail({super.key, required this.label, required this.hintText, required this.appendText, required this.deleteText, required this.listOfString});
+  const TextListDetail({super.key,
+    required this.label,
+    required this.hintText,
+    required this.appendText,
+    required this.deleteText,
+    required this.listOfString,
+    this.multiline = false,
+    this.limit = -1,
+  });
   final String label;
   final String hintText;
   final VoidCallback appendText;
   final Function(int) deleteText;
   final List<TextEditingController> listOfString;
+  final bool multiline;
+  final int limit;
 
   @override
   State<TextListDetail> createState() => _TextListDetailState();
@@ -53,6 +63,8 @@ class _TextListDetailState extends State<TextListDetail> {
                             listOfString;
                           });
                         },
+                        multiline: widget.multiline,
+                        limit: widget.limit,
                       );
                     },
                   ),
@@ -94,11 +106,20 @@ class _TextListDetailState extends State<TextListDetail> {
 }
 
 class TextListDetailItem extends StatefulWidget {
-  const TextListDetailItem({super.key, required this.index, required this.hintText, required this.textEditingController, required this.deleteText});
+  const TextListDetailItem({super.key,
+    required this.index,
+    required this.hintText,
+    required this.textEditingController,
+    required this.deleteText,
+    this.multiline = false,
+    this.limit = -1,
+  });
   final int index;
   final String hintText;
   final TextEditingController textEditingController;
   final VoidCallback deleteText;
+  final bool multiline;
+  final int limit;
 
   @override
   State<TextListDetailItem> createState() => _TextListDetailItemState();
@@ -141,6 +162,8 @@ class _TextListDetailItemState extends State<TextListDetailItem> {
                 child: CustomTextField(
                   textEditingController: widget.textEditingController,
                   hintText: widget.hintText,
+                  type: widget.multiline ? TextInputType.multiline : TextInputType.text,
+                  limit: widget.limit,
                 ),
               ),
             ),

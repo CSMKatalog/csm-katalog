@@ -28,7 +28,7 @@ class SalesAdd extends StatefulWidget {
   final VoidCallback changeScreenListener;
   final VoidCallback progressScreenListener;
   final VoidCallback missingValueToast;
-  final VoidCallback tooLongToast;
+  final void Function(String) tooLongToast;
   final VoidCallback notAPhoneNumberToast;
   final VoidCallback successUpdateToast;
   final VoidCallback successCreateToast;
@@ -57,7 +57,7 @@ class _SalesAddState extends State<SalesAdd> {
     }
 
     if(noteController.value.text.length > 200) {
-      widget.tooLongToast();
+      widget.tooLongToast("Keterangan");
       return false;
     }
 
@@ -116,7 +116,7 @@ class _SalesAddState extends State<SalesAdd> {
         readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
     fields.add(NumberDetail(label: "Nomor Telepon *", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
-    fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController,
+    fields.add(LongTextDetail(label: "Keterangan", hintText: "Maks 200 huruf", textEditingController: noteController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
 
     if (widget.client.clientID.isEmpty) {

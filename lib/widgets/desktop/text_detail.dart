@@ -60,14 +60,18 @@ class DimensionDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: TextDetail(
+        Expanded(child: NumberDetail(
           label: "Panjang $label",
           hintText: "Panjang $hintText",
           textEditingController: lengthController,
           readOnly: readOnly,
         )),
         const SizedBox(width: 16.0,),
-        Expanded(child: TextDetail(label: "Lebar $label", hintText: "Lebar $hintText", textEditingController: widthController)),
+        Expanded(child: NumberDetail(
+            label: "Lebar $label",
+            hintText: "Lebar $hintText",
+            textEditingController: widthController,
+        )),
       ],
     );
   }

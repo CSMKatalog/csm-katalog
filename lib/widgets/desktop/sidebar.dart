@@ -31,7 +31,7 @@ class Sidebar extends StatelessWidget {
               )
           ),
           child: SizedBox(
-            width: (MediaQuery.of(context).size.width > 900) ? (MediaQuery.of(context).size.width/4) : (180),
+            width: (MediaQuery.of(context).size.width > 720) ? (MediaQuery.of(context).size.width/4) : (180),
             height: MediaQuery.of(context).size.height,
             child: Container(
               color: Colors.blueGrey[300],
@@ -46,7 +46,7 @@ class Sidebar extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: MediaQuery.of(context).size.width > 1000 ? Image.asset("images/logo_csm.png") : const SizedBox(),
+                            child: MediaQuery.of(context).size.width > 1200 ? Image.asset("images/logo_csm.png") : const SizedBox(),
                           ),
                           Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +89,7 @@ class Sidebar extends StatelessWidget {
                                   child: Text(screen.label,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       color: Colors.blueGrey[900],
                                     ),
                                   ),

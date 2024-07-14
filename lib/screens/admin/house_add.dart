@@ -23,7 +23,7 @@ class HouseAdd extends StatefulWidget {
   final VoidCallback changeScreenListener;
   final VoidCallback missingValueToast;
   final VoidCallback moreThanPriceToast;
-  final VoidCallback tooLongToast;
+  final void Function(String) tooLongToast;
   final VoidCallback successUpdateToast;
   final VoidCallback successCreateToast;
   final VoidCallback successDeleteToast;
@@ -73,9 +73,14 @@ class _HouseAddState extends State<HouseAdd> {
     int price = int.parse(priceController.value.text.replaceAll(",", "").replaceAll(".", ""));
     int dp = int.parse(dpController.value.text.replaceAll(",", "").replaceAll(".", ""));
 
-    if(descriptionController.value.text.length > 200 || 
-        listOfFeatures.any((e) => e.value.text.length > 50)) {
-      widget.tooLongToast();
+    if(descriptionController.value.text.length > 200) {
+      widget.tooLongToast("Deskripsi rumah");
+      return;
+    }
+
+    var tooLong = listOfCriteria.indexWhere((e) => e.value.text.length > 200);
+    if(tooLong != -1) {
+      widget.tooLongToast("Kriteria ${tooLong + 1}");
       return;
     }
 
@@ -201,6 +206,7 @@ class _HouseAddState extends State<HouseAdd> {
       appendText: () {listOfFeatures.add(TextEditingController());},
       deleteText: (index) {listOfFeatures.removeAt(index);},
       listOfString: listOfFeatures,
+      limit: 50,
     ));
     fields.add(TextListDetail(
       label: "Link video Youtube",
@@ -216,6 +222,7 @@ class _HouseAddState extends State<HouseAdd> {
       appendText: () {listOfCriteria.add(TextEditingController());},
       deleteText: (index) {listOfCriteria.removeAt(index);},
       listOfString: listOfCriteria,
+      multiline: true,
     ));
     fields.add(ImageListDetail(
       label: "List gambar rumah, denah, atau tabel angsuran:",
@@ -225,7 +232,6 @@ class _HouseAddState extends State<HouseAdd> {
     ));
 
     fields.add(const SizedBox());
-    // Tambah tombol add atau edit
     if (widget.house.modelID.isNotEmpty) {
       fields.add(Row(
         mainAxisAlignment: MainAxisAlignment.end,
