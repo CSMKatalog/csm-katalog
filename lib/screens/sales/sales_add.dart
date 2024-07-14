@@ -45,7 +45,7 @@ class _SalesAddState extends State<SalesAdd> {
   String headerText = "Tambah Data Klien Baru";
 
   Future<void> uploadClientDetail() async {
-    if(nameController.value.text.isEmpty || phoneController.value.text.isEmpty) {
+    if(nameController.value.text.isEmpty || houseController.value.text.isEmpty || phoneController.value.text.isEmpty) {
       widget.missingValueToast();
       return;
     }
@@ -83,7 +83,7 @@ class _SalesAddState extends State<SalesAdd> {
   void initState() {
     super.initState();
     fields = [];
-    var spinnerItems = ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal"];
+    var spinnerItems = ["Tertarik", "Sedang Proses", "Telah Membeli"];
 
     if (widget.client.clientID.isNotEmpty) {
       Client client = widget.client;
@@ -98,14 +98,14 @@ class _SalesAddState extends State<SalesAdd> {
       }
     }
 
-    fields.add(TextDetail(label: "Nama", hintText: "Nama klien", textEditingController: nameController,
+    fields.add(TextDetail(label: "Nama *", hintText: "Nama klien", textEditingController: nameController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
     fields.add(const SizedBox());
-    fields.add(ComboBoxDetail(label: "Status Klien", onChanged: (e) { typeItem = e; }, value: typeItem, items: spinnerItems,
+    fields.add(ComboBoxDetail(label: "Status Klien *", onChanged: (e) { typeItem = e; }, value: typeItem, items: spinnerItems,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),));
-    fields.add(TextDetail(label: "Model Rumah Terkait", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController,
+    fields.add(TextDetail(label: "Model Rumah Terkait *", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController,
         readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
-    fields.add(TextDetail(label: "Nomor Telepon / Email", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController,
+    fields.add(TextDetail(label: "Nomor Telepon / Email *", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
     fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);

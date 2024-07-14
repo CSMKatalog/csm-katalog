@@ -1,9 +1,8 @@
-enum ClientType {interested, inProgress, bought, cancelled, deleted }
+enum ClientType {interested, inProgress, bought, deleted }
 
 String clientTypeToString(ClientType ct) {
   switch (ct) {
     case ClientType.bought: return 'Telah Membeli';
-    case ClientType.cancelled: return 'Batal';
     case ClientType.inProgress: return 'Sedang Proses';
     case ClientType.interested: return 'Tertarik';
     case ClientType.deleted: return 'Dihapus';
@@ -13,7 +12,6 @@ String clientTypeToString(ClientType ct) {
 ClientType stringToClientType(String s) {
   switch (s) {
     case 'Telah Membeli': return ClientType.bought;
-    case 'Batal': return ClientType.cancelled;
     case 'Sedang Proses': return ClientType.inProgress;
     case 'Tertarik': return ClientType.interested;
     default: return ClientType.deleted;

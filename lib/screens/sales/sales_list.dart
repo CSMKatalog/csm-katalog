@@ -43,7 +43,7 @@ class _SalesListState extends State<SalesList> {
       child: Column(
         children: [
           ComboBoxDetail(label: "Filter ",
-            items: ["Tertarik", "Sedang Proses", "Telah Membeli", "Batal", "Semua", "Dihapus"],
+            items: ["Tertarik", "Sedang Proses", "Telah Membeli", "Semua", "Dihapus"],
             value: typeItem,
             onChanged: (e) {
               setState(() {

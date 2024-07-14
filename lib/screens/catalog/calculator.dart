@@ -45,7 +45,7 @@ class _CalculatorOverlayState extends State<CalculatorOverlay> {
         closeWidgetListener: widget.closeWidgetListener,
         children: [
           Flexible(
-            child: ComboBoxDetail(label: "Tipe Rumah", items: houseTypes, value: selectedHouse,
+            child: ComboBoxDetail(label: "Tipe Rumah *", items: houseTypes, value: selectedHouse,
                 onChanged: (v) {
                   selectedHouse = v;
                   House house = widget.houseList.firstWhere((e) => e.name == v, orElse: House.empty);

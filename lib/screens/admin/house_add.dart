@@ -187,14 +187,14 @@ class _HouseAddState extends State<HouseAdd> {
 
     // Tambah elemen form
     // TODO: Ini untuk ubah kolom pada detail rumah
-    fields.add(TextDetail(label: "Nama", hintText: "Nama model rumah", textEditingController: nameController),);
+    fields.add(TextDetail(label: "Nama *", hintText: "Nama model rumah", textEditingController: nameController),);
     fields.add(const SizedBox());
-    fields.add(TextDetail(label: "Tipe Bangunan", hintText: "Kode tipe banguan", textEditingController: typeController),);
-    fields.add(LongTextDetail(label: "Deskripsi Model Rumah", hintText: "Maksimal 200 huruf", textEditingController: descriptionController),);
-    fields.add(NumberDetail(label: "Harga Jual Rumah", hintText: "Harga (rupiah)", textEditingController: priceController),);
-    fields.add(NumberDetail(label: "Down Payment", hintText: "DP (rupiah)", textEditingController: dpController),);
-    fields.add(NumberDetail(label: "Luas Rumah", hintText: "Luas (meter persegi)", textEditingController: houseAreaController),);
-    fields.add(NumberDetail(label: "Luas Tanah", hintText: "Luas (meter persegi)", textEditingController: landAreaController),);
+    fields.add(TextDetail(label: "Tipe Bangunan *", hintText: "Kode tipe banguan", textEditingController: typeController),);
+    fields.add(LongTextDetail(label: "Deskripsi Model Rumah *", hintText: "Maksimal 200 huruf", textEditingController: descriptionController),);
+    fields.add(NumberDetail(label: "Harga Jual Rumah *", hintText: "Harga (rupiah)", textEditingController: priceController),);
+    fields.add(NumberDetail(label: "Down Payment *", hintText: "DP (rupiah)", textEditingController: dpController),);
+    fields.add(NumberDetail(label: "Luas Rumah *", hintText: "Luas (meter persegi)", textEditingController: houseAreaController),);
+    fields.add(NumberDetail(label: "Luas Tanah *", hintText: "Luas (meter persegi)", textEditingController: landAreaController),);
     fields.add(TextListDetail(
       label: "Daftar fitur istimewa",
       hintText: "Fitur",
