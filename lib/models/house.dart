@@ -76,7 +76,7 @@ class House {
       youtubeUrls: List<String>.from(json["videos"]),
       features: List<String>.from(json["features"]),
       criteria: List<String>.from(json["criteria"]),
-      deleted: bool.parse(json['deleted']),
+      deleted: json['deleted'] == true,
     );
     return house;
   }
