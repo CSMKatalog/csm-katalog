@@ -76,7 +76,7 @@ class House {
       youtubeUrls: List<String>.from(json["videos"]),
       features: List<String>.from(json["features"]),
       criteria: List<String>.from(json["criteria"]),
-      deleted: json['deleted'],
+      deleted: bool.parse(json['deleted']),
     );
     return house;
   }
@@ -98,7 +98,7 @@ class House {
     json["features"] = features;
     json["criteria"] = criteria;
     json["timestamp"] = DateTime.now().millisecondsSinceEpoch / 60000;
-    json["deleted"] = deleted.toString();
+    json["deleted"] = deleted;
     return json;
   }
 }
