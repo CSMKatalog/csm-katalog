@@ -102,6 +102,7 @@ class _HouseAddState extends State<HouseAdd> {
       youtubeUrls: listOfYoutubeUrls.map((e) => e.value.text).toList(),
       features: listOfFeatures.map((e) => e.value.text).toList(),
       criteria: listOfCriteria.map((e) => e.value.text).toList(),
+      deleted: markForDeletion,
     );
 
     if (widget.house.modelID.isNotEmpty) {
@@ -122,6 +123,8 @@ class _HouseAddState extends State<HouseAdd> {
       FirestorageConnector.deleteFile(Uri.parse(imageUrl).pathSegments.last);
     }
   }
+
+  bool markForDeletion = false;
 
   Future<void> deleteHouseDetail() async {
     for (var imageUrl in widget.house.imageUrls) {
@@ -237,7 +240,10 @@ class _HouseAddState extends State<HouseAdd> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SubmitButton(text: "Ubah", onPressed: reuploadHouseDetail),
-          SubmitButton(text: "Hapus", onPressed: deleteHouseDetail),
+          SubmitButton(text: "Hapus", onPressed: () async {
+            markForDeletion = true;
+            uploadHouseDetail();
+          }),
         ],
       ));
     } else {

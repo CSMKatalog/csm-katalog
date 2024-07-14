@@ -15,7 +15,7 @@ class FirestoreConnector {
     await db.collection("houses").orderBy("timestamp", descending: true).get().then((event) {
       for (var doc in event.docs) {
         House house = House.fromJson(doc.data(), doc.id);
-        houses.add(house);
+        if(!house.deleted) houses.add(house);
       }
     });
     return houses;

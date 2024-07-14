@@ -11,6 +11,7 @@ class House {
   final List<String> youtubeUrls;
   final List<String> features;
   final List<String> criteria;
+  final bool deleted;
 
   House.empty() :
         modelID = "",
@@ -24,7 +25,8 @@ class House {
         imageUrls = [],
         youtubeUrls = [],
         features = [],
-        criteria = [];
+        criteria = [],
+        deleted = false;
 
   House ({
     required this.modelID,
@@ -39,6 +41,7 @@ class House {
     required this.youtubeUrls,
     required this.features,
     required this.criteria,
+    required this.deleted,
   });
 
   House.cover({required List imageUrls}) :
@@ -53,7 +56,8 @@ class House {
         youtubeUrls = [],
         features = [],
         criteria = [],
-        this.imageUrls = imageUrls.map((e) => e.toString()).toList();
+        this.imageUrls = imageUrls.map((e) => e.toString()).toList(),
+        deleted = false;
 
 
   factory House.fromJson(
@@ -72,6 +76,7 @@ class House {
       youtubeUrls: List<String>.from(json["videos"]),
       features: List<String>.from(json["features"]),
       criteria: List<String>.from(json["criteria"]),
+      deleted: json['deleted'],
     );
     return house;
   }
@@ -93,6 +98,7 @@ class House {
     json["features"] = features;
     json["criteria"] = criteria;
     json["timestamp"] = DateTime.now().millisecondsSinceEpoch / 60000;
+    json["deleted"] = deleted.toString();
     return json;
   }
 }
