@@ -52,6 +52,10 @@ class _AdminScreenState extends State<AdminScreen> {
     showToast("Deskripsi rumah terlalu panjang");
   }
 
+  void notAPhoneNumberToast() {
+    showToast("Data yang dimasukkan bukan nomor telepon");
+  }
+
   void successUpdateToast() {
     showToast("Data berhasil diedit");
   }
@@ -118,6 +122,7 @@ class _AdminScreenState extends State<AdminScreen> {
       progressScreenListener: () { },
       missingValueToast: missingValueToast,
       tooLongToast: tooLongToast,
+      notAPhoneNumberToast: notAPhoneNumberToast,
       successUpdateToast: successUpdateToast,
       successCreateToast: successCreateToast,
       successDeleteToast: successDeleteToast,
@@ -135,6 +140,7 @@ class _AdminScreenState extends State<AdminScreen> {
       },
       missingValueToast: missingValueToast,
       tooLongToast: tooLongToast,
+      notAPhoneNumberToast: notAPhoneNumberToast,
       successUpdateToast: successUpdateToast,
       successCreateToast: successCreateToast,
       successDeleteToast: successDeleteToast,

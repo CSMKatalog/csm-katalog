@@ -139,7 +139,8 @@ class _TextListDetailItemState extends State<TextListDetailItem> {
               child: Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: CustomTextField(
-                  textEditingController: widget.textEditingController, hintText: widget.hintText,
+                  textEditingController: widget.textEditingController,
+                  hintText: widget.hintText,
                 ),
               ),
             ),

@@ -10,12 +10,13 @@ import 'package:csmkatalog/widgets/catalog/text_detail.dart';
 import 'catalog_widget.dart';
 
 class ContactFormOverlay extends StatefulWidget {
-  const ContactFormOverlay({super.key, required this.officeContact, required this.houseList, required this.closeWidgetListener, required this.submitWidgetListener, required this.missingValueToast});
+  const ContactFormOverlay({super.key, required this.officeContact, required this.houseList, required this.closeWidgetListener, required this.submitWidgetListener, required this.missingValueToast, required this.notAPhoneNumberToast});
   final String officeContact;
   final List<House> houseList;
   final VoidCallback closeWidgetListener;
   final VoidCallback submitWidgetListener;
   final VoidCallback missingValueToast;
+  final VoidCallback notAPhoneNumberToast;
 
   @override
   State<ContactFormOverlay> createState() => _ContactFormOverlayState();
@@ -75,7 +76,7 @@ class _ContactFormOverlayState extends State<ContactFormOverlay> {
             textController: nameController,
           ),
           TextDetail(
-            label: "Nomor / Email *",
+            label: "Nomor Telepon *",
             hintText: "Kontak yang dapat dihubungi",
             textController: phoneController,
           ),

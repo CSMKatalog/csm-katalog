@@ -171,6 +171,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
                           missingValueToast: () {
                             showToast("Ada data penting yang belum diisi");
                           },
+                          notAPhoneNumberToast: () {
+                            showToast("Data yang dimasukkan bukan nomor telepon");
+                          },
                           houseList: houseList, officeContact: officeContact,
                         );
                       });

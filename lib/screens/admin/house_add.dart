@@ -190,7 +190,7 @@ class _HouseAddState extends State<HouseAdd> {
     fields.add(TextDetail(label: "Nama *", hintText: "Nama model rumah", textEditingController: nameController),);
     fields.add(const SizedBox());
     fields.add(TextDetail(label: "Tipe Bangunan *", hintText: "Kode tipe banguan", textEditingController: typeController),);
-    fields.add(LongTextDetail(label: "Deskripsi Model Rumah *", hintText: "Maksimal 200 huruf", textEditingController: descriptionController),);
+    fields.add(LongTextDetail(label: "Deskripsi Model Rumah", hintText: "Maksimal 200 huruf", textEditingController: descriptionController),);
     fields.add(NumberDetail(label: "Harga Jual Rumah *", hintText: "Harga (rupiah)", textEditingController: priceController),);
     fields.add(NumberDetail(label: "Down Payment *", hintText: "DP (rupiah)", textEditingController: dpController),);
     fields.add(NumberDetail(label: "Luas Rumah *", hintText: "Luas (meter persegi)", textEditingController: houseAreaController),);

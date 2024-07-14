@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
-  const CustomTextField({super.key, this.hintText = "", required this.textEditingController, this.type = TextInputType.text, this.readOnly = false});
+  const CustomTextField({
+    super.key,
+    this.hintText = "",
+    required this.textEditingController,
+    this.type = TextInputType.text,
+    this.readOnly = false,
+    this.limit = -1,
+  });
   final String hintText;
   final TextEditingController textEditingController;
   final TextInputType type;
   final bool readOnly;
+  final int limit;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +24,7 @@ class CustomTextField extends StatelessWidget {
       keyboardType: type,
       inputFormatters: [
         if(type == TextInputType.number) FilteringTextInputFormatter.allow(RegExp(r"[\.\,0-9]*")),
+        if(limit != -1) LengthLimitingTextInputFormatter(limit),
       ],
       maxLines: type == TextInputType.multiline ? null : 1,
       style: const TextStyle(
@@ -84,6 +93,7 @@ class TextDetail extends StatelessWidget {
                       textEditingController: textController,
                       type: (numberInput != null && numberInput != false) ? TextInputType.number : TextInputType.text,
                       readOnly: readOnly != null ? readOnly! : false,
+                      limit: 50,
                     ),
                   ),
                   if(suffix != null) Padding(

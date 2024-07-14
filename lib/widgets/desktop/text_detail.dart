@@ -6,11 +6,13 @@ class CustomTextField extends StatelessWidget {
     required this.hintText,
     required this.textEditingController,
     this.type = TextInputType.text,
-    this.readOnly = false});
+    this.readOnly = false,
+    this.limit = -1});
   final String hintText;
   final TextEditingController textEditingController;
   final TextInputType type;
   final bool readOnly;
+  final int limit;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +21,7 @@ class CustomTextField extends StatelessWidget {
       keyboardType: type,
       inputFormatters: [
         if(type == TextInputType.number) FilteringTextInputFormatter.allow(RegExp(r"[\.\,0-9]*")),
+        if(limit != -1) LengthLimitingTextInputFormatter(limit),
       ],
       maxLines: type == TextInputType.multiline ? null : 1,
       style: const TextStyle(
@@ -94,6 +97,7 @@ class NumberDetail extends StatelessWidget {
           textEditingController: textEditingController,
           type: TextInputType.number,
           readOnly: readOnly,
+          limit: 20,
         ),
       ],
     );
@@ -126,6 +130,7 @@ class TextDetail extends StatelessWidget {
           textEditingController: textEditingController,
           type: TextInputType.text,
           readOnly: readOnly,
+          limit: 50,
         ),
       ],
     );

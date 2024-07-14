@@ -70,9 +70,12 @@ class HouseListItem extends StatelessWidget {
                 ),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width/4,
-                  child: Image.network(
+                  child: house.imageUrls.length > 0 ? Image.network(
                     house.imageUrls[0],
                     fit: BoxFit.contain,
+                  ) : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text("Belum ada gambar"),
                   ),
                 ),
               ),

@@ -10,6 +10,8 @@ import 'package:csmkatalog/widgets/desktop/header.dart';
 import 'package:csmkatalog/widgets/desktop/submit_button.dart';
 import 'package:csmkatalog/widgets/desktop/text_detail.dart';
 
+import '../../utils/utils.dart';
+
 class SalesAdd extends StatefulWidget {
   const SalesAdd({super.key,
     required this.client,
@@ -17,6 +19,7 @@ class SalesAdd extends StatefulWidget {
     required this.progressScreenListener,
     required this.missingValueToast,
     required this.tooLongToast,
+    required this.notAPhoneNumberToast,
     required this.successUpdateToast,
     required this.successCreateToast,
     required this.successDeleteToast});
@@ -25,6 +28,7 @@ class SalesAdd extends StatefulWidget {
   final VoidCallback progressScreenListener;
   final VoidCallback missingValueToast;
   final VoidCallback tooLongToast;
+  final VoidCallback notAPhoneNumberToast;
   final VoidCallback successUpdateToast;
   final VoidCallback successCreateToast;
   final VoidCallback successDeleteToast;
@@ -44,10 +48,20 @@ class _SalesAddState extends State<SalesAdd> {
   String typeItem = "Tertarik";
   String headerText = "Tambah Data Klien Baru";
 
-  Future<void> uploadClientDetail() async {
+  Future<bool> uploadClientDetail() async {
     if(nameController.value.text.isEmpty || houseController.value.text.isEmpty || phoneController.value.text.isEmpty) {
       widget.missingValueToast();
-      return;
+      return false;
+    }
+
+    if(noteController.value.text.length > 200) {
+      widget.tooLongToast();
+      return false;
+    }
+
+    if(!isPhoneNumber(phoneController.value.text)) {
+      widget.notAPhoneNumberToast();
+      return false;
     }
 
     Client client =  Client(
@@ -60,11 +74,6 @@ class _SalesAddState extends State<SalesAdd> {
       progress: widget.client.clientID.isNotEmpty ? widget.client.progress : getBlankProgress()
     );
 
-    if(noteController.value.text.length > 200) {
-      widget.tooLongToast();
-      return;
-    }
-
     if (widget.client.clientID.isNotEmpty) {
       await FirestoreConnector.updateClient(widget.client.clientID, client);
       widget.successUpdateToast();
@@ -72,6 +81,7 @@ class _SalesAddState extends State<SalesAdd> {
       await FirestoreConnector.createClient(client);
       widget.successCreateToast();
     }
+    return true;
   }
 
   Future<void> deleteClientDetail() async {
@@ -101,11 +111,11 @@ class _SalesAddState extends State<SalesAdd> {
     fields.add(TextDetail(label: "Nama *", hintText: "Nama klien", textEditingController: nameController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
     fields.add(const SizedBox());
-    fields.add(ComboBoxDetail(label: "Status Klien *", onChanged: (e) { typeItem = e; }, value: typeItem, items: spinnerItems,
+    fields.add(ComboBoxDetail(label: "Status Klien", onChanged: (e) { typeItem = e; }, value: typeItem, items: spinnerItems,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),));
     fields.add(TextDetail(label: "Model Rumah Terkait *", hintText: "Model rumah yang diinginkan klien", textEditingController: houseController,
         readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
-    fields.add(TextDetail(label: "Nomor Telepon / Email *", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController,
+    fields.add(NumberDetail(label: "Nomor Telepon *", hintText: "Kontak klien yang dapat dihubungi", textEditingController: phoneController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
     fields.add(LongTextDetail(label: "Keterangan", hintText: "Keterangan terkait klien", textEditingController: noteController,
       readOnly: typeItem == clientTypeToString(ClientType.deleted),),);
@@ -116,8 +126,9 @@ class _SalesAddState extends State<SalesAdd> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SubmitButton(text: "Tambah", onPressed: () async {
-            await uploadClientDetail();
-            widget.changeScreenListener();
+            if(await uploadClientDetail()) {
+              widget.changeScreenListener();
+            }
           }),
         ],
       ));
@@ -131,8 +142,9 @@ class _SalesAddState extends State<SalesAdd> {
         children: [
           SubmitButton(text: "Pulihkan", onPressed: () async {
             typeItem = clientTypeToString(ClientType.inProgress);
-            await uploadClientDetail();
-            widget.changeScreenListener();
+            if(await uploadClientDetail()) {
+              widget.changeScreenListener();
+            }
           }),
         ],
       ));
@@ -145,8 +157,9 @@ class _SalesAddState extends State<SalesAdd> {
         SubmitButton(
             text: "Progress",
             onPressed: () async {
-              await uploadClientDetail();
-              widget.progressScreenListener();
+              if(await uploadClientDetail()) {
+                widget.progressScreenListener();
+              }
             }),
       ],
     ));
@@ -154,14 +167,16 @@ class _SalesAddState extends State<SalesAdd> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         SubmitButton(text: "Ubah", onPressed: () async {
-          await uploadClientDetail();
-          widget.changeScreenListener();
+          if(await uploadClientDetail()) {
+            widget.changeScreenListener();
+          }
         }),
         SubmitButton(text: "Hapus", onPressed: () async {
           if(typeItem != clientTypeToString(ClientType.deleted)) {
             typeItem = clientTypeToString(ClientType.deleted);
-            await uploadClientDetail();
-            widget.changeScreenListener();
+            if(await uploadClientDetail()) {
+              widget.changeScreenListener();
+            }
           }
           // deleteClientDetail();
         }),

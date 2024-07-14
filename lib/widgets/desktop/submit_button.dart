@@ -34,11 +34,10 @@ class _SubmitButtonState extends State<SubmitButton> {
           onPressed: () {
             if(hasClicked) {
               widget.onPressed();
-            } else {
-              setState(() {
-                hasClicked = true;
-              });
             }
+            setState(() {
+              hasClicked = !hasClicked;
+            });
           },
         ),
       ),
