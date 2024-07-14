@@ -22,7 +22,8 @@ class SalesAdd extends StatefulWidget {
     required this.notAPhoneNumberToast,
     required this.successUpdateToast,
     required this.successCreateToast,
-    required this.successDeleteToast});
+    required this.successDeleteToast,
+    required this.successRestoreToast});
   final Client client;
   final VoidCallback changeScreenListener;
   final VoidCallback progressScreenListener;
@@ -32,6 +33,7 @@ class SalesAdd extends StatefulWidget {
   final VoidCallback successUpdateToast;
   final VoidCallback successCreateToast;
   final VoidCallback successDeleteToast;
+  final VoidCallback successRestoreToast;
 
   @override
   State<SalesAdd> createState() => _SalesAddState();
@@ -76,17 +78,14 @@ class _SalesAddState extends State<SalesAdd> {
 
     if (widget.client.clientID.isNotEmpty) {
       await FirestoreConnector.updateClient(widget.client.clientID, client);
-      widget.successUpdateToast();
     } else {
       await FirestoreConnector.createClient(client);
-      widget.successCreateToast();
     }
     return true;
   }
 
   Future<void> deleteClientDetail() async {
     await FirestoreConnector.deleteClient(widget.client.clientID);
-    widget.successDeleteToast();
   }
 
   @override
@@ -127,6 +126,7 @@ class _SalesAddState extends State<SalesAdd> {
         children: [
           SubmitButton(text: "Tambah", onPressed: () async {
             if(await uploadClientDetail()) {
+              widget.successCreateToast();
               widget.changeScreenListener();
             }
           }),
@@ -143,6 +143,7 @@ class _SalesAddState extends State<SalesAdd> {
           SubmitButton(text: "Pulihkan", onPressed: () async {
             typeItem = clientTypeToString(ClientType.inProgress);
             if(await uploadClientDetail()) {
+              widget.successRestoreToast();
               widget.changeScreenListener();
             }
           }),
@@ -158,6 +159,7 @@ class _SalesAddState extends State<SalesAdd> {
             text: "Progress",
             onPressed: () async {
               if(await uploadClientDetail()) {
+                widget.successUpdateToast();
                 widget.progressScreenListener();
               }
             }),
@@ -168,6 +170,7 @@ class _SalesAddState extends State<SalesAdd> {
       children: [
         SubmitButton(text: "Ubah", onPressed: () async {
           if(await uploadClientDetail()) {
+            widget.successUpdateToast();
             widget.changeScreenListener();
           }
         }),
@@ -175,6 +178,7 @@ class _SalesAddState extends State<SalesAdd> {
           if(typeItem != clientTypeToString(ClientType.deleted)) {
             typeItem = clientTypeToString(ClientType.deleted);
             if(await uploadClientDetail()) {
+              widget.successDeleteToast();
               widget.changeScreenListener();
             }
           }

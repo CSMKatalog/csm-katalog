@@ -68,6 +68,10 @@ class _AdminScreenState extends State<AdminScreen> {
     showToast("Data berhasil dihapus");
   }
 
+  void successRestoreToast() {
+    showToast("Data berhasil dipulihkan");
+  }
+
   Widget? toastOverlay;
   Timer? timer;
 
@@ -126,6 +130,7 @@ class _AdminScreenState extends State<AdminScreen> {
       successUpdateToast: successUpdateToast,
       successCreateToast: successCreateToast,
       successDeleteToast: successDeleteToast,
+      successRestoreToast: successRestoreToast,
     );
   }
 
@@ -144,6 +149,7 @@ class _AdminScreenState extends State<AdminScreen> {
       successUpdateToast: successUpdateToast,
       successCreateToast: successCreateToast,
       successDeleteToast: successDeleteToast,
+      successRestoreToast: successRestoreToast,
     );
   }
 
