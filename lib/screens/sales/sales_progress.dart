@@ -17,7 +17,7 @@ import 'package:csmkatalog/utils/dashboard_screen.dart';
 class SalesProgress extends StatefulWidget {
   const SalesProgress({super.key, required this.client, required this.changeScreenListener, required this.successUpdateToast});
   final Client client;
-  final VoidCallback changeScreenListener;
+  final Function(Client) changeScreenListener;
   final VoidCallback successUpdateToast;
 
   @override
@@ -28,11 +28,8 @@ class _SalesProgressState extends State<SalesProgress> {
   late Client client;
 
   Future<void> uploadClientDetail() async {
-    log('5');
     await FirestoreConnector.updateClient(client.clientID, client);
-    log('6');
     Client updatedClient = await FirestoreConnector.getClient(client.clientID);
-    log('7');
     widget.successUpdateToast();
     setState(() {
       client = updatedClient;
@@ -294,7 +291,9 @@ class _SalesProgressState extends State<SalesProgress> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        PageHeader(text: "Progress Pengajuan Kredit", onTap: widget.changeScreenListener,),
+        PageHeader(text: "Progress Pengajuan Kredit", onTap: () {
+          widget.changeScreenListener(client);
+        },),
         ProgressTrack(items: documents.map((e) => ProgressTrackItem(
             icon: e.icon,
             label: e.label,

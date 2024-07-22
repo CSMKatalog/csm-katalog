@@ -1,11 +1,8 @@
-
-
-import 'dart:developer';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:csmkatalog/firebase/firestorage_connector.dart';
 
@@ -24,19 +21,16 @@ class FileListDetail extends StatefulWidget {
 
 class _FileListDetailState extends State<FileListDetail> {
   Future<void> openFile() async {
-    log('1');
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg', 'gif', 'svg'],
       withData: true,
     );
-    log('2');
 
     if (result != null) {
       Uint8List image = result.files.single.bytes!;
       String fileName = "file-${DateTime.now()}";
-      log('3');
       String imageUrl = await FirestorageConnector.uploadFile(image, fileName, "documents/");
-      log('4');
       widget.fileAddListener(imageUrl);
     }
   }
@@ -98,7 +92,7 @@ class _FileListDetailState extends State<FileListDetail> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: const Text(
-                                "Upload Dokumen",
+                                "Upload Foto Dokumen",
                                 style: TextStyle(color: Colors.blueGrey,),
                                 textAlign: TextAlign.center,
                               ),
@@ -130,10 +124,28 @@ class FileListDetailItem extends StatefulWidget {
 
 class _FileListDetailItemState extends State<FileListDetailItem> {
   bool isHovered = false;
+  Uint8List? image;
 
   Future<void> deleteDocument() async {
     String uri = Uri.parse(widget.url).pathSegments.last;
     FirestorageConnector.deleteFile(uri);
+  }
+
+  Future<void> downloadDocument() async {
+    launchUrl(Uri.parse(widget.url));
+  }
+
+  Future<void> loadImage(String imageUrl) async {
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    setState(() {
+      image = response.bodyBytes;
+    }); 
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadImage(widget.url);
   }
 
   @override
@@ -159,15 +171,9 @@ class _FileListDetailItemState extends State<FileListDetailItem> {
                       width: 1
                   ),
                   borderRadius: const BorderRadius.all(Radius.circular(4.0))),
-              child: InkWell(
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Text(Uri.parse(widget.url).pathSegments.last),
-                ),
-                onTap: () {
-                  final Uri url = Uri.parse(widget.url);
-                  launchUrl(url);
-                },
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: image != null ? Image.memory(image!) : Text("Loading...")
               ),
             ),
           ),

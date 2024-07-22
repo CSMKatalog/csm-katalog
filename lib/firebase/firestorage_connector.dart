@@ -1,3 +1,4 @@
+
 import 'dart:typed_data';
 import 'package:mime/mime.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,10 +25,7 @@ class FirestorageConnector {
   }
 
   static Future<void> deleteFile(String imageUrl) async {
-    // Create a reference to the file to delete
-    final desertRef = storage.ref().child(imageUrl);
-
-    // Delete the file
-    await desertRef.delete();
+    final ref = storage.ref().child(imageUrl);
+    await ref.delete();
   }
 }
